@@ -1,8 +1,6 @@
-[[Text-Base Ai adventure]]
-
----
-
 # Complete Action Plan: AI-Powered Text-Based RPG Game (Game Jam MVP)
+
+# Title: Tales Craft AI
 
 ## PHASE 1: PROJECT SETUP & PLANNING (Days 1-2)
 
