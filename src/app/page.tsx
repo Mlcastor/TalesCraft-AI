@@ -2,7 +2,6 @@
 
 // Homepage component
 import Link from 'next/link';
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 const getImagePath = (name: string) => {
@@ -63,7 +62,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              href="/login" 
+              href="/sign-in" 
               className="px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-600 text-white rounded-md hover:from-amber-600 hover:to-yellow-700 transition-all transform hover:scale-105 font-medium text-lg shadow-lg"
             >
               Begin Your Adventure
@@ -208,7 +207,7 @@ export default function Home() {
             Every story is unique. Every choice is yours. Begin your journey into a world crafted by AI and shaped by your decisions.
           </p>
           <Link 
-            href="/login" 
+            href="/sign-in" 
             className="inline-block px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-white rounded-md hover:from-amber-600 hover:to-yellow-700 transition-all transform hover:scale-105 font-bold text-lg shadow-lg"
           >
             Start Your Epic Tale
