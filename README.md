@@ -1,4 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-Powered Text-Based RPG Game
+
+A modern text-based RPG adventure game powered by AI, built with Next.js and TypeScript.
+
+## Features
+
+- AI-driven narrative and world generation
+- Turn-based combat system
+- Character creation and progression
+- Persistent game state
+- Responsive design for desktop and mobile
+
+## Development
+
+This project uses Next.js with TypeScript.
+
+### Prerequisites
+
+- Node.js 16+
+- npm or yarn
+
+### Setup
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Create a `.env.local` file with required API keys (see `.env.example`)
+4. Run the development server:
+   ```
+   npm run dev
+   ```
+
+### Project Structure
+
+- `/src/components` - React components
+- `/src/lib` - Game engine and AI integration
+- `/src/types` - TypeScript type definitions
+- `/src/app` - Next.js app directory
+- `/src/styles` - Global styles
+
+## License
+
+[MIT](LICENSE)
 
 ## Getting Started
 
