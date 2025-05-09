@@ -23,7 +23,7 @@ jobs:
       run: npm ci
       
     - name: Run type check
-      run: npm run type-check || npm run tsc
+      run: npm run type-check
       
     - name: Run linter
       run: npm run lint || exit 0
