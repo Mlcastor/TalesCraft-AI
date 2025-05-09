@@ -1,14 +1,58 @@
+"use client";
+
 // Homepage component
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+
+const getImagePath = (name: string) => {
+  // Check if the browser supports WebP (would need to be more sophisticated in production)
+  const supportsWebP = true; // In reality, you'd detect this
+  return supportsWebP ? `/images/${name}.webp` : `/images/${name}.png`;
+};
 
 export default function Home() {
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const backgrounds = [
+    getImagePath('bg-fantasy'),
+    getImagePath('bg-scifi'),
+    getImagePath('bg-dungeon'),
+    getImagePath('bg-cyberpunk'),
+    getImagePath('bg-postapocalyptic'),
+  ];
+
+  useEffect(() => {
+    // Skip animation for users who prefer reduced motion
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prevIndex) => 
+        (prevIndex + 1) % backgrounds.length
+      );
+    }, 7000); // Change every 7 seconds
+
+    return () => clearInterval(interval);
+  }, [backgrounds.length]);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      {/* Hero Section */}
+      {/* Hero Section with changing background */}
       <div className="relative w-full flex flex-col items-center justify-center px-4 py-24 text-center overflow-hidden">
-        {/* Background effects */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('/images/fantasy-map-bg.png')] bg-no-repeat bg-cover"></div>
+        {/* Background images with crossfade */}
+        {backgrounds.map((bg, index) => (
+          <div 
+            key={bg}
+            className="absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover transition-opacity duration-2000"
+            style={{
+              backgroundImage: `url(${bg})`,
+              opacity: currentBgIndex === index ? 0.2 : 0,
+              zIndex: 0
+            }}
+            aria-hidden="true"
+          />
+        ))}
         
         <div className="z-10 max-w-5xl">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500">
