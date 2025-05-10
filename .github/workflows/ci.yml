@@ -9,6 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    env:
+      # Clerk Authentication
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      NEXT_PUBLIC_CLERK_SIGN_IN_URL: '/sign-in'
+      NEXT_PUBLIC_CLERK_SIGN_UP_URL: '/sign-up'
+      NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: '/game'
+      NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: '/game'
 
     steps:
     - uses: actions/checkout@v3
