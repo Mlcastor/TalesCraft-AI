@@ -1,10 +1,8 @@
-import { gameSessionRepository } from "@/lib/db/gameSession";
-import { prisma } from "@/lib/db/prisma";
 import type { GameSession } from "@/types/database";
 
 /**
- * SessionManager is responsible for creating, tracking, and ending game sessions.
- * It ensures that we have a consistent way to handle game sessions across the application.
+ * SessionManager is responsible for managing game session state on the client side.
+ * It should not directly interact with the database.
  */
 export class SessionManager {
   private currentSession: GameSession | null = null;
@@ -47,112 +45,19 @@ export class SessionManager {
   }
 
   /**
-   * Start a new game session for the character
+   * Set the current session
    *
-   * @returns Promise resolving to the created session
-   * @throws Error if characterId is not set
+   * @param session - The session to set as current
    */
-  async startSession(): Promise<GameSession> {
-    if (!this.characterId) {
-      throw new Error("Cannot start session: Character ID not set");
-    }
-
-    // Check if there's already an active session for this character
-    const existingActiveSession =
-      await gameSessionRepository.getActiveSessionForCharacter(
-        this.characterId
-      );
-
-    if (existingActiveSession) {
-      // If there's an existing active session, use it
-      this.currentSession = existingActiveSession;
-      return existingActiveSession;
-    }
-
-    // Create a new session with the correct structure
-    const newSession = await gameSessionRepository.createGameSession({
-      character: {
-        connect: { id: this.characterId },
-      },
-      sessionData: {},
-    });
-
-    this.currentSession = newSession;
-
-    return newSession;
+  setCurrentSession(session: GameSession | null): void {
+    this.currentSession = session;
   }
 
   /**
-   * End the current game session
-   *
-   * @returns Promise resolving to the ended session or null if no session was active
+   * Clear the current session
    */
-  async endSession(): Promise<GameSession | null> {
-    if (!this.currentSession || !this.currentSession.id) {
-      return null;
-    }
-
-    const endedSession = await gameSessionRepository.endGameSession(
-      this.currentSession.id
-    );
+  clearSession(): void {
     this.currentSession = null;
-
-    return endedSession;
-  }
-
-  /**
-   * Update the current session data
-   *
-   * @param sessionData - Partial session data to merge with existing data
-   * @returns Promise resolving to the updated session or null if no session is active
-   */
-  async updateSessionData(
-    sessionData: Record<string, any>
-  ): Promise<GameSession | null> {
-    if (!this.currentSession || !this.currentSession.id) {
-      return null;
-    }
-
-    // Merge the new session data with existing data
-    const currentData = this.currentSession.sessionData as Record<string, any>;
-    const mergedData = {
-      ...currentData,
-      ...sessionData,
-    };
-
-    const updatedSession = await gameSessionRepository.updateGameSession(
-      this.currentSession.id,
-      { sessionData: mergedData }
-    );
-
-    this.currentSession = updatedSession;
-    return updatedSession;
-  }
-
-  /**
-   * Resume the last active session for a character, or create a new one if none exists
-   *
-   * @returns Promise resolving to the resumed or created session
-   * @throws Error if characterId is not set
-   */
-  async resumeOrCreateSession(): Promise<GameSession> {
-    if (!this.characterId) {
-      throw new Error("Cannot resume session: Character ID not set");
-    }
-
-    // Try to find an active session for this character
-    const activeSession =
-      await gameSessionRepository.getActiveSessionForCharacter(
-        this.characterId
-      );
-
-    if (activeSession) {
-      this.currentSession = activeSession;
-      return activeSession;
-    }
-
-    // If no active session is found, create a new one
-    return this.startSession();
   }
 }
 
