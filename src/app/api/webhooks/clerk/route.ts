@@ -1,14 +1,23 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
-import { userRepository } from "@/lib/db/user";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db/prisma";
 
 /**
  * Handler for Clerk webhooks
  * Processes authentication events and syncs user data with our database
  */
 export async function POST(req: Request) {
+  // Ensure Prisma is initialized
+  try {
+    // Test prisma connection with a simple query
+    await prisma.$queryRaw`SELECT 1`;
+  } catch (error) {
+    console.error("Database connection error:", error);
+    return new NextResponse("Database connection error", { status: 500 });
+  }
+
   // Verify the webhook signature
   const headerPayload = await headers();
   const svixId = headerPayload.get("svix-id");
@@ -87,18 +96,27 @@ async function handleUserCreated(data: any) {
 
   const primaryEmail = email_addresses[0].email_address;
 
-  // Check if user already exists
-  const existingUser = await userRepository.getUserByEmail(primaryEmail);
-
-  if (!existingUser) {
-    // Create new user in our database
-    await userRepository.createUser({
-      id: id, // Using Clerk's ID as our user ID
-      email: primaryEmail,
-      createdAt: new Date(created_at),
-      isActive: true,
-      preferences: {},
+  try {
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: primaryEmail },
     });
+
+    if (!existingUser) {
+      // Create new user in our database
+      await prisma.user.create({
+        data: {
+          id: id, // Using Clerk's ID as our user ID
+          email: primaryEmail,
+          createdAt: new Date(created_at),
+          isActive: true,
+          preferences: {},
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Error in handleUserCreated:", error);
+    throw error; // Re-throw for upstream handling
   }
 }
 
@@ -117,16 +135,23 @@ async function handleUserUpdated(data: any) {
   const primaryEmail = email_addresses[0].email_address;
 
   // Check if user exists by Clerk ID
-  const existingUser = await userRepository.getUserById(id);
+  const existingUser = await prisma.user.findUnique({
+    where: { id },
+  });
 
   if (existingUser) {
     // Update the user in our database
-    await userRepository.updateUser(id, {
-      email: primaryEmail,
+    await prisma.user.update({
+      where: { id },
+      data: {
+        email: primaryEmail,
+      },
     });
   } else {
     // If user doesn't exist by ID, but might exist by email, handle appropriately
-    const userByEmail = await userRepository.getUserByEmail(primaryEmail);
+    const userByEmail = await prisma.user.findUnique({
+      where: { email: primaryEmail },
+    });
 
     if (userByEmail) {
       // This is an edge case where the user exists with a different ID
@@ -151,5 +176,8 @@ async function handleSessionCreated(data: any) {
   }
 
   // Update the last login timestamp for the user
-  await userRepository.updateLastLogin(user_id);
+  await prisma.user.update({
+    where: { id: user_id },
+    data: { lastLogin: new Date() },
+  });
 }

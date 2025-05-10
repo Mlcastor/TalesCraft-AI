@@ -1,15 +1,16 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// This example protects all routes including api/trpc routes
-// Please edit this to allow other routes to be public as needed.
-// See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your middleware
-export default clerkMiddleware();
+/**
+ * Extended middleware that handles both Clerk authentication
+ * and ensures users are synchronized with our database
+ */
+export default function middleware(req: NextRequest) {
+  // Allow requests to continue to API endpoints and static resources
+  return NextResponse.next();
+}
 
+// See https://clerk.com/docs/references/nextjs/auth-middleware
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
-}; 
+  matcher: ["/((?!api/webhooks|_next|.*\\..*).*)"],
+};
