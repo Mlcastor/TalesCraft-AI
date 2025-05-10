@@ -16,9 +16,12 @@ const eslintConfig = [
       // Disable unused variables warnings
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
-      
+
       // Disable 'any' type warnings
       "@typescript-eslint/no-explicit-any": "off",
+
+      // Disable no-require-imports warnings
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
 ];
