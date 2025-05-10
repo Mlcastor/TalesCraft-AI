@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
 /**
- * Extended middleware that handles both Clerk authentication
- * and ensures users are synchronized with our database
+ * This middleware handles Clerk authentication for your application.
+ * See https://clerk.com/docs/references/nextjs/auth-middleware for more information.
  */
-export default function middleware(req: NextRequest) {
-  // Allow requests to continue to API endpoints and static resources
-  return NextResponse.next();
-}
+export default clerkMiddleware();
 
-// See https://clerk.com/docs/references/nextjs/auth-middleware
 export const config = {
-  matcher: ["/((?!api/webhooks|_next|.*\\..*).*)"],
+  matcher: [
+    // Skip Next.js internals and all static files unless found in search params
+    "/((?!_next|.*\\..*).)*",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
+  ],
 };
