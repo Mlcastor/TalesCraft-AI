@@ -74,8 +74,16 @@ export default function GameClient({
 // Main game interface that uses the game engine
 function GameInterface({ characterId }: { characterId: string }) {
   const router = useRouter();
-  const { gameState, session, isLoading, error, resumeGame, updateGameState } =
-    useGameEngine();
+  const {
+    gameState,
+    session,
+    isLoading,
+    error,
+    resumeGame,
+    updateGameState,
+    saveNarrativeHistory,
+    loadNarrativeHistory,
+  } = useGameEngine();
 
   const [initialized, setInitialized] = useState(false);
   const [narrativeHistory, setNarrativeHistory] = useState<NarrativeItem[]>([]);
@@ -94,6 +102,8 @@ function GameInterface({ characterId }: { characterId: string }) {
   useEffect(() => {
     async function initializeGame() {
       try {
+        setIsProcessing(true); // Set isProcessing at the beginning for a single loading screen
+
         if (!characterId) {
           router.push("/characters");
           return;
@@ -104,36 +114,10 @@ function GameInterface({ characterId }: { characterId: string }) {
           // Attempt to resume an existing game, or start a new one if none exists
           await resumeGame(characterId);
         }
-        setInitialized(true);
-      } catch (err) {
-        console.error("Failed to initialize game:", err);
-      }
-    }
 
-    // Check if we already have state from server-side initialization
-    if (session && gameState) {
-      setInitialized(true);
-    } else if (!initialized && !isLoading) {
-      initializeGame();
-    }
-  }, [
-    characterId,
-    initialized,
-    isLoading,
-    resumeGame,
-    router,
-    session,
-    gameState,
-  ]);
-
-  // Setup player character and start narrative when game state is loaded
-  useEffect(() => {
-    if (gameState && !currentResponse && !isProcessing) {
-      const setupNarrative = async () => {
-        try {
-          setIsProcessing(true);
-
-          // Cast to our extended game state type
+        // At this point we should have a game state
+        if (gameState) {
+          // Create a character from the game state
           const extendedState = gameState as unknown as ExtendedGameState;
           const characterInfo = extendedState.character || {};
 
@@ -157,11 +141,177 @@ function GameInterface({ characterId }: { characterId: string }) {
             },
           };
 
+          // Set player character immediately so it's available for choices
           setPlayerCharacter(character);
+          console.log("Player character initialized:", character.name);
 
           // Use the current location from game state or default
           const location = createExampleLocation(); // Default location
           setCurrentLocation(location);
+
+          // Load narrative history if available
+          try {
+            // Load narrative history from the database
+            const history = await loadNarrativeHistory();
+
+            if (history && history.length > 0) {
+              // Convert the loaded history to NarrativeItem format with proper type casting
+              const formattedHistory: NarrativeItem[] = history.map((item) => ({
+                type: item.type as "narrative" | "playerResponse",
+                content: item.content,
+              }));
+
+              setNarrativeHistory(formattedHistory);
+
+              // Set the current response to the last narrative item
+              const lastNarrative = formattedHistory
+                .filter((item) => item.type === "narrative")
+                .pop();
+
+              if (lastNarrative) {
+                // Ensure we have a proper AIResponse object with choices
+                const aiResponse = lastNarrative.content as AIResponse;
+
+                // Sometimes the choices might be lost in serialization/deserialization
+                // So make sure they exist and have the correct structure
+                if (
+                  !aiResponse.choices ||
+                  !Array.isArray(aiResponse.choices) ||
+                  aiResponse.choices.length === 0
+                ) {
+                  console.warn(
+                    "No choices found in last narrative, adding default options"
+                  );
+                  // Add default choices if none exist
+                  aiResponse.choices = [
+                    { id: "continue_1", text: "Continue exploring" },
+                    { id: "continue_2", text: "Look around more carefully" },
+                  ];
+                }
+
+                // Set as current response
+                setCurrentResponse(aiResponse);
+                console.log(
+                  "Current response set with choices:",
+                  aiResponse.choices
+                );
+              }
+
+              console.log(
+                "Loaded narrative history:",
+                formattedHistory.length,
+                "items"
+              );
+            }
+          } catch (err) {
+            console.error("Failed to load narrative history:", err);
+          }
+        }
+
+        setInitialized(true);
+      } catch (err) {
+        console.error("Failed to initialize game:", err);
+      } finally {
+        setIsProcessing(false); // Reset processing state after everything is done
+      }
+    }
+
+    // Check if we already have state from server-side initialization
+    if (session && gameState && !initialized && !isLoading) {
+      initializeGame();
+    } else if (!initialized && !isLoading) {
+      initializeGame();
+    }
+  }, [
+    characterId,
+    initialized,
+    isLoading,
+    resumeGame,
+    router,
+    session,
+    gameState,
+    loadNarrativeHistory,
+  ]);
+
+  // Save narrative history when it changes
+  useEffect(() => {
+    async function persistHistory() {
+      // Only save if we have a game state, narrative history exists, and we're not in a loading state
+      if (
+        gameState?.id &&
+        narrativeHistory.length > 0 &&
+        !isProcessing &&
+        initialized
+      ) {
+        try {
+          console.log(
+            "Saving narrative history...",
+            narrativeHistory.length,
+            "items"
+          );
+          await saveNarrativeHistory(narrativeHistory);
+        } catch (err) {
+          console.error("Failed to save narrative history:", err);
+        }
+      }
+    }
+
+    // Debounce the save operation to avoid too many database writes
+    const saveTimeout = setTimeout(persistHistory, 1000);
+    return () => clearTimeout(saveTimeout);
+  }, [
+    gameState,
+    narrativeHistory,
+    saveNarrativeHistory,
+    isProcessing,
+    initialized,
+  ]);
+
+  // Setup player character and start narrative when game state is loaded
+  useEffect(() => {
+    if (gameState && !currentResponse && !isProcessing && initialized) {
+      const setupNarrative = async () => {
+        try {
+          setIsProcessing(true);
+
+          // Only create a character if we don't already have one
+          if (!playerCharacter) {
+            // Cast to our extended game state type
+            const extendedState = gameState as unknown as ExtendedGameState;
+            const characterInfo = extendedState.character || {};
+
+            // Create a character from the game state
+            const character: GameCharacter = {
+              id: characterId,
+              name: characterInfo.name || "Adventurer",
+              backstory:
+                characterInfo.backstory || "An adventurer seeking glory.",
+              appearanceDescription:
+                characterInfo.appearance || "A mysterious figure.",
+              personalityTraits: {
+                primary: characterInfo.personalityTraits?.primary || "Curious",
+                secondary: characterInfo.personalityTraits?.secondary || [
+                  "Brave",
+                ],
+                flaws: characterInfo.personalityTraits?.flaws || ["Impulsive"],
+                motivations: characterInfo.personalityTraits?.motivations || [
+                  "Adventure",
+                ],
+              },
+            };
+
+            setPlayerCharacter(character);
+            console.log(
+              "Player character created in setupNarrative:",
+              character.name
+            );
+          }
+
+          // Only set the location if we don't already have one
+          if (!currentLocation) {
+            const location = createExampleLocation(); // Default location
+            setCurrentLocation(location);
+          }
 
           // Start the narrative if we don't have any history
           if (narrativeHistory.length === 0) {
@@ -169,8 +319,9 @@ function GameInterface({ characterId }: { characterId: string }) {
             try {
               const response = await generateNarrativeResponse(
                 initialPrompt,
-                character,
-                location
+                playerCharacter!, // We know it's not null now
+                currentLocation,
+                {} // Default options
               );
 
               // Check if it's a mock response (development fallback)
@@ -270,30 +421,109 @@ function GameInterface({ characterId }: { characterId: string }) {
     gameState,
     currentResponse,
     isProcessing,
+    initialized,
     characterId,
     narrativeHistory.length,
     updateGameState,
+    playerCharacter,
+    currentLocation,
   ]);
 
   // Handle player choice
   const handleChoiceSelected = async (choiceIndex: number) => {
-    if (!currentResponse || !playerCharacter || isProcessing) return;
+    // Add logging to debug button click issue
+    console.log("Choice selected:", choiceIndex);
+    console.log("Current response:", currentResponse);
+    console.log("Player character:", playerCharacter);
+    console.log("Is processing:", isProcessing);
+
+    // Extra validation to ensure we have all necessary data
+    if (!currentResponse) {
+      console.error("No current response available");
+      return;
+    }
+
+    if (!playerCharacter) {
+      console.error("Player character is null - trying to recreate");
+
+      // Attempt to recreate player character as a recovery mechanism
+      if (gameState) {
+        try {
+          const extendedState = gameState as unknown as ExtendedGameState;
+          const characterInfo = extendedState.character || {};
+
+          // Create a character from the game state
+          const character: GameCharacter = {
+            id: characterId,
+            name: characterInfo.name || "Adventurer",
+            backstory:
+              characterInfo.backstory || "An adventurer seeking glory.",
+            appearanceDescription:
+              characterInfo.appearance || "A mysterious figure.",
+            personalityTraits: {
+              primary: characterInfo.personalityTraits?.primary || "Curious",
+              secondary: characterInfo.personalityTraits?.secondary || [
+                "Brave",
+              ],
+              flaws: characterInfo.personalityTraits?.flaws || ["Impulsive"],
+              motivations: characterInfo.personalityTraits?.motivations || [
+                "Adventure",
+              ],
+            },
+          };
+
+          setPlayerCharacter(character);
+          console.log("Recovery: Player character recreated");
+
+          // After setting the player character, we'll return and let the user try again
+          // This avoids state update race conditions
+          alert("Please try selecting your choice again");
+          return;
+        } catch (err) {
+          console.error("Failed to recreate player character:", err);
+          alert("An error occurred. Please try refreshing the page.");
+          return;
+        }
+      } else {
+        alert("Game not properly initialized. Please try refreshing the page.");
+        return;
+      }
+    }
+
+    if (isProcessing) {
+      console.warn("Already processing a choice");
+      return;
+    }
 
     try {
       setIsProcessing(true);
 
-      // Get the selected choice text for error reporting
+      // Ensure we have a choice to select
+      if (!currentResponse.choices || !currentResponse.choices[choiceIndex]) {
+        console.error("No valid choice found at index:", choiceIndex);
+        setIsProcessing(false);
+        return;
+      }
+
+      // Get the selected choice text
       const selectedChoice =
-        currentResponse.choices?.[choiceIndex]?.text || "Unknown choice";
+        currentResponse.choices[choiceIndex]?.text || "Unknown choice";
+      console.log("Selected choice:", selectedChoice);
 
       // Add the player's choice to the narrative history
-      setNarrativeHistory((prev) => [
-        ...prev,
-        { type: "playerResponse", content: selectedChoice },
-      ]);
+      const updatedHistory = [
+        ...narrativeHistory,
+        { type: "playerResponse", content: selectedChoice } as NarrativeItem,
+      ];
+      setNarrativeHistory(updatedHistory);
 
       try {
         // Get the next narrative based on the player's choice
+        console.log(
+          "Calling continueNarrative with player:",
+          playerCharacter.name
+        );
+
         const nextResponse = await continueNarrative(
           currentResponse,
           choiceIndex + 1, // Convert to 1-based index for continueNarrative
@@ -301,6 +531,8 @@ function GameInterface({ characterId }: { characterId: string }) {
           currentLocation,
           {} // Default options
         );
+
+        console.log("Received next response from AI");
 
         // Check if it's a mock response (development fallback)
         if (nextResponse.metadata?.isMockResponse) {
@@ -311,10 +543,11 @@ function GameInterface({ characterId }: { characterId: string }) {
 
         // Update state
         setCurrentResponse(nextResponse);
-        setNarrativeHistory((prev) => [
-          ...prev,
-          { type: "narrative", content: nextResponse },
-        ]);
+        const finalHistory: NarrativeItem[] = [
+          ...updatedHistory,
+          { type: "narrative", content: nextResponse } as NarrativeItem,
+        ];
+        setNarrativeHistory(finalHistory);
 
         // Update game state with new narrative context
         await updateGameState({
@@ -396,6 +629,26 @@ function GameInterface({ characterId }: { characterId: string }) {
     }
   };
 
+  // Handle story reset
+  const handleResetStory = async () => {
+    try {
+      setIsProcessing(true);
+
+      // Clear narrative history from state
+      setNarrativeHistory([]);
+      setCurrentResponse(null);
+
+      // Clear narrative history from database
+      if (gameState) {
+        await saveNarrativeHistory([]);
+      }
+    } catch (err) {
+      console.error("Failed to reset story:", err);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   if (isLoading || isProcessing) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
@@ -471,7 +724,9 @@ function GameInterface({ characterId }: { characterId: string }) {
               {item.type === "narrative" ? (
                 <div className="bg-gray-700 p-4 rounded-lg mb-4">
                   <p className="text-white leading-relaxed">
-                    {(item.content as AIResponse).text}
+                    {typeof item.content === "string"
+                      ? item.content
+                      : (item.content as AIResponse).text}
                   </p>
                 </div>
               ) : (
@@ -482,30 +737,31 @@ function GameInterface({ characterId }: { characterId: string }) {
                   </p>
                 </div>
               )}
-
-              {/* Only show choices for the current narrative response at the end */}
-              {index === narrativeHistory.length - 1 &&
-                item.type === "narrative" &&
-                (item.content as AIResponse).choices && (
-                  <div className="space-y-2 mt-4">
-                    {(item.content as AIResponse).choices?.map(
-                      (choice, choiceIndex) => (
-                        <button
-                          key={choice.id}
-                          onClick={() => handleChoiceSelected(choiceIndex)}
-                          disabled={isProcessing}
-                          className="w-full text-left p-3 bg-amber-700 hover:bg-amber-600 text-white rounded-md transition"
-                        >
-                          {choice.text}
-                        </button>
-                      )
-                    )}
-                  </div>
-                )}
             </div>
           ))}
         </div>
       </div>
+
+      {/* Display choices separately based on the current response */}
+      {currentResponse &&
+        currentResponse.choices &&
+        currentResponse.choices.length > 0 &&
+        !isProcessing && (
+          <div className="bg-gray-700 p-4 rounded-lg mb-4 border-t border-gray-600">
+            <div className="space-y-2">
+              {currentResponse.choices.map((choice, choiceIndex) => (
+                <button
+                  key={choice.id || `choice-${choiceIndex}`}
+                  onClick={() => handleChoiceSelected(choiceIndex)}
+                  disabled={isProcessing}
+                  className="w-full text-left p-3 bg-amber-700 hover:bg-amber-600 text-white rounded-md transition"
+                >
+                  {choice.text}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
       {/* Controls */}
       <div className="bg-gray-800 rounded-b-lg p-4 border-t border-gray-700">
@@ -519,11 +775,7 @@ function GameInterface({ characterId }: { characterId: string }) {
 
           <div className="flex space-x-2">
             <button
-              onClick={() => {
-                // Reset conversation but keep character and location
-                setNarrativeHistory([]);
-                setCurrentResponse(null);
-              }}
+              onClick={handleResetStory}
               className="px-4 py-2 bg-red-700 hover:bg-red-600 text-white rounded-md"
             >
               Reset Story

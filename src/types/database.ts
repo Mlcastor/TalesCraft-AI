@@ -13,6 +13,7 @@ export type Decision = Prisma.DecisionGetPayload<Record<string, never>>;
 export type AIContextHistory = Prisma.AIContextHistoryGetPayload<
   Record<string, never>
 >;
+export type NarrativeHistory = Prisma.NarrativeHistoryGetPayload<{}>;
 
 // Extended types for create operations
 export type CharacterCreate = Prisma.CharacterCreateInput;
@@ -25,3 +26,4 @@ export type WorldLoreCreate = Prisma.WorldLoreCreateInput;
 export type DecisionCreate = Prisma.DecisionCreateInput;
 export type AIContextHistoryCreate = Prisma.AIContextHistoryCreateInput;
 export type UserCreate = Prisma.UserCreateInput;
+export type NarrativeHistoryCreate = Prisma.NarrativeHistoryCreateInput;

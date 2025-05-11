@@ -63,6 +63,11 @@ export type Decision = $Result.DefaultSelection<Prisma.$DecisionPayload>
  * 
  */
 export type AIContextHistory = $Result.DefaultSelection<Prisma.$AIContextHistoryPayload>
+/**
+ * Model NarrativeHistory
+ * 
+ */
+export type NarrativeHistory = $Result.DefaultSelection<Prisma.$NarrativeHistoryPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -288,6 +293,16 @@ export class PrismaClient<
     * ```
     */
   get aIContextHistory(): Prisma.AIContextHistoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.narrativeHistory`: Exposes CRUD operations for the **NarrativeHistory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more NarrativeHistories
+    * const narrativeHistories = await prisma.narrativeHistory.findMany()
+    * ```
+    */
+  get narrativeHistory(): Prisma.NarrativeHistoryDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -737,7 +752,8 @@ export namespace Prisma {
     LoreCategory: 'LoreCategory',
     WorldLore: 'WorldLore',
     Decision: 'Decision',
-    AIContextHistory: 'AIContextHistory'
+    AIContextHistory: 'AIContextHistory',
+    NarrativeHistory: 'NarrativeHistory'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -756,7 +772,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "character" | "gameSession" | "gameState" | "nPCTemplate" | "nPCState" | "loreCategory" | "worldLore" | "decision" | "aIContextHistory"
+      modelProps: "user" | "character" | "gameSession" | "gameState" | "nPCTemplate" | "nPCState" | "loreCategory" | "worldLore" | "decision" | "aIContextHistory" | "narrativeHistory"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1500,6 +1516,80 @@ export namespace Prisma {
           }
         }
       }
+      NarrativeHistory: {
+        payload: Prisma.$NarrativeHistoryPayload<ExtArgs>
+        fields: Prisma.NarrativeHistoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NarrativeHistoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NarrativeHistoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>
+          }
+          findFirst: {
+            args: Prisma.NarrativeHistoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NarrativeHistoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>
+          }
+          findMany: {
+            args: Prisma.NarrativeHistoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>[]
+          }
+          create: {
+            args: Prisma.NarrativeHistoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>
+          }
+          createMany: {
+            args: Prisma.NarrativeHistoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NarrativeHistoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>[]
+          }
+          delete: {
+            args: Prisma.NarrativeHistoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>
+          }
+          update: {
+            args: Prisma.NarrativeHistoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.NarrativeHistoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NarrativeHistoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.NarrativeHistoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.NarrativeHistoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NarrativeHistoryPayload>
+          }
+          aggregate: {
+            args: Prisma.NarrativeHistoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNarrativeHistory>
+          }
+          groupBy: {
+            args: Prisma.NarrativeHistoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NarrativeHistoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NarrativeHistoryCountArgs<ExtArgs>
+            result: $Utils.Optional<NarrativeHistoryCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1594,6 +1684,7 @@ export namespace Prisma {
     worldLore?: WorldLoreOmit
     decision?: DecisionOmit
     aIContextHistory?: AIContextHistoryOmit
+    narrativeHistory?: NarrativeHistoryOmit
   }
 
   /* Types for Logging */
@@ -1793,12 +1884,14 @@ export namespace Prisma {
     npcStates: number
     decisions: number
     aiContextHistory: number
+    narrativeHistory: number
   }
 
   export type GameStateCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     npcStates?: boolean | GameStateCountOutputTypeCountNpcStatesArgs
     decisions?: boolean | GameStateCountOutputTypeCountDecisionsArgs
     aiContextHistory?: boolean | GameStateCountOutputTypeCountAiContextHistoryArgs
+    narrativeHistory?: boolean | GameStateCountOutputTypeCountNarrativeHistoryArgs
   }
 
   // Custom InputTypes
@@ -1831,6 +1924,13 @@ export namespace Prisma {
    */
   export type GameStateCountOutputTypeCountAiContextHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AIContextHistoryWhereInput
+  }
+
+  /**
+   * GameStateCountOutputType without action
+   */
+  export type GameStateCountOutputTypeCountNarrativeHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NarrativeHistoryWhereInput
   }
 
 
@@ -5496,6 +5596,7 @@ export namespace Prisma {
     npcStates?: boolean | GameState$npcStatesArgs<ExtArgs>
     decisions?: boolean | GameState$decisionsArgs<ExtArgs>
     aiContextHistory?: boolean | GameState$aiContextHistoryArgs<ExtArgs>
+    narrativeHistory?: boolean | GameState$narrativeHistoryArgs<ExtArgs>
     _count?: boolean | GameStateCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["gameState"]>
 
@@ -5555,6 +5656,7 @@ export namespace Prisma {
     npcStates?: boolean | GameState$npcStatesArgs<ExtArgs>
     decisions?: boolean | GameState$decisionsArgs<ExtArgs>
     aiContextHistory?: boolean | GameState$aiContextHistoryArgs<ExtArgs>
+    narrativeHistory?: boolean | GameState$narrativeHistoryArgs<ExtArgs>
     _count?: boolean | GameStateCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type GameStateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5574,6 +5676,7 @@ export namespace Prisma {
       npcStates: Prisma.$NPCStatePayload<ExtArgs>[]
       decisions: Prisma.$DecisionPayload<ExtArgs>[]
       aiContextHistory: Prisma.$AIContextHistoryPayload<ExtArgs>[]
+      narrativeHistory: Prisma.$NarrativeHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5987,6 +6090,7 @@ export namespace Prisma {
     npcStates<T extends GameState$npcStatesArgs<ExtArgs> = {}>(args?: Subset<T, GameState$npcStatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NPCStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     decisions<T extends GameState$decisionsArgs<ExtArgs> = {}>(args?: Subset<T, GameState$decisionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DecisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     aiContextHistory<T extends GameState$aiContextHistoryArgs<ExtArgs> = {}>(args?: Subset<T, GameState$aiContextHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIContextHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    narrativeHistory<T extends GameState$narrativeHistoryArgs<ExtArgs> = {}>(args?: Subset<T, GameState$narrativeHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6493,6 +6597,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AIContextHistoryScalarFieldEnum | AIContextHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * GameState.narrativeHistory
+   */
+  export type GameState$narrativeHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    where?: NarrativeHistoryWhereInput
+    orderBy?: NarrativeHistoryOrderByWithRelationInput | NarrativeHistoryOrderByWithRelationInput[]
+    cursor?: NarrativeHistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NarrativeHistoryScalarFieldEnum | NarrativeHistoryScalarFieldEnum[]
   }
 
   /**
@@ -13235,6 +13363,1064 @@ export namespace Prisma {
 
 
   /**
+   * Model NarrativeHistory
+   */
+
+  export type AggregateNarrativeHistory = {
+    _count: NarrativeHistoryCountAggregateOutputType | null
+    _min: NarrativeHistoryMinAggregateOutputType | null
+    _max: NarrativeHistoryMaxAggregateOutputType | null
+  }
+
+  export type NarrativeHistoryMinAggregateOutputType = {
+    id: string | null
+    gameStateId: string | null
+    type: string | null
+    content: string | null
+    timestamp: Date | null
+  }
+
+  export type NarrativeHistoryMaxAggregateOutputType = {
+    id: string | null
+    gameStateId: string | null
+    type: string | null
+    content: string | null
+    timestamp: Date | null
+  }
+
+  export type NarrativeHistoryCountAggregateOutputType = {
+    id: number
+    gameStateId: number
+    type: number
+    content: number
+    timestamp: number
+    _all: number
+  }
+
+
+  export type NarrativeHistoryMinAggregateInputType = {
+    id?: true
+    gameStateId?: true
+    type?: true
+    content?: true
+    timestamp?: true
+  }
+
+  export type NarrativeHistoryMaxAggregateInputType = {
+    id?: true
+    gameStateId?: true
+    type?: true
+    content?: true
+    timestamp?: true
+  }
+
+  export type NarrativeHistoryCountAggregateInputType = {
+    id?: true
+    gameStateId?: true
+    type?: true
+    content?: true
+    timestamp?: true
+    _all?: true
+  }
+
+  export type NarrativeHistoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NarrativeHistory to aggregate.
+     */
+    where?: NarrativeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NarrativeHistories to fetch.
+     */
+    orderBy?: NarrativeHistoryOrderByWithRelationInput | NarrativeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NarrativeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NarrativeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NarrativeHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned NarrativeHistories
+    **/
+    _count?: true | NarrativeHistoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NarrativeHistoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NarrativeHistoryMaxAggregateInputType
+  }
+
+  export type GetNarrativeHistoryAggregateType<T extends NarrativeHistoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateNarrativeHistory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNarrativeHistory[P]>
+      : GetScalarType<T[P], AggregateNarrativeHistory[P]>
+  }
+
+
+
+
+  export type NarrativeHistoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NarrativeHistoryWhereInput
+    orderBy?: NarrativeHistoryOrderByWithAggregationInput | NarrativeHistoryOrderByWithAggregationInput[]
+    by: NarrativeHistoryScalarFieldEnum[] | NarrativeHistoryScalarFieldEnum
+    having?: NarrativeHistoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NarrativeHistoryCountAggregateInputType | true
+    _min?: NarrativeHistoryMinAggregateInputType
+    _max?: NarrativeHistoryMaxAggregateInputType
+  }
+
+  export type NarrativeHistoryGroupByOutputType = {
+    id: string
+    gameStateId: string
+    type: string
+    content: string
+    timestamp: Date
+    _count: NarrativeHistoryCountAggregateOutputType | null
+    _min: NarrativeHistoryMinAggregateOutputType | null
+    _max: NarrativeHistoryMaxAggregateOutputType | null
+  }
+
+  type GetNarrativeHistoryGroupByPayload<T extends NarrativeHistoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NarrativeHistoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NarrativeHistoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NarrativeHistoryGroupByOutputType[P]>
+            : GetScalarType<T[P], NarrativeHistoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NarrativeHistorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    gameStateId?: boolean
+    type?: boolean
+    content?: boolean
+    timestamp?: boolean
+    gameState?: boolean | GameStateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["narrativeHistory"]>
+
+  export type NarrativeHistorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    gameStateId?: boolean
+    type?: boolean
+    content?: boolean
+    timestamp?: boolean
+    gameState?: boolean | GameStateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["narrativeHistory"]>
+
+  export type NarrativeHistorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    gameStateId?: boolean
+    type?: boolean
+    content?: boolean
+    timestamp?: boolean
+    gameState?: boolean | GameStateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["narrativeHistory"]>
+
+  export type NarrativeHistorySelectScalar = {
+    id?: boolean
+    gameStateId?: boolean
+    type?: boolean
+    content?: boolean
+    timestamp?: boolean
+  }
+
+  export type NarrativeHistoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "gameStateId" | "type" | "content" | "timestamp", ExtArgs["result"]["narrativeHistory"]>
+  export type NarrativeHistoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    gameState?: boolean | GameStateDefaultArgs<ExtArgs>
+  }
+  export type NarrativeHistoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    gameState?: boolean | GameStateDefaultArgs<ExtArgs>
+  }
+  export type NarrativeHistoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    gameState?: boolean | GameStateDefaultArgs<ExtArgs>
+  }
+
+  export type $NarrativeHistoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "NarrativeHistory"
+    objects: {
+      gameState: Prisma.$GameStatePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      gameStateId: string
+      type: string
+      content: string
+      timestamp: Date
+    }, ExtArgs["result"]["narrativeHistory"]>
+    composites: {}
+  }
+
+  type NarrativeHistoryGetPayload<S extends boolean | null | undefined | NarrativeHistoryDefaultArgs> = $Result.GetResult<Prisma.$NarrativeHistoryPayload, S>
+
+  type NarrativeHistoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<NarrativeHistoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: NarrativeHistoryCountAggregateInputType | true
+    }
+
+  export interface NarrativeHistoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['NarrativeHistory'], meta: { name: 'NarrativeHistory' } }
+    /**
+     * Find zero or one NarrativeHistory that matches the filter.
+     * @param {NarrativeHistoryFindUniqueArgs} args - Arguments to find a NarrativeHistory
+     * @example
+     * // Get one NarrativeHistory
+     * const narrativeHistory = await prisma.narrativeHistory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NarrativeHistoryFindUniqueArgs>(args: SelectSubset<T, NarrativeHistoryFindUniqueArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one NarrativeHistory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {NarrativeHistoryFindUniqueOrThrowArgs} args - Arguments to find a NarrativeHistory
+     * @example
+     * // Get one NarrativeHistory
+     * const narrativeHistory = await prisma.narrativeHistory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NarrativeHistoryFindUniqueOrThrowArgs>(args: SelectSubset<T, NarrativeHistoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NarrativeHistory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NarrativeHistoryFindFirstArgs} args - Arguments to find a NarrativeHistory
+     * @example
+     * // Get one NarrativeHistory
+     * const narrativeHistory = await prisma.narrativeHistory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NarrativeHistoryFindFirstArgs>(args?: SelectSubset<T, NarrativeHistoryFindFirstArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NarrativeHistory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NarrativeHistoryFindFirstOrThrowArgs} args - Arguments to find a NarrativeHistory
+     * @example
+     * // Get one NarrativeHistory
+     * const narrativeHistory = await prisma.narrativeHistory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NarrativeHistoryFindFirstOrThrowArgs>(args?: SelectSubset<T, NarrativeHistoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more NarrativeHistories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NarrativeHistoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all NarrativeHistories
+     * const narrativeHistories = await prisma.narrativeHistory.findMany()
+     * 
+     * // Get first 10 NarrativeHistories
+     * const narrativeHistories = await prisma.narrativeHistory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const narrativeHistoryWithIdOnly = await prisma.narrativeHistory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NarrativeHistoryFindManyArgs>(args?: SelectSubset<T, NarrativeHistoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a NarrativeHistory.
+     * @param {NarrativeHistoryCreateArgs} args - Arguments to create a NarrativeHistory.
+     * @example
+     * // Create one NarrativeHistory
+     * const NarrativeHistory = await prisma.narrativeHistory.create({
+     *   data: {
+     *     // ... data to create a NarrativeHistory
+     *   }
+     * })
+     * 
+     */
+    create<T extends NarrativeHistoryCreateArgs>(args: SelectSubset<T, NarrativeHistoryCreateArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many NarrativeHistories.
+     * @param {NarrativeHistoryCreateManyArgs} args - Arguments to create many NarrativeHistories.
+     * @example
+     * // Create many NarrativeHistories
+     * const narrativeHistory = await prisma.narrativeHistory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NarrativeHistoryCreateManyArgs>(args?: SelectSubset<T, NarrativeHistoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many NarrativeHistories and returns the data saved in the database.
+     * @param {NarrativeHistoryCreateManyAndReturnArgs} args - Arguments to create many NarrativeHistories.
+     * @example
+     * // Create many NarrativeHistories
+     * const narrativeHistory = await prisma.narrativeHistory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many NarrativeHistories and only return the `id`
+     * const narrativeHistoryWithIdOnly = await prisma.narrativeHistory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NarrativeHistoryCreateManyAndReturnArgs>(args?: SelectSubset<T, NarrativeHistoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a NarrativeHistory.
+     * @param {NarrativeHistoryDeleteArgs} args - Arguments to delete one NarrativeHistory.
+     * @example
+     * // Delete one NarrativeHistory
+     * const NarrativeHistory = await prisma.narrativeHistory.delete({
+     *   where: {
+     *     // ... filter to delete one NarrativeHistory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NarrativeHistoryDeleteArgs>(args: SelectSubset<T, NarrativeHistoryDeleteArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one NarrativeHistory.
+     * @param {NarrativeHistoryUpdateArgs} args - Arguments to update one NarrativeHistory.
+     * @example
+     * // Update one NarrativeHistory
+     * const narrativeHistory = await prisma.narrativeHistory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NarrativeHistoryUpdateArgs>(args: SelectSubset<T, NarrativeHistoryUpdateArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more NarrativeHistories.
+     * @param {NarrativeHistoryDeleteManyArgs} args - Arguments to filter NarrativeHistories to delete.
+     * @example
+     * // Delete a few NarrativeHistories
+     * const { count } = await prisma.narrativeHistory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NarrativeHistoryDeleteManyArgs>(args?: SelectSubset<T, NarrativeHistoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NarrativeHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NarrativeHistoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many NarrativeHistories
+     * const narrativeHistory = await prisma.narrativeHistory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NarrativeHistoryUpdateManyArgs>(args: SelectSubset<T, NarrativeHistoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NarrativeHistories and returns the data updated in the database.
+     * @param {NarrativeHistoryUpdateManyAndReturnArgs} args - Arguments to update many NarrativeHistories.
+     * @example
+     * // Update many NarrativeHistories
+     * const narrativeHistory = await prisma.narrativeHistory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more NarrativeHistories and only return the `id`
+     * const narrativeHistoryWithIdOnly = await prisma.narrativeHistory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends NarrativeHistoryUpdateManyAndReturnArgs>(args: SelectSubset<T, NarrativeHistoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one NarrativeHistory.
+     * @param {NarrativeHistoryUpsertArgs} args - Arguments to update or create a NarrativeHistory.
+     * @example
+     * // Update or create a NarrativeHistory
+     * const narrativeHistory = await prisma.narrativeHistory.upsert({
+     *   create: {
+     *     // ... data to create a NarrativeHistory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the NarrativeHistory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NarrativeHistoryUpsertArgs>(args: SelectSubset<T, NarrativeHistoryUpsertArgs<ExtArgs>>): Prisma__NarrativeHistoryClient<$Result.GetResult<Prisma.$NarrativeHistoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of NarrativeHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NarrativeHistoryCountArgs} args - Arguments to filter NarrativeHistories to count.
+     * @example
+     * // Count the number of NarrativeHistories
+     * const count = await prisma.narrativeHistory.count({
+     *   where: {
+     *     // ... the filter for the NarrativeHistories we want to count
+     *   }
+     * })
+    **/
+    count<T extends NarrativeHistoryCountArgs>(
+      args?: Subset<T, NarrativeHistoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NarrativeHistoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a NarrativeHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NarrativeHistoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NarrativeHistoryAggregateArgs>(args: Subset<T, NarrativeHistoryAggregateArgs>): Prisma.PrismaPromise<GetNarrativeHistoryAggregateType<T>>
+
+    /**
+     * Group by NarrativeHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NarrativeHistoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NarrativeHistoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NarrativeHistoryGroupByArgs['orderBy'] }
+        : { orderBy?: NarrativeHistoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NarrativeHistoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNarrativeHistoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the NarrativeHistory model
+   */
+  readonly fields: NarrativeHistoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for NarrativeHistory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NarrativeHistoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    gameState<T extends GameStateDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GameStateDefaultArgs<ExtArgs>>): Prisma__GameStateClient<$Result.GetResult<Prisma.$GameStatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the NarrativeHistory model
+   */
+  interface NarrativeHistoryFieldRefs {
+    readonly id: FieldRef<"NarrativeHistory", 'String'>
+    readonly gameStateId: FieldRef<"NarrativeHistory", 'String'>
+    readonly type: FieldRef<"NarrativeHistory", 'String'>
+    readonly content: FieldRef<"NarrativeHistory", 'String'>
+    readonly timestamp: FieldRef<"NarrativeHistory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * NarrativeHistory findUnique
+   */
+  export type NarrativeHistoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NarrativeHistory to fetch.
+     */
+    where: NarrativeHistoryWhereUniqueInput
+  }
+
+  /**
+   * NarrativeHistory findUniqueOrThrow
+   */
+  export type NarrativeHistoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NarrativeHistory to fetch.
+     */
+    where: NarrativeHistoryWhereUniqueInput
+  }
+
+  /**
+   * NarrativeHistory findFirst
+   */
+  export type NarrativeHistoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NarrativeHistory to fetch.
+     */
+    where?: NarrativeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NarrativeHistories to fetch.
+     */
+    orderBy?: NarrativeHistoryOrderByWithRelationInput | NarrativeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NarrativeHistories.
+     */
+    cursor?: NarrativeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NarrativeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NarrativeHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NarrativeHistories.
+     */
+    distinct?: NarrativeHistoryScalarFieldEnum | NarrativeHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * NarrativeHistory findFirstOrThrow
+   */
+  export type NarrativeHistoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NarrativeHistory to fetch.
+     */
+    where?: NarrativeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NarrativeHistories to fetch.
+     */
+    orderBy?: NarrativeHistoryOrderByWithRelationInput | NarrativeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NarrativeHistories.
+     */
+    cursor?: NarrativeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NarrativeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NarrativeHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NarrativeHistories.
+     */
+    distinct?: NarrativeHistoryScalarFieldEnum | NarrativeHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * NarrativeHistory findMany
+   */
+  export type NarrativeHistoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NarrativeHistories to fetch.
+     */
+    where?: NarrativeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NarrativeHistories to fetch.
+     */
+    orderBy?: NarrativeHistoryOrderByWithRelationInput | NarrativeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing NarrativeHistories.
+     */
+    cursor?: NarrativeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NarrativeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NarrativeHistories.
+     */
+    skip?: number
+    distinct?: NarrativeHistoryScalarFieldEnum | NarrativeHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * NarrativeHistory create
+   */
+  export type NarrativeHistoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a NarrativeHistory.
+     */
+    data: XOR<NarrativeHistoryCreateInput, NarrativeHistoryUncheckedCreateInput>
+  }
+
+  /**
+   * NarrativeHistory createMany
+   */
+  export type NarrativeHistoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many NarrativeHistories.
+     */
+    data: NarrativeHistoryCreateManyInput | NarrativeHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * NarrativeHistory createManyAndReturn
+   */
+  export type NarrativeHistoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many NarrativeHistories.
+     */
+    data: NarrativeHistoryCreateManyInput | NarrativeHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NarrativeHistory update
+   */
+  export type NarrativeHistoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a NarrativeHistory.
+     */
+    data: XOR<NarrativeHistoryUpdateInput, NarrativeHistoryUncheckedUpdateInput>
+    /**
+     * Choose, which NarrativeHistory to update.
+     */
+    where: NarrativeHistoryWhereUniqueInput
+  }
+
+  /**
+   * NarrativeHistory updateMany
+   */
+  export type NarrativeHistoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update NarrativeHistories.
+     */
+    data: XOR<NarrativeHistoryUpdateManyMutationInput, NarrativeHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which NarrativeHistories to update
+     */
+    where?: NarrativeHistoryWhereInput
+    /**
+     * Limit how many NarrativeHistories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * NarrativeHistory updateManyAndReturn
+   */
+  export type NarrativeHistoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to update NarrativeHistories.
+     */
+    data: XOR<NarrativeHistoryUpdateManyMutationInput, NarrativeHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which NarrativeHistories to update
+     */
+    where?: NarrativeHistoryWhereInput
+    /**
+     * Limit how many NarrativeHistories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NarrativeHistory upsert
+   */
+  export type NarrativeHistoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the NarrativeHistory to update in case it exists.
+     */
+    where: NarrativeHistoryWhereUniqueInput
+    /**
+     * In case the NarrativeHistory found by the `where` argument doesn't exist, create a new NarrativeHistory with this data.
+     */
+    create: XOR<NarrativeHistoryCreateInput, NarrativeHistoryUncheckedCreateInput>
+    /**
+     * In case the NarrativeHistory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NarrativeHistoryUpdateInput, NarrativeHistoryUncheckedUpdateInput>
+  }
+
+  /**
+   * NarrativeHistory delete
+   */
+  export type NarrativeHistoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter which NarrativeHistory to delete.
+     */
+    where: NarrativeHistoryWhereUniqueInput
+  }
+
+  /**
+   * NarrativeHistory deleteMany
+   */
+  export type NarrativeHistoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NarrativeHistories to delete
+     */
+    where?: NarrativeHistoryWhereInput
+    /**
+     * Limit how many NarrativeHistories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * NarrativeHistory without action
+   */
+  export type NarrativeHistoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeHistory
+     */
+    select?: NarrativeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeHistory
+     */
+    omit?: NarrativeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeHistoryInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -13383,6 +14569,17 @@ export namespace Prisma {
   };
 
   export type AIContextHistoryScalarFieldEnum = (typeof AIContextHistoryScalarFieldEnum)[keyof typeof AIContextHistoryScalarFieldEnum]
+
+
+  export const NarrativeHistoryScalarFieldEnum: {
+    id: 'id',
+    gameStateId: 'gameStateId',
+    type: 'type',
+    content: 'content',
+    timestamp: 'timestamp'
+  };
+
+  export type NarrativeHistoryScalarFieldEnum = (typeof NarrativeHistoryScalarFieldEnum)[keyof typeof NarrativeHistoryScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -13738,6 +14935,7 @@ export namespace Prisma {
     npcStates?: NPCStateListRelationFilter
     decisions?: DecisionListRelationFilter
     aiContextHistory?: AIContextHistoryListRelationFilter
+    narrativeHistory?: NarrativeHistoryListRelationFilter
   }
 
   export type GameStateOrderByWithRelationInput = {
@@ -13758,6 +14956,7 @@ export namespace Prisma {
     npcStates?: NPCStateOrderByRelationAggregateInput
     decisions?: DecisionOrderByRelationAggregateInput
     aiContextHistory?: AIContextHistoryOrderByRelationAggregateInput
+    narrativeHistory?: NarrativeHistoryOrderByRelationAggregateInput
   }
 
   export type GameStateWhereUniqueInput = Prisma.AtLeast<{
@@ -13781,6 +14980,7 @@ export namespace Prisma {
     npcStates?: NPCStateListRelationFilter
     decisions?: DecisionListRelationFilter
     aiContextHistory?: AIContextHistoryListRelationFilter
+    narrativeHistory?: NarrativeHistoryListRelationFilter
   }, "id">
 
   export type GameStateOrderByWithAggregationInput = {
@@ -14235,6 +15435,61 @@ export namespace Prisma {
     relevanceScore?: FloatNullableWithAggregatesFilter<"AIContextHistory"> | number | null
   }
 
+  export type NarrativeHistoryWhereInput = {
+    AND?: NarrativeHistoryWhereInput | NarrativeHistoryWhereInput[]
+    OR?: NarrativeHistoryWhereInput[]
+    NOT?: NarrativeHistoryWhereInput | NarrativeHistoryWhereInput[]
+    id?: StringFilter<"NarrativeHistory"> | string
+    gameStateId?: StringFilter<"NarrativeHistory"> | string
+    type?: StringFilter<"NarrativeHistory"> | string
+    content?: StringFilter<"NarrativeHistory"> | string
+    timestamp?: DateTimeFilter<"NarrativeHistory"> | Date | string
+    gameState?: XOR<GameStateScalarRelationFilter, GameStateWhereInput>
+  }
+
+  export type NarrativeHistoryOrderByWithRelationInput = {
+    id?: SortOrder
+    gameStateId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    timestamp?: SortOrder
+    gameState?: GameStateOrderByWithRelationInput
+  }
+
+  export type NarrativeHistoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: NarrativeHistoryWhereInput | NarrativeHistoryWhereInput[]
+    OR?: NarrativeHistoryWhereInput[]
+    NOT?: NarrativeHistoryWhereInput | NarrativeHistoryWhereInput[]
+    gameStateId?: StringFilter<"NarrativeHistory"> | string
+    type?: StringFilter<"NarrativeHistory"> | string
+    content?: StringFilter<"NarrativeHistory"> | string
+    timestamp?: DateTimeFilter<"NarrativeHistory"> | Date | string
+    gameState?: XOR<GameStateScalarRelationFilter, GameStateWhereInput>
+  }, "id">
+
+  export type NarrativeHistoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    gameStateId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    timestamp?: SortOrder
+    _count?: NarrativeHistoryCountOrderByAggregateInput
+    _max?: NarrativeHistoryMaxOrderByAggregateInput
+    _min?: NarrativeHistoryMinOrderByAggregateInput
+  }
+
+  export type NarrativeHistoryScalarWhereWithAggregatesInput = {
+    AND?: NarrativeHistoryScalarWhereWithAggregatesInput | NarrativeHistoryScalarWhereWithAggregatesInput[]
+    OR?: NarrativeHistoryScalarWhereWithAggregatesInput[]
+    NOT?: NarrativeHistoryScalarWhereWithAggregatesInput | NarrativeHistoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"NarrativeHistory"> | string
+    gameStateId?: StringWithAggregatesFilter<"NarrativeHistory"> | string
+    type?: StringWithAggregatesFilter<"NarrativeHistory"> | string
+    content?: StringWithAggregatesFilter<"NarrativeHistory"> | string
+    timestamp?: DateTimeWithAggregatesFilter<"NarrativeHistory"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -14475,6 +15730,7 @@ export namespace Prisma {
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateUncheckedCreateInput = {
@@ -14493,6 +15749,7 @@ export namespace Prisma {
     npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
     decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateUpdateInput = {
@@ -14511,6 +15768,7 @@ export namespace Prisma {
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateInput = {
@@ -14529,6 +15787,7 @@ export namespace Prisma {
     npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateCreateManyInput = {
@@ -15014,6 +16273,61 @@ export namespace Prisma {
     relevanceScore?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
+  export type NarrativeHistoryCreateInput = {
+    id?: string
+    type: string
+    content: string
+    timestamp?: Date | string
+    gameState: GameStateCreateNestedOneWithoutNarrativeHistoryInput
+  }
+
+  export type NarrativeHistoryUncheckedCreateInput = {
+    id?: string
+    gameStateId: string
+    type: string
+    content: string
+    timestamp?: Date | string
+  }
+
+  export type NarrativeHistoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    gameState?: GameStateUpdateOneRequiredWithoutNarrativeHistoryNestedInput
+  }
+
+  export type NarrativeHistoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    gameStateId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NarrativeHistoryCreateManyInput = {
+    id?: string
+    gameStateId: string
+    type: string
+    content: string
+    timestamp?: Date | string
+  }
+
+  export type NarrativeHistoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NarrativeHistoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    gameStateId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -15384,6 +16698,12 @@ export namespace Prisma {
     none?: AIContextHistoryWhereInput
   }
 
+  export type NarrativeHistoryListRelationFilter = {
+    every?: NarrativeHistoryWhereInput
+    some?: NarrativeHistoryWhereInput
+    none?: NarrativeHistoryWhereInput
+  }
+
   export type NPCStateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -15393,6 +16713,10 @@ export namespace Prisma {
   }
 
   export type AIContextHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NarrativeHistoryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -15733,6 +17057,30 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type NarrativeHistoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    gameStateId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type NarrativeHistoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    gameStateId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type NarrativeHistoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    gameStateId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    timestamp?: SortOrder
+  }
+
   export type CharacterCreateNestedManyWithoutUserInput = {
     create?: XOR<CharacterCreateWithoutUserInput, CharacterUncheckedCreateWithoutUserInput> | CharacterCreateWithoutUserInput[] | CharacterUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CharacterCreateOrConnectWithoutUserInput | CharacterCreateOrConnectWithoutUserInput[]
@@ -15990,6 +17338,13 @@ export namespace Prisma {
     connect?: AIContextHistoryWhereUniqueInput | AIContextHistoryWhereUniqueInput[]
   }
 
+  export type NarrativeHistoryCreateNestedManyWithoutGameStateInput = {
+    create?: XOR<NarrativeHistoryCreateWithoutGameStateInput, NarrativeHistoryUncheckedCreateWithoutGameStateInput> | NarrativeHistoryCreateWithoutGameStateInput[] | NarrativeHistoryUncheckedCreateWithoutGameStateInput[]
+    connectOrCreate?: NarrativeHistoryCreateOrConnectWithoutGameStateInput | NarrativeHistoryCreateOrConnectWithoutGameStateInput[]
+    createMany?: NarrativeHistoryCreateManyGameStateInputEnvelope
+    connect?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+  }
+
   export type NPCStateUncheckedCreateNestedManyWithoutGameStateInput = {
     create?: XOR<NPCStateCreateWithoutGameStateInput, NPCStateUncheckedCreateWithoutGameStateInput> | NPCStateCreateWithoutGameStateInput[] | NPCStateUncheckedCreateWithoutGameStateInput[]
     connectOrCreate?: NPCStateCreateOrConnectWithoutGameStateInput | NPCStateCreateOrConnectWithoutGameStateInput[]
@@ -16009,6 +17364,13 @@ export namespace Prisma {
     connectOrCreate?: AIContextHistoryCreateOrConnectWithoutGameStateInput | AIContextHistoryCreateOrConnectWithoutGameStateInput[]
     createMany?: AIContextHistoryCreateManyGameStateInputEnvelope
     connect?: AIContextHistoryWhereUniqueInput | AIContextHistoryWhereUniqueInput[]
+  }
+
+  export type NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput = {
+    create?: XOR<NarrativeHistoryCreateWithoutGameStateInput, NarrativeHistoryUncheckedCreateWithoutGameStateInput> | NarrativeHistoryCreateWithoutGameStateInput[] | NarrativeHistoryUncheckedCreateWithoutGameStateInput[]
+    connectOrCreate?: NarrativeHistoryCreateOrConnectWithoutGameStateInput | NarrativeHistoryCreateOrConnectWithoutGameStateInput[]
+    createMany?: NarrativeHistoryCreateManyGameStateInputEnvelope
+    connect?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
   }
 
   export type GameSessionUpdateOneRequiredWithoutGameStatesNestedInput = {
@@ -16069,6 +17431,20 @@ export namespace Prisma {
     deleteMany?: AIContextHistoryScalarWhereInput | AIContextHistoryScalarWhereInput[]
   }
 
+  export type NarrativeHistoryUpdateManyWithoutGameStateNestedInput = {
+    create?: XOR<NarrativeHistoryCreateWithoutGameStateInput, NarrativeHistoryUncheckedCreateWithoutGameStateInput> | NarrativeHistoryCreateWithoutGameStateInput[] | NarrativeHistoryUncheckedCreateWithoutGameStateInput[]
+    connectOrCreate?: NarrativeHistoryCreateOrConnectWithoutGameStateInput | NarrativeHistoryCreateOrConnectWithoutGameStateInput[]
+    upsert?: NarrativeHistoryUpsertWithWhereUniqueWithoutGameStateInput | NarrativeHistoryUpsertWithWhereUniqueWithoutGameStateInput[]
+    createMany?: NarrativeHistoryCreateManyGameStateInputEnvelope
+    set?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    disconnect?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    delete?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    connect?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    update?: NarrativeHistoryUpdateWithWhereUniqueWithoutGameStateInput | NarrativeHistoryUpdateWithWhereUniqueWithoutGameStateInput[]
+    updateMany?: NarrativeHistoryUpdateManyWithWhereWithoutGameStateInput | NarrativeHistoryUpdateManyWithWhereWithoutGameStateInput[]
+    deleteMany?: NarrativeHistoryScalarWhereInput | NarrativeHistoryScalarWhereInput[]
+  }
+
   export type NPCStateUncheckedUpdateManyWithoutGameStateNestedInput = {
     create?: XOR<NPCStateCreateWithoutGameStateInput, NPCStateUncheckedCreateWithoutGameStateInput> | NPCStateCreateWithoutGameStateInput[] | NPCStateUncheckedCreateWithoutGameStateInput[]
     connectOrCreate?: NPCStateCreateOrConnectWithoutGameStateInput | NPCStateCreateOrConnectWithoutGameStateInput[]
@@ -16109,6 +17485,20 @@ export namespace Prisma {
     update?: AIContextHistoryUpdateWithWhereUniqueWithoutGameStateInput | AIContextHistoryUpdateWithWhereUniqueWithoutGameStateInput[]
     updateMany?: AIContextHistoryUpdateManyWithWhereWithoutGameStateInput | AIContextHistoryUpdateManyWithWhereWithoutGameStateInput[]
     deleteMany?: AIContextHistoryScalarWhereInput | AIContextHistoryScalarWhereInput[]
+  }
+
+  export type NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput = {
+    create?: XOR<NarrativeHistoryCreateWithoutGameStateInput, NarrativeHistoryUncheckedCreateWithoutGameStateInput> | NarrativeHistoryCreateWithoutGameStateInput[] | NarrativeHistoryUncheckedCreateWithoutGameStateInput[]
+    connectOrCreate?: NarrativeHistoryCreateOrConnectWithoutGameStateInput | NarrativeHistoryCreateOrConnectWithoutGameStateInput[]
+    upsert?: NarrativeHistoryUpsertWithWhereUniqueWithoutGameStateInput | NarrativeHistoryUpsertWithWhereUniqueWithoutGameStateInput[]
+    createMany?: NarrativeHistoryCreateManyGameStateInputEnvelope
+    set?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    disconnect?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    delete?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    connect?: NarrativeHistoryWhereUniqueInput | NarrativeHistoryWhereUniqueInput[]
+    update?: NarrativeHistoryUpdateWithWhereUniqueWithoutGameStateInput | NarrativeHistoryUpdateWithWhereUniqueWithoutGameStateInput[]
+    updateMany?: NarrativeHistoryUpdateManyWithWhereWithoutGameStateInput | NarrativeHistoryUpdateManyWithWhereWithoutGameStateInput[]
+    deleteMany?: NarrativeHistoryScalarWhereInput | NarrativeHistoryScalarWhereInput[]
   }
 
   export type NPCStateCreateNestedManyWithoutNpcTemplateInput = {
@@ -16357,6 +17747,20 @@ export namespace Prisma {
     upsert?: GameStateUpsertWithoutAiContextHistoryInput
     connect?: GameStateWhereUniqueInput
     update?: XOR<XOR<GameStateUpdateToOneWithWhereWithoutAiContextHistoryInput, GameStateUpdateWithoutAiContextHistoryInput>, GameStateUncheckedUpdateWithoutAiContextHistoryInput>
+  }
+
+  export type GameStateCreateNestedOneWithoutNarrativeHistoryInput = {
+    create?: XOR<GameStateCreateWithoutNarrativeHistoryInput, GameStateUncheckedCreateWithoutNarrativeHistoryInput>
+    connectOrCreate?: GameStateCreateOrConnectWithoutNarrativeHistoryInput
+    connect?: GameStateWhereUniqueInput
+  }
+
+  export type GameStateUpdateOneRequiredWithoutNarrativeHistoryNestedInput = {
+    create?: XOR<GameStateCreateWithoutNarrativeHistoryInput, GameStateUncheckedCreateWithoutNarrativeHistoryInput>
+    connectOrCreate?: GameStateCreateOrConnectWithoutNarrativeHistoryInput
+    upsert?: GameStateUpsertWithoutNarrativeHistoryInput
+    connect?: GameStateWhereUniqueInput
+    update?: XOR<XOR<GameStateUpdateToOneWithWhereWithoutNarrativeHistoryInput, GameStateUpdateWithoutNarrativeHistoryInput>, GameStateUncheckedUpdateWithoutNarrativeHistoryInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -16732,6 +18136,7 @@ export namespace Prisma {
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateUncheckedCreateWithoutCharacterInput = {
@@ -16749,6 +18154,7 @@ export namespace Prisma {
     npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
     decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateCreateOrConnectWithoutCharacterInput = {
@@ -16898,6 +18304,7 @@ export namespace Prisma {
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateUncheckedCreateWithoutSessionInput = {
@@ -16915,6 +18322,7 @@ export namespace Prisma {
     npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
     decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateCreateOrConnectWithoutSessionInput = {
@@ -17128,6 +18536,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type NarrativeHistoryCreateWithoutGameStateInput = {
+    id?: string
+    type: string
+    content: string
+    timestamp?: Date | string
+  }
+
+  export type NarrativeHistoryUncheckedCreateWithoutGameStateInput = {
+    id?: string
+    type: string
+    content: string
+    timestamp?: Date | string
+  }
+
+  export type NarrativeHistoryCreateOrConnectWithoutGameStateInput = {
+    where: NarrativeHistoryWhereUniqueInput
+    create: XOR<NarrativeHistoryCreateWithoutGameStateInput, NarrativeHistoryUncheckedCreateWithoutGameStateInput>
+  }
+
+  export type NarrativeHistoryCreateManyGameStateInputEnvelope = {
+    data: NarrativeHistoryCreateManyGameStateInput | NarrativeHistoryCreateManyGameStateInput[]
+    skipDuplicates?: boolean
+  }
+
   export type GameSessionUpsertWithoutGameStatesInput = {
     update: XOR<GameSessionUpdateWithoutGameStatesInput, GameSessionUncheckedUpdateWithoutGameStatesInput>
     create: XOR<GameSessionCreateWithoutGameStatesInput, GameSessionUncheckedCreateWithoutGameStatesInput>
@@ -17286,6 +18718,33 @@ export namespace Prisma {
     relevanceScore?: FloatNullableFilter<"AIContextHistory"> | number | null
   }
 
+  export type NarrativeHistoryUpsertWithWhereUniqueWithoutGameStateInput = {
+    where: NarrativeHistoryWhereUniqueInput
+    update: XOR<NarrativeHistoryUpdateWithoutGameStateInput, NarrativeHistoryUncheckedUpdateWithoutGameStateInput>
+    create: XOR<NarrativeHistoryCreateWithoutGameStateInput, NarrativeHistoryUncheckedCreateWithoutGameStateInput>
+  }
+
+  export type NarrativeHistoryUpdateWithWhereUniqueWithoutGameStateInput = {
+    where: NarrativeHistoryWhereUniqueInput
+    data: XOR<NarrativeHistoryUpdateWithoutGameStateInput, NarrativeHistoryUncheckedUpdateWithoutGameStateInput>
+  }
+
+  export type NarrativeHistoryUpdateManyWithWhereWithoutGameStateInput = {
+    where: NarrativeHistoryScalarWhereInput
+    data: XOR<NarrativeHistoryUpdateManyMutationInput, NarrativeHistoryUncheckedUpdateManyWithoutGameStateInput>
+  }
+
+  export type NarrativeHistoryScalarWhereInput = {
+    AND?: NarrativeHistoryScalarWhereInput | NarrativeHistoryScalarWhereInput[]
+    OR?: NarrativeHistoryScalarWhereInput[]
+    NOT?: NarrativeHistoryScalarWhereInput | NarrativeHistoryScalarWhereInput[]
+    id?: StringFilter<"NarrativeHistory"> | string
+    gameStateId?: StringFilter<"NarrativeHistory"> | string
+    type?: StringFilter<"NarrativeHistory"> | string
+    content?: StringFilter<"NarrativeHistory"> | string
+    timestamp?: DateTimeFilter<"NarrativeHistory"> | Date | string
+  }
+
   export type NPCStateCreateWithoutNpcTemplateInput = {
     id?: string
     currentLocation?: string | null
@@ -17345,6 +18804,7 @@ export namespace Prisma {
     character: CharacterCreateNestedOneWithoutGameStatesInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateUncheckedCreateWithoutNpcStatesInput = {
@@ -17362,6 +18822,7 @@ export namespace Prisma {
     isCompleted?: boolean
     decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateCreateOrConnectWithoutNpcStatesInput = {
@@ -17420,6 +18881,7 @@ export namespace Prisma {
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateWithoutNpcStatesInput = {
@@ -17437,6 +18899,7 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
   }
 
   export type NPCTemplateUpsertWithoutNpcStatesInput = {
@@ -17690,6 +19153,7 @@ export namespace Prisma {
     character: CharacterCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateUncheckedCreateWithoutDecisionsInput = {
@@ -17707,6 +19171,7 @@ export namespace Prisma {
     isCompleted?: boolean
     npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateCreateOrConnectWithoutDecisionsInput = {
@@ -17740,6 +19205,7 @@ export namespace Prisma {
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateWithoutDecisionsInput = {
@@ -17757,6 +19223,7 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateCreateWithoutAiContextHistoryInput = {
@@ -17774,6 +19241,7 @@ export namespace Prisma {
     character: CharacterCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateUncheckedCreateWithoutAiContextHistoryInput = {
@@ -17791,6 +19259,7 @@ export namespace Prisma {
     isCompleted?: boolean
     npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
     decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
   }
 
   export type GameStateCreateOrConnectWithoutAiContextHistoryInput = {
@@ -17824,6 +19293,7 @@ export namespace Prisma {
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateWithoutAiContextHistoryInput = {
@@ -17841,6 +19311,95 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+  }
+
+  export type GameStateCreateWithoutNarrativeHistoryInput = {
+    id?: string
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+    session: GameSessionCreateNestedOneWithoutGameStatesInput
+    character: CharacterCreateNestedOneWithoutGameStatesInput
+    npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
+    decisions?: DecisionCreateNestedManyWithoutGameStateInput
+    aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+  }
+
+  export type GameStateUncheckedCreateWithoutNarrativeHistoryInput = {
+    id?: string
+    sessionId: string
+    characterId: string
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+    npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
+    decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
+    aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+  }
+
+  export type GameStateCreateOrConnectWithoutNarrativeHistoryInput = {
+    where: GameStateWhereUniqueInput
+    create: XOR<GameStateCreateWithoutNarrativeHistoryInput, GameStateUncheckedCreateWithoutNarrativeHistoryInput>
+  }
+
+  export type GameStateUpsertWithoutNarrativeHistoryInput = {
+    update: XOR<GameStateUpdateWithoutNarrativeHistoryInput, GameStateUncheckedUpdateWithoutNarrativeHistoryInput>
+    create: XOR<GameStateCreateWithoutNarrativeHistoryInput, GameStateUncheckedCreateWithoutNarrativeHistoryInput>
+    where?: GameStateWhereInput
+  }
+
+  export type GameStateUpdateToOneWithWhereWithoutNarrativeHistoryInput = {
+    where?: GameStateWhereInput
+    data: XOR<GameStateUpdateWithoutNarrativeHistoryInput, GameStateUncheckedUpdateWithoutNarrativeHistoryInput>
+  }
+
+  export type GameStateUpdateWithoutNarrativeHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
+    character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
+    decisions?: DecisionUpdateManyWithoutGameStateNestedInput
+    aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+  }
+
+  export type GameStateUncheckedUpdateWithoutNarrativeHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
+    decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
+    aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
   }
 
   export type CharacterCreateManyUserInput = {
@@ -17954,6 +19513,7 @@ export namespace Prisma {
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateWithoutCharacterInput = {
@@ -17971,6 +19531,7 @@ export namespace Prisma {
     npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateManyWithoutCharacterInput = {
@@ -18016,6 +19577,7 @@ export namespace Prisma {
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateWithoutSessionInput = {
@@ -18033,6 +19595,7 @@ export namespace Prisma {
     npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
   }
 
   export type GameStateUncheckedUpdateManyWithoutSessionInput = {
@@ -18079,6 +19642,13 @@ export namespace Prisma {
     completionText?: string | null
     timestamp?: Date | string
     relevanceScore?: number | null
+  }
+
+  export type NarrativeHistoryCreateManyGameStateInput = {
+    id?: string
+    type: string
+    content: string
+    timestamp?: Date | string
   }
 
   export type NPCStateUpdateWithoutGameStateInput = {
@@ -18175,6 +19745,27 @@ export namespace Prisma {
     completionText?: NullableStringFieldUpdateOperationsInput | string | null
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
     relevanceScore?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type NarrativeHistoryUpdateWithoutGameStateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NarrativeHistoryUncheckedUpdateWithoutGameStateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NarrativeHistoryUncheckedUpdateManyWithoutGameStateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type NPCStateCreateManyNpcTemplateInput = {

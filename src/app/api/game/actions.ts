@@ -2,6 +2,8 @@
 
 import { gameStateRepository } from "@/lib/db/gameState";
 import { gameSessionRepository } from "@/lib/db/gameSession";
+import { narrativeHistoryRepository } from "@/lib/db/narrativeHistory";
+import { decisionRepository } from "@/lib/db/decision";
 import type { GameSession, GameState } from "@/types/database";
 
 // Default initial game state - matches the one in GameStateManager
@@ -453,6 +455,114 @@ export async function endGameSessionAction(sessionId: string): Promise<
     console.error("Failed to end game session:", error);
     return {
       success: false,
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
+  }
+}
+
+/**
+ * Save narrative history for a game state
+ *
+ * @param gameStateId The ID of the game state
+ * @param narrativeHistory Array of narrative history items
+ * @returns Array of created narrative history items or error message
+ */
+export async function saveNarrativeHistoryAction(
+  gameStateId: string,
+  narrativeHistory: Array<{
+    type: string;
+    content: any;
+  }>
+): Promise<
+  | {
+      success: true;
+      error: null;
+    }
+  | {
+      success: false;
+      error: string;
+    }
+> {
+  try {
+    if (!gameStateId) {
+      return {
+        success: false,
+        error: "No game state ID provided",
+      };
+    }
+
+    // Save narrative history
+    await narrativeHistoryRepository.saveNarrativeHistory(
+      gameStateId,
+      narrativeHistory
+    );
+
+    return {
+      success: true,
+      error: null,
+    };
+  } catch (error) {
+    console.error("Failed to save narrative history:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
+  }
+}
+
+/**
+ * Load narrative history for a game state
+ *
+ * @param gameStateId The ID of the game state
+ * @returns Array of narrative history items or error message
+ */
+export async function loadNarrativeHistoryAction(gameStateId: string): Promise<
+  | {
+      narrativeHistory: Array<{
+        id: string;
+        type: string;
+        content: any;
+        timestamp: Date;
+      }>;
+      error: null;
+    }
+  | {
+      narrativeHistory: null;
+      error: string;
+    }
+> {
+  try {
+    if (!gameStateId) {
+      return {
+        narrativeHistory: null,
+        error: "No game state ID provided",
+      };
+    }
+
+    // Load narrative history from repository
+    const history =
+      await narrativeHistoryRepository.getNarrativeHistoryByGameStateId(
+        gameStateId
+      );
+
+    // No need for additional parsing as it's handled in the repository
+    const parsedHistory = history.map((item) => ({
+      id: item.id,
+      type: item.type,
+      content: item.content,
+      timestamp: item.timestamp,
+    }));
+
+    return {
+      narrativeHistory: parsedHistory,
+      error: null,
+    };
+  } catch (error) {
+    console.error("Failed to load narrative history:", error);
+    return {
+      narrativeHistory: null,
       error:
         error instanceof Error ? error.message : "An unknown error occurred",
     };

@@ -14,6 +14,8 @@ import {
   updateGameStateAction,
   createCheckpointAction,
   endGameSessionAction,
+  saveNarrativeHistoryAction,
+  loadNarrativeHistoryAction,
 } from "@/app/api/game/actions";
 
 /**
@@ -69,6 +71,30 @@ export interface GameEngineContextType {
    * @throws Error if checkpoint creation fails
    */
   createCheckpoint: (savePointName?: string) => Promise<GameState>;
+
+  /**
+   * Save narrative history for the current game state
+   * @throws Error if the save fails
+   */
+  saveNarrativeHistory: (
+    narrativeHistory: Array<{
+      type: string;
+      content: any;
+    }>
+  ) => Promise<boolean>;
+
+  /**
+   * Load narrative history for the current game state
+   * @throws Error if the load fails
+   */
+  loadNarrativeHistory: () => Promise<
+    Array<{
+      id: string;
+      type: string;
+      content: any;
+      timestamp: Date;
+    }>
+  >;
 }
 
 // Create context with default values
@@ -90,6 +116,12 @@ const GameEngineContext = createContext<GameEngineContextType>({
     throw new Error("GameEngineProvider not initialized");
   },
   createCheckpoint: async () => {
+    throw new Error("GameEngineProvider not initialized");
+  },
+  saveNarrativeHistory: async () => {
+    throw new Error("GameEngineProvider not initialized");
+  },
+  loadNarrativeHistory: async () => {
     throw new Error("GameEngineProvider not initialized");
   },
 });
@@ -312,6 +344,82 @@ export function GameEngineProvider({
     [session, gameState]
   );
 
+  /**
+   * Save narrative history for the current game state
+   */
+  const saveNarrativeHistory = useCallback(
+    async (
+      narrativeHistory: Array<{
+        type: string;
+        content: any;
+      }>
+    ): Promise<boolean> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        if (!gameState?.id) {
+          throw new Error("No active game state");
+        }
+
+        // Use the server action to save narrative history
+        const result = await saveNarrativeHistoryAction(
+          gameState.id,
+          narrativeHistory
+        );
+
+        if (result.error) {
+          setError(result.error);
+          throw new Error(result.error);
+        }
+
+        return true;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Failed to save narrative history";
+        setError(errorMessage);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [gameState]
+  );
+
+  /**
+   * Load narrative history for the current game state
+   */
+  const loadNarrativeHistory = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      if (!gameState?.id) {
+        throw new Error("No active game state");
+      }
+
+      // Use the server action to load narrative history
+      const result = await loadNarrativeHistoryAction(gameState.id);
+
+      if (result.error || !result.narrativeHistory) {
+        const errorMsg = result.error || "Failed to load narrative history";
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      return result.narrativeHistory;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load narrative history";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [gameState]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -331,6 +439,8 @@ export function GameEngineProvider({
     endGameSession,
     updateGameState,
     createCheckpoint,
+    saveNarrativeHistory,
+    loadNarrativeHistory,
   };
 
   return (
