@@ -12,16 +12,15 @@ import {
   Location,
   NarrativeMood,
   DangerLevel,
-  getAIResponse,
 } from "../aiService";
 import { AIProvider, GroqModel } from "../aiConfig";
 
 /**
- * Example function showing how to generate a narrative response
+ * Create a narrative example player character
+ * @returns A sample game character
  */
-export async function generateNarrativeExample(): Promise<AIResponse> {
-  // Create a simple player character
-  const playerCharacter: GameCharacter = {
+export function createExampleCharacter(): GameCharacter {
+  return {
     name: "Aria",
     backstory:
       "A skilled archer from the forest village of Elmwood, seeking adventure.",
@@ -34,135 +33,246 @@ export async function generateNarrativeExample(): Promise<AIResponse> {
       motivations: ["Discover the truth about her missing brother"],
     },
   };
+}
 
-  // Create a location
-  const currentLocation: Location = {
+/**
+ * Create an example location
+ * @returns A sample location
+ */
+export function createExampleLocation(): Location {
+  return {
     id: "ancient-ruins",
     name: "Ancient Ruins",
     description:
-      "Stone structures covered in moss and vines, with strange symbols carved into the walls. This ruins are rumored to be a passageway to the underworld.",
+      "Stone structures covered in moss and vines, with strange symbols carved into the walls. These ruins are rumored to be a passageway to the underworld.",
     connectedLocations: ["dark-forest", "hidden-valley"],
     dangerLevel: DangerLevel.MODERATE,
     discoveredLore: [],
   };
+}
 
-  // Sample conversation history
+/**
+ * Generate a narrative response for the specified context
+ *
+ * @param playerPrompt - The player's action or question
+ * @param playerCharacter - The player character (defaults to example character if not provided)
+ * @param currentLocation - The current location (defaults to example location if not provided)
+ * @param options - Optional configuration for the AI request
+ * @returns Promise with the AI response
+ */
+export async function generateNarrativeResponse(
+  playerPrompt: string,
+  playerCharacter?: GameCharacter,
+  currentLocation?: Location,
+  options: {
+    temperature?: number;
+    maxTokens?: number;
+    modelName?: string;
+  } = {}
+): Promise<AIResponse> {
+  // Use provided parameters or defaults
+  const character = playerCharacter || createExampleCharacter();
+  const location = currentLocation || createExampleLocation();
+
+  // Create initial conversation history
   const conversationHistory = [
     {
       role: "system" as const,
-      content:
-        "You are the narrative director for an adventure in ancient ruins.",
+      content: `You are the Narrative Director for a text-based RPG adventure in ${location.name}.`,
     },
     {
       role: "assistant" as const,
-      content:
-        "You stand before the entrance to the ruins, ancient stone structures looming above you. The air is thick with mystery and the scent of damp earth. What would you like to do?",
-    },
-    {
-      role: "user" as const,
-      content: "I want to examine the symbols on the walls.",
+      content: `You stand before ${location.name}, ${
+        location.description.split(".")[0]
+      }. The air feels thick with ancient secrets. What would you like to do?`,
     },
   ];
 
-  // User prompt
-  const prompt =
-    "I run my fingers over the strange symbols, trying to understand their meaning.";
-
-  // Generate AI response
   try {
-    console.log("Sending request to AI service...");
-    console.log("Context includes location:", currentLocation.name);
-
-    const response = await getAIResponse(
-      {
-        agentRole: AIAgentRole.NARRATIVE_DIRECTOR,
-        playerCharacter,
-        currentLocation,
-        conversationHistory,
-        prompt,
+    // Call the server-side API instead of directly using getAIResponse
+    const response = await fetch("/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        provider: AIProvider.GROQ,
-        modelName: GroqModel.MIXTRAL_8X7B,
-        temperature: 0.8,
-        maxTokens: 800,
-      }
-    );
-
-    console.log(
-      "Received AI response with choice count:",
-      response.choices?.length
-    );
-    return response;
-  } catch (error) {
-    console.error("Error generating narrative:", error);
-    throw error;
-  }
-}
-
-/**
- * Show how to use the response in the application
- */
-export function demonstrateNarrativeResponse(response: AIResponse): void {
-  // Display the narrative text
-  console.log("\n=== NARRATIVE TEXT ===");
-  console.log(response.text);
-
-  // Display choices - these have been formatted from simple strings to full choice objects
-  if (response.choices && response.choices.length > 0) {
-    console.log("\n=== PLAYER CHOICES ===");
-    response.choices.forEach((choice, index) => {
-      console.log(`${index + 1}. ${choice.text} (ID: ${choice.id})`);
+      body: JSON.stringify({
+        role: AIAgentRole.NARRATIVE_DIRECTOR,
+        prompt: playerPrompt,
+        character: character,
+        location: location,
+        context: {
+          conversationHistory,
+          mood: NarrativeMood.NEUTRAL,
+          temperature: options.temperature || 0.8,
+          maxTokens: options.maxTokens || 1024,
+          modelName: options.modelName || GroqModel.LLAMA_4_MAVRICK,
+        },
+      }),
     });
-  }
 
-  // Display metadata - this was generated programmatically, not from the AI
-  if (response.metadata) {
-    console.log("\n=== AUTO-GENERATED METADATA ===");
-    console.log(`Mood: ${response.metadata.mood}`);
-    console.log(`Danger Level: ${response.metadata.danger}`);
-
-    if (
-      response.metadata.locationRelevance &&
-      response.metadata.locationRelevance.length > 0
-    ) {
-      console.log("\nRelevant Locations:");
-      response.metadata.locationRelevance.forEach((location) =>
-        console.log(`- ${location}`)
-      );
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`API error: ${errorData.error || response.statusText}`);
     }
 
-    if (
-      response.metadata.suggestedNextLocations &&
-      response.metadata.suggestedNextLocations.length > 0
-    ) {
-      console.log("\nPossible Next Locations:");
-      response.metadata.suggestedNextLocations.forEach((location) =>
-        console.log(`- ${location}`)
-      );
-    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error generating narrative response:", error);
 
-    if (
-      response.metadata.npcMentioned &&
-      response.metadata.npcMentioned.length > 0
-    ) {
-      console.log("\nNPCs Involved:");
-      response.metadata.npcMentioned.forEach((npc) => console.log(`- ${npc}`));
-    }
+    // Return a fallback response in case of error
+    return {
+      text: "The story encountered a brief interruption. (There was an issue connecting to the storyteller.)",
+      choices: [
+        { id: "retry", text: "Try again" },
+        { id: "continue", text: "Continue differently" },
+      ],
+      metadata: {
+        mood: NarrativeMood.MYSTERIOUS,
+        danger: DangerLevel.NONE,
+      },
+    };
   }
 }
 
 /**
- * Execute the example (can be called from a test environment)
+ * Generate a continuing narrative based on a previous response
+ *
+ * @param previousResponse - The previous AI response
+ * @param playerChoice - The player's chosen option (index or text)
+ * @param playerCharacter - The player character
+ * @param currentLocation - The current location
+ * @param options - Optional configuration for the AI request
+ * @returns Promise with the next AI response
  */
-export async function runNarrativeExample(): Promise<void> {
+export async function continueNarrative(
+  previousResponse: AIResponse,
+  playerChoice: number | string,
+  playerCharacter: GameCharacter,
+  currentLocation: Location,
+  options: {
+    temperature?: number;
+    maxTokens?: number;
+    modelName?: string;
+  } = {}
+): Promise<AIResponse> {
+  // Determine which choice was selected
+  let choiceText = "";
+
+  if (
+    typeof playerChoice === "number" &&
+    previousResponse.choices &&
+    previousResponse.choices.length > 0
+  ) {
+    const index = playerChoice - 1; // Convert from 1-based to 0-based indexing
+    if (index >= 0 && index < previousResponse.choices.length) {
+      choiceText = previousResponse.choices[index].text;
+    }
+  } else if (typeof playerChoice === "string") {
+    choiceText = playerChoice;
+  }
+
+  if (!choiceText) {
+    throw new Error("Invalid player choice specified");
+  }
+
+  // Create conversation history with previous interaction
+  const conversationHistory = [
+    {
+      role: "system" as const,
+      content: `You are the Narrative Director for a text-based RPG adventure in ${currentLocation.name}.`,
+    },
+    {
+      role: "assistant" as const,
+      content: previousResponse.text,
+    },
+    {
+      role: "user" as const,
+      content: choiceText,
+    },
+  ];
+
   try {
-    console.log("=== NARRATIVE GENERATION EXAMPLE ===");
-    console.log("Generating narrative response with Groq...");
-    const response = await generateNarrativeExample();
-    demonstrateNarrativeResponse(response);
-    console.log("\n=== EXAMPLE COMPLETE ===");
+    // Call the server-side API
+    const response = await fetch("/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: AIAgentRole.NARRATIVE_DIRECTOR,
+        prompt: choiceText,
+        character: playerCharacter,
+        location: currentLocation,
+        context: {
+          conversationHistory,
+          mood: previousResponse.metadata?.mood || NarrativeMood.NEUTRAL,
+          temperature: options.temperature || 0.8,
+          maxTokens: options.maxTokens || 1024,
+          modelName: options.modelName || GroqModel.LLAMA_4_MAVRICK,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`API error: ${errorData.error || response.statusText}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error("Failed to run narrative example:", error);
+    console.error("Error continuing narrative:", error);
+
+    // Return a fallback response in case of error
+    return {
+      text: `The story pauses momentarily. (There was an issue processing your choice: "${choiceText}")`,
+      choices: [
+        { id: "retry", text: "Try the same choice again" },
+        { id: "different", text: "Try a different approach" },
+      ],
+      metadata: {
+        mood: NarrativeMood.MYSTERIOUS,
+        danger: DangerLevel.NONE,
+      },
+    };
+  }
+}
+
+/**
+ * Example usage of the narrative generation functions
+ */
+export async function exampleNarrativeFlow(): Promise<AIResponse[]> {
+  const responses: AIResponse[] = [];
+
+  try {
+    // Generate initial narrative
+    const character = createExampleCharacter();
+    const location = createExampleLocation();
+
+    // First interaction
+    const initialPrompt = "I examine the strange symbols on the wall.";
+    const firstResponse = await generateNarrativeResponse(
+      initialPrompt,
+      character,
+      location
+    );
+    responses.push(firstResponse);
+
+    // Continue narrative with player choice
+    if (firstResponse.choices && firstResponse.choices.length > 0) {
+      // Select the first choice
+      const secondResponse = await continueNarrative(
+        firstResponse,
+        1, // Choose the first option
+        character,
+        location,
+        {} // Pass empty options object
+      );
+      responses.push(secondResponse);
+    }
+
+    return responses;
+  } catch (error) {
+    console.error("Error in narrative flow example:", error);
+    return responses;
   }
 }

@@ -3,9 +3,23 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import GameClient from "./GameClient";
 import { resumeGameSession } from "@/app/api/game/actions";
 
-export default async function GamePage(props: any) {
-  // Get the characterId from the search params
-  const characterId = props.searchParams?.characterId;
+// Define the proper type for page props
+interface GamePageProps {
+  params: { slug?: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function GamePage({ searchParams }: GamePageProps) {
+  // Get the search params in a way that's compatible with Next.js 15
+  const searchParamsData = await Promise.resolve(searchParams);
+
+  // Get the characterId from the resolved search params
+  const characterId =
+    typeof searchParamsData.characterId === "string"
+      ? searchParamsData.characterId
+      : Array.isArray(searchParamsData.characterId)
+      ? searchParamsData.characterId[0]
+      : undefined;
 
   // Get authenticated user
   const { userId } = await auth();

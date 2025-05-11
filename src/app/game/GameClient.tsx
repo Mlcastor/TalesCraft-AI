@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { GameEngineProvider, useGameEngine } from "@/lib/game-engine";
 import type { GameSession, GameState } from "@/types/database";
+import {
+  generateNarrativeResponse,
+  continueNarrative,
+  createExampleLocation,
+} from "@/lib/ai/examples/narrativeDirectorExample";
+import { AIResponse, GameCharacter, Location } from "@/lib/ai/aiService";
 
 interface GameClientProps {
   characterId: string;
@@ -19,6 +25,26 @@ interface WorldState {
   discoveredLocations: string[];
   completedEvents: string[];
   npcRelationships: Record<string, number>;
+  currentLocation?: Location;
+}
+
+// Character information from the game state
+interface CharacterInfo {
+  name?: string;
+  backstory?: string;
+  appearance?: string;
+  personalityTraits?: {
+    primary?: string;
+    secondary?: string[];
+    flaws?: string[];
+    motivations?: string[];
+  };
+}
+
+// Extended game state with character information
+interface ExtendedGameState extends Omit<GameState, "characterState"> {
+  character?: CharacterInfo;
+  characterState?: Record<string, any>;
 }
 
 // Wrapper component that provides the GameEngine context
@@ -42,16 +68,21 @@ export default function GameClient({
 // Main game interface that uses the game engine
 function GameInterface({ characterId }: { characterId: string }) {
   const router = useRouter();
-  const {
-    gameState,
-    session,
-    isLoading,
-    error,
-    startNewGame,
-    resumeGame,
-    updateGameState,
-  } = useGameEngine();
+  const { gameState, session, isLoading, error, resumeGame, updateGameState } =
+    useGameEngine();
+
   const [initialized, setInitialized] = useState(false);
+  const [narrativeHistory, setNarrativeHistory] = useState<AIResponse[]>([]);
+  const [currentResponse, setCurrentResponse] = useState<AIResponse | null>(
+    null
+  );
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [playerCharacter, setPlayerCharacter] = useState<GameCharacter | null>(
+    null
+  );
+  const [currentLocation, setCurrentLocation] = useState<Location>(
+    createExampleLocation()
+  );
 
   // Initialize the game when the component mounts
   useEffect(() => {
@@ -89,35 +120,263 @@ function GameInterface({ characterId }: { characterId: string }) {
     gameState,
   ]);
 
-  // Handle demo action - this is just for testing
-  const handleDemoAction = async () => {
-    if (!gameState) return;
+  // Setup player character and start narrative when game state is loaded
+  useEffect(() => {
+    if (gameState && !currentResponse && !isProcessing) {
+      const setupNarrative = async () => {
+        try {
+          setIsProcessing(true);
+
+          // Cast to our extended game state type
+          const extendedState = gameState as unknown as ExtendedGameState;
+          const characterInfo = extendedState.character || {};
+
+          // Create a character from the game state
+          const character: GameCharacter = {
+            id: characterId,
+            name: characterInfo.name || "Adventurer",
+            backstory:
+              characterInfo.backstory || "An adventurer seeking glory.",
+            appearanceDescription:
+              characterInfo.appearance || "A mysterious figure.",
+            personalityTraits: {
+              primary: characterInfo.personalityTraits?.primary || "Curious",
+              secondary: characterInfo.personalityTraits?.secondary || [
+                "Brave",
+              ],
+              flaws: characterInfo.personalityTraits?.flaws || ["Impulsive"],
+              motivations: characterInfo.personalityTraits?.motivations || [
+                "Adventure",
+              ],
+            },
+          };
+
+          setPlayerCharacter(character);
+
+          // Use the current location from game state or default
+          const location = createExampleLocation(); // Default location
+          setCurrentLocation(location);
+
+          // Start the narrative if we don't have any history
+          if (narrativeHistory.length === 0) {
+            const initialPrompt = "I look around, taking in my surroundings.";
+            try {
+              const response = await generateNarrativeResponse(
+                initialPrompt,
+                character,
+                location
+              );
+
+              // Check if it's a mock response (development fallback)
+              if (response.metadata?.isMockResponse) {
+                console.warn(
+                  "Using mock AI response due to missing API key configuration"
+                );
+              }
+
+              setCurrentResponse(response);
+              setNarrativeHistory((prev) => [...prev, response]);
+
+              // Update game state with narrative context
+              await updateGameState({
+                narrativeContext: response.text,
+                worldState: {
+                  ...(gameState.worldState as Record<string, any>),
+                  currentLocation: location,
+                },
+              });
+            } catch (apiError: any) {
+              // Handle different types of API errors
+              console.error("AI API Error:", apiError);
+              let errorMessage = "Unknown error occurred";
+              let errorChoices = [
+                { id: "retry", text: "Refresh and try again" },
+              ];
+
+              // Check for common error scenarios
+              if (
+                apiError.message?.includes("API key") ||
+                apiError.message?.includes("authentication")
+              ) {
+                errorMessage =
+                  "⚠️ AI Configuration Error: Missing or invalid API key. Please check your API configuration in the .env.local file.";
+                errorChoices = [
+                  { id: "retry", text: "Refresh and try again" },
+                  { id: "help", text: "View setup instructions" },
+                ];
+              } else if (apiError.message?.includes("rate limit")) {
+                errorMessage =
+                  "⚠️ AI Service Rate Limit: The AI service has reached its request limit. Please try again in a few moments.";
+              } else if (apiError.message?.includes("timeout")) {
+                errorMessage =
+                  "⚠️ AI Service Timeout: The request took too long to process. Please try again with a simpler prompt.";
+              } else if (
+                apiError.message?.includes("server error") ||
+                apiError.message?.includes("5")
+              ) {
+                errorMessage =
+                  "⚠️ AI Service Error: The AI service is experiencing technical difficulties. Please try again later.";
+              } else if (
+                apiError.message?.includes("network") ||
+                apiError.message?.includes("connection")
+              ) {
+                errorMessage =
+                  "⚠️ Network Error: Could not connect to the AI service. Please check your internet connection.";
+              } else {
+                // Generic error with the actual message
+                errorMessage = `⚠️ AI Service Error: ${
+                  apiError.message || errorMessage
+                }`;
+              }
+
+              setNarrativeHistory([
+                {
+                  text: errorMessage,
+                  choices: errorChoices,
+                },
+              ]);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to start narrative:", err);
+          // Add global error state for component rendering
+          setNarrativeHistory([
+            {
+              text: `An error occurred while setting up the game: ${
+                err instanceof Error ? err.message : "Unknown error"
+              }`,
+              choices: [{ id: "retry", text: "Refresh and try again" }],
+            },
+          ]);
+        } finally {
+          setIsProcessing(false);
+        }
+      };
+
+      setupNarrative();
+    }
+  }, [
+    gameState,
+    currentResponse,
+    isProcessing,
+    characterId,
+    narrativeHistory.length,
+    updateGameState,
+  ]);
+
+  // Handle player choice
+  const handleChoiceSelected = async (choiceIndex: number) => {
+    if (!currentResponse || !playerCharacter || isProcessing) return;
 
     try {
-      // Cast worldState to our interface type
-      const worldState = gameState.worldState as unknown as WorldState;
+      setIsProcessing(true);
 
-      await updateGameState({
-        worldState: {
-          timeOfDay:
-            worldState.timeOfDay === "morning" ? "afternoon" : "morning",
-          discoveredLocations: [
-            ...worldState.discoveredLocations,
-            "forest_edge",
-          ],
-        },
-        narrativeContext: "The player has discovered the edge of the forest.",
-      });
+      // Get the selected choice text for error reporting
+      const selectedChoice =
+        currentResponse.choices?.[choiceIndex]?.text || "Unknown choice";
+
+      try {
+        // Get the next narrative based on the player's choice
+        const nextResponse = await continueNarrative(
+          currentResponse,
+          choiceIndex + 1, // Convert to 1-based index for continueNarrative
+          playerCharacter,
+          currentLocation,
+          {} // Default options
+        );
+
+        // Check if it's a mock response (development fallback)
+        if (nextResponse.metadata?.isMockResponse) {
+          console.warn(
+            "Using mock AI response due to missing API key configuration"
+          );
+        }
+
+        // Update state
+        setCurrentResponse(nextResponse);
+        setNarrativeHistory((prev) => [...prev, nextResponse]);
+
+        // Update game state with new narrative context
+        await updateGameState({
+          narrativeContext: nextResponse.text,
+          worldState: {
+            ...(gameState?.worldState as Record<string, any>),
+            currentLocation,
+          },
+        });
+      } catch (apiError: any) {
+        // Handle AI API errors with more specific error types
+        console.error("AI API Error in choice handling:", apiError);
+        let errorMessage = "Unknown error occurred";
+        const errorChoices = [
+          { id: "retry", text: "Try this choice again" },
+          { id: "different", text: "Try a different approach" },
+        ];
+
+        // Check for common error scenarios
+        if (
+          apiError.message?.includes("API key") ||
+          apiError.message?.includes("authentication")
+        ) {
+          errorMessage = `⚠️ AI Configuration Error: Missing or invalid API key while processing your choice "${selectedChoice}".`;
+        } else if (apiError.message?.includes("rate limit")) {
+          errorMessage = `⚠️ AI Service Rate Limit: The AI service has reached its request limit while processing your choice "${selectedChoice}".`;
+        } else if (apiError.message?.includes("timeout")) {
+          errorMessage = `⚠️ AI Service Timeout: The request took too long to process your choice "${selectedChoice}".`;
+        } else if (
+          apiError.message?.includes("server error") ||
+          apiError.message?.includes("5")
+        ) {
+          errorMessage = `⚠️ AI Service Error: The AI service is experiencing technical difficulties while processing your choice "${selectedChoice}".`;
+        } else if (
+          apiError.message?.includes("network") ||
+          apiError.message?.includes("connection")
+        ) {
+          errorMessage = `⚠️ Network Error: Could not connect to the AI service while processing your choice "${selectedChoice}".`;
+        } else {
+          // Generic error with the actual message and selected choice
+          errorMessage = `⚠️ AI Service Error while processing your choice "${selectedChoice}": ${
+            apiError.message || errorMessage
+          }`;
+        }
+
+        // Add the error as a new narrative entry
+        const errorResponse: AIResponse = {
+          text: errorMessage,
+          choices: errorChoices,
+        };
+
+        setCurrentResponse(errorResponse);
+        setNarrativeHistory((prev) => [...prev, errorResponse]);
+      }
     } catch (err) {
-      console.error("Failed to update game state:", err);
+      console.error("Failed to process choice:", err);
+
+      // Update UI with error info
+      const errorResponse: AIResponse = {
+        text: `An error occurred: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`,
+        choices: [
+          { id: "retry", text: "Try again" },
+          { id: "back", text: "Go back" },
+        ],
+      };
+
+      setCurrentResponse(errorResponse);
+      setNarrativeHistory((prev) => [...prev, errorResponse]);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isProcessing) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-xl text-amber-400">Loading your adventure...</p>
+        <p className="text-xl text-amber-400">
+          {isLoading ? "Loading your adventure..." : "The story unfolds..."}
+        </p>
       </div>
     );
   }
@@ -162,81 +421,74 @@ function GameInterface({ characterId }: { characterId: string }) {
     );
   }
 
-  // Debug output of current game state
-  const currentLocation = gameState.currentLocation;
+  // Get world state info
   const worldState = gameState.worldState as unknown as WorldState;
-  const timeOfDay = worldState.timeOfDay || "unknown";
-  const discoveredLocations = worldState.discoveredLocations || [];
+  const timeOfDay = worldState?.timeOfDay || "Day";
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-gray-800 rounded-lg p-6 mb-6 border border-gray-700">
-        <h1 className="text-3xl font-bold text-amber-400 mb-4">
-          Game Test Interface
+    <div className="max-w-4xl mx-auto p-6 flex flex-col h-screen">
+      {/* Game header */}
+      <div className="bg-gray-800 rounded-t-lg p-4 border-b border-gray-700">
+        <h1 className="text-2xl font-bold text-amber-400">
+          {playerCharacter?.name}&apos;s Adventure
         </h1>
+        <p className="text-gray-300">
+          {currentLocation?.name} - {timeOfDay}
+        </p>
+      </div>
 
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-white mb-2">Session Info</h2>
-          <div className="bg-gray-900 p-3 rounded-md">
-            <p className="text-gray-300">
-              Session ID: <span className="text-amber-400">{session.id}</span>
-            </p>
-            <p className="text-gray-300">
-              Started:{" "}
-              <span className="text-amber-400">
-                {new Date(session.startedAt).toLocaleString()}
-              </span>
-            </p>
-          </div>
-        </div>
+      {/* Narrative history */}
+      <div className="flex-grow bg-gray-800 p-4 overflow-y-auto">
+        <div className="space-y-6">
+          {narrativeHistory.map((response, index) => (
+            <div key={index} className="space-y-4">
+              <div className="bg-gray-700 p-4 rounded-lg">
+                <p className="text-white leading-relaxed">{response.text}</p>
+              </div>
 
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-white mb-2">Game State</h2>
-          <div className="bg-gray-900 p-3 rounded-md">
-            <p className="text-gray-300">
-              Current Location:{" "}
-              <span className="text-amber-400">{currentLocation}</span>
-            </p>
-            <p className="text-gray-300">
-              Time of Day: <span className="text-amber-400">{timeOfDay}</span>
-            </p>
-            <p className="text-gray-300">Discovered Locations:</p>
-            <ul className="list-disc pl-6 text-amber-400">
-              {discoveredLocations.map((location: string) => (
-                <li key={location}>{location}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-white mb-2">
-            Narrative Context
-          </h2>
-          <div className="bg-gray-900 p-3 rounded-md">
-            <p className="text-gray-300">
-              {gameState.narrativeContext || "No narrative context yet."}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={handleDemoAction}
-            className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-gray-900 rounded-lg font-bold"
-          >
-            Test State Update
-          </button>
+              {/* Only show choices for the current response */}
+              {index === narrativeHistory.length - 1 && response.choices && (
+                <div className="space-y-2">
+                  {response.choices.map((choice, choiceIndex) => (
+                    <button
+                      key={choice.id}
+                      onClick={() => handleChoiceSelected(choiceIndex)}
+                      disabled={isProcessing}
+                      className="w-full text-left p-3 bg-amber-700 hover:bg-amber-600 text-white rounded-md transition"
+                    >
+                      {choice.text}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="text-center">
-        <Link
-          href="/characters"
-          className="text-amber-400 hover:text-amber-300 underline"
-        >
-          Return to Characters
-        </Link>
+      {/* Controls */}
+      <div className="bg-gray-800 rounded-b-lg p-4 border-t border-gray-700">
+        <div className="flex justify-between">
+          <Link
+            href="/characters"
+            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md"
+          >
+            Exit Adventure
+          </Link>
+
+          <div className="flex space-x-2">
+            <button
+              onClick={() => {
+                // Reset conversation but keep character and location
+                setNarrativeHistory([]);
+                setCurrentResponse(null);
+              }}
+              className="px-4 py-2 bg-red-700 hover:bg-red-600 text-white rounded-md"
+            >
+              Reset Story
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

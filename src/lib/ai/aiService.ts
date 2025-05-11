@@ -9,6 +9,7 @@ import {
   getProviderConfig,
   isProviderConfigured,
 } from "./aiConfig";
+import { debugEnvironmentVariables } from "./debugEnv";
 
 /**
  * Represents the possible AI agent roles in the game
@@ -177,146 +178,173 @@ export interface AIResponseOptions {
 }
 
 /**
- * Sends a request to the AI LLM and returns the response
+ * Get an AI response for the given input
  *
- * @param context - The context information for the AI request
- * @param options - Configuration options for the request
- * @returns Promise with the AI response
+ * @param input The input data for the AI request
+ * @param config Configuration options for the AI provider
+ * @returns A Promise that resolves to an AIResponse
  */
 export async function getAIResponse(
-  context: AIRequestContext,
-  options: AIResponseOptions = {}
+  input: AIRequestContext,
+  config: AIResponseOptions = {}
 ): Promise<AIResponse> {
-  try {
-    // Get provider configuration
-    const provider = options.provider || AIProvider.GROQ;
+  // For backward compatibility, continue logging if API key is properly configured
+  const isConfigured = isProviderConfigured();
+  if (!isConfigured) {
+    console.warn(
+      "AI Provider is not properly configured. Attempting to use server-side API endpoint."
+    );
+  }
 
-    // Check if provider is configured
-    if (!isProviderConfigured(provider)) {
-      throw new Error(
-        `AI provider ${provider} is not properly configured. Missing API key.`
+  try {
+    // Use the server-side API endpoint
+    const response = await fetch("/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: input.agentRole,
+        prompt: input.prompt,
+        character: input.playerCharacter,
+        location: input.currentLocation,
+        context: {
+          conversationHistory: input.conversationHistory,
+          mood: input.currentLocation?.dangerLevel || DangerLevel.LOW,
+          temperature: config.temperature || 0.7,
+          maxTokens: config.maxTokens || 1024,
+          modelName: config.modelName || GroqModel.LLAMA_4_MAVRICK,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      // Handle error response
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage =
+        errorData.error ||
+        `API error: ${response.status} ${response.statusText}`;
+      console.error("AI response error:", errorMessage);
+
+      if (process.env.NODE_ENV === "development") {
+        return generateMockResponse(
+          input,
+          config.provider || AIProvider.GROQ,
+          errorMessage
+        );
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    // Parse response
+    const aiResponse = await response.json();
+    return parseAIResponse(aiResponse, input);
+  } catch (error) {
+    console.error("Error in getAIResponse:", error);
+
+    if (process.env.NODE_ENV === "development") {
+      return generateMockResponse(
+        input,
+        config.provider || AIProvider.GROQ,
+        error instanceof Error ? error.message : "Unknown error occurred"
       );
     }
 
-    const providerConfig = getProviderConfig(provider);
+    throw error;
+  }
+}
 
-    // Initialize the Groq client
-    const groq = new Groq({
-      apiKey: providerConfig.apiKey,
-    });
+/**
+ * Generate a mock AI response for development purposes when API keys are missing
+ * @param context - The request context
+ * @param provider - The AI provider that was attempted
+ * @param errorDetails - Optional error details to include in the response
+ * @returns A mock AI response
+ */
+function generateMockResponse(
+  context: AIRequestContext,
+  provider: AIProvider,
+  errorDetails?: string
+): AIResponse {
+  console.log(`Generating mock response for ${provider} with context:`, {
+    agentRole: context.agentRole,
+    prompt: context.prompt,
+    error: errorDetails || "No API key configured",
+  });
 
-    // Get system prompt based on agent role
-    const systemPrompt = getSystemPrompt(context.agentRole, context);
+  // Get location name if available
+  const locationName = context.currentLocation?.name || "this mysterious place";
 
-    // Prepare conversation history for the model
-    const trimmedHistory = trimConversationContext(context.conversationHistory);
+  // Create an appropriate mock message based on whether error details are provided
+  const mockText = errorDetails
+    ? `[MOCK RESPONSE] You are in ${locationName}. The system encountered an error: ${errorDetails}. This is a development fallback response.`
+    : `[MOCK RESPONSE] You are in ${locationName}. The ${provider.toUpperCase()} API key is missing, so this is a development fallback response. Please configure your API key to see actual AI-generated content.`;
 
-    // Format conversation history for Groq
-    const messages = [
-      { role: "system", content: systemPrompt },
-      ...trimmedHistory.map((msg) => ({
-        role: msg.role === "npc" ? "assistant" : msg.role, // Map "npc" to "assistant" for LLM
-        content: msg.content,
-      })),
-      { role: "user", content: context.prompt },
-    ];
+  return {
+    text: mockText,
+    choices: [
+      { id: "mock-1", text: "Continue exploring (mock choice)" },
+      { id: "mock-2", text: "Check for hidden secrets (mock choice)" },
+      { id: "mock-3", text: "Return to safety (mock choice)" },
+    ],
+    metadata: {
+      mood: NarrativeMood.NEUTRAL,
+      danger: DangerLevel.NONE,
+      isMockResponse: true,
+      mockReason: errorDetails || "Missing API key",
+    },
+  };
+}
 
-    // Construct a simplified output format instruction
-    const formatInstruction = `
-    Important: Format your response in JSON with these fields:
-    1. "text": Your main narrative text response
-    2. "choices": A simple array of 2-4 strings representing player options/choices
+/**
+ * Parse the raw AI response text into a structured AIResponse object
+ * @param responseText - The raw response text from the AI
+ * @param context - The original request context
+ * @returns A structured AI response
+ */
+function parseAIResponse(
+  responseText: string,
+  context: AIRequestContext
+): AIResponse {
+  try {
+    // Parse the JSON response - should be valid JSON since we used json_object format
+    const parsedResponse = JSON.parse(responseText);
 
-    Example format:
-    {
-      "text": "The narrative description...",
-      "choices": ["First option", "Second option"]
-    }
+    // Extract text and raw choices
+    const narrativeText = parsedResponse.text || "The narrative continues...";
+    const rawChoices = Array.isArray(parsedResponse.choices)
+      ? parsedResponse.choices
+      : [];
 
-    Do not include any other fields or explanations outside this JSON structure.`;
+    // Generate properly formatted choices
+    const formattedChoices = rawChoices.map(
+      (choice: string, index: number) => ({
+        id: `choice_${index + 1}`,
+        text: choice,
+      })
+    );
 
-    // Add the formatting instruction to the user's last message
-    messages[messages.length - 1].content += `\n\n${formatInstruction}`;
+    // Generate metadata programmatically based on context
+    const metadata = generateMetadata(narrativeText, context);
 
-    // Call Groq API with the prepared messages
-    const completion = await groq.chat.completions.create({
-      messages: messages as any, // Type assertion for compatibility
-      model: options.modelName || providerConfig.defaultModel,
-      temperature: options.temperature ?? providerConfig.temperature,
-      max_tokens: options.maxTokens ?? providerConfig.maxTokens,
-    });
-
-    // Extract the response text
-    const responseText = completion.choices[0]?.message?.content || "";
-
-    try {
-      // Try to parse the JSON response
-      const jsonStart = responseText.indexOf("{");
-      const jsonEnd = responseText.lastIndexOf("}");
-
-      if (jsonStart >= 0 && jsonEnd > jsonStart) {
-        const jsonStr = responseText.substring(jsonStart, jsonEnd + 1);
-        const parsedResponse = JSON.parse(jsonStr);
-
-        // Extract text and raw choices
-        const narrativeText =
-          parsedResponse.text || "The narrative continues...";
-        const rawChoices = Array.isArray(parsedResponse.choices)
-          ? parsedResponse.choices
-          : [];
-
-        // Generate properly formatted choices
-        const formattedChoices = rawChoices.map(
-          (choice: string, index: number) => ({
-            id: `choice_${index + 1}`,
-            text: choice,
-          })
-        );
-
-        // Generate metadata programmatically based on context
-        const metadata = generateMetadata(narrativeText, context);
-
-        // Return the properly formatted AIResponse
-        return {
-          text: narrativeText,
-          choices:
-            formattedChoices.length > 0
-              ? formattedChoices
-              : generateDefaultChoices(),
-          metadata: metadata,
-        };
-      }
-    } catch (parseError) {
-      console.error("Error parsing AI response as JSON:", parseError);
-    }
-
-    // Fallback if JSON parsing fails
+    // Return the properly formatted AIResponse
     return {
-      text:
-        extractPlainTextNarrative(responseText) || "The narrative continues...",
+      text: narrativeText,
+      choices:
+        formattedChoices.length > 0
+          ? formattedChoices
+          : generateDefaultChoices(),
+      metadata: metadata,
+    };
+  } catch (parseError) {
+    console.error("Error parsing AI response as JSON:", parseError);
+
+    // Fallback if JSON parsing fails - this should be rare with response_format: json_object
+    return {
+      text: "The narrative takes an unexpected turn... (There was an issue with the storyteller's response.)",
       choices: generateDefaultChoices(),
       metadata: generateMetadata("", context),
-    };
-  } catch (error) {
-    console.error("Error calling AI API:", error);
-
-    // Graceful error handling with fallback response
-    return {
-      text: "As you proceed on your journey, the path ahead seems momentarily unclear... (There was an issue connecting to the storyteller. Please try again shortly.)",
-      choices: [
-        {
-          id: "retry",
-          text: "Try again",
-        },
-        {
-          id: "wait",
-          text: "Wait a moment",
-        },
-      ],
-      metadata: {
-        mood: NarrativeMood.MYSTERIOUS,
-        danger: DangerLevel.NONE,
-      },
     };
   }
 }

@@ -26,9 +26,24 @@ interface AIProviderConfig {
  */
 export enum GroqModel {
   MIXTRAL_8X7B = "mixtral-8x7b-32768",
+  LLAMA_4_MAVRICK = "meta-llama/llama-4-maverick-17b-128e-instruct",
   LLAMA_3_8B = "llama3-8b-8192",
   LLAMA_3_70B = "llama3-70b-8192",
   GEMMA_7B = "gemma-7b-it",
+}
+
+/**
+ * Safely gets environment variables, with debug logs in development
+ */
+function getEnvVar(key: string, defaultValue: string = ""): string {
+  const value = process.env[key] || defaultValue;
+
+  // In development, log whether we found the key (without revealing the value)
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[ENV CONFIG] ${key} is ${value ? "set" : "not set"}`);
+  }
+
+  return value;
 }
 
 /**
@@ -36,10 +51,10 @@ export enum GroqModel {
  */
 const defaultProviderConfig: Record<AIProvider, AIProviderConfig> = {
   [AIProvider.GROQ]: {
-    apiKey: process.env.GROQ_API_KEY || "",
-    defaultModel: GroqModel.MIXTRAL_8X7B,
-    maxTokens: 1000,
-    temperature: 0.7,
+    apiKey: getEnvVar("GROQ_API_KEY"),
+    defaultModel: GroqModel.LLAMA_4_MAVRICK,
+    maxTokens: 1024,
+    temperature: 0.8,
   },
 };
 
@@ -63,7 +78,18 @@ export function isProviderConfigured(
   provider: AIProvider = AIProvider.GROQ
 ): boolean {
   const config = getProviderConfig(provider);
-  return Boolean(config.apiKey);
+  const isConfigured = Boolean(config.apiKey && config.apiKey.trim() !== "");
+
+  if (process.env.NODE_ENV === "development" && !isConfigured) {
+    console.warn(
+      `[CONFIG WARNING] ${provider} API key is not properly configured.`
+    );
+    console.warn(
+      `Make sure you have GROQ_API_KEY set in your .env.local file.`
+    );
+  }
+
+  return isConfigured;
 }
 
 /**
