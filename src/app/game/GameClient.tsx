@@ -91,6 +91,7 @@ function GameInterface({ characterId }: { characterId: string }) {
     null
   );
   const [isProcessing, setIsProcessing] = useState(false);
+  const [loadingFromDB, setLoadingFromDB] = useState(false);
   const [playerCharacter, setPlayerCharacter] = useState<GameCharacter | null>(
     null
   );
@@ -102,7 +103,10 @@ function GameInterface({ characterId }: { characterId: string }) {
   useEffect(() => {
     async function initializeGame() {
       try {
-        setIsProcessing(true); // Set isProcessing at the beginning for a single loading screen
+        // Only set processing flag if not already in a loading state
+        if (!isProcessing) {
+          setIsProcessing(true);
+        }
 
         if (!characterId) {
           router.push("/characters");
@@ -112,7 +116,9 @@ function GameInterface({ characterId }: { characterId: string }) {
         // Only try to resume the game if we don't already have a session and game state
         if (!session || !gameState) {
           // Attempt to resume an existing game, or start a new one if none exists
+          setLoadingFromDB(true);
           await resumeGame(characterId);
+          setLoadingFromDB(false);
         }
 
         // At this point we should have a game state
@@ -152,7 +158,9 @@ function GameInterface({ characterId }: { characterId: string }) {
           // Load narrative history if available
           try {
             // Load narrative history from the database
+            setLoadingFromDB(true);
             const history = await loadNarrativeHistory();
+            setLoadingFromDB(false);
 
             if (history && history.length > 0) {
               // Convert the loaded history to NarrativeItem format with proper type casting
@@ -213,6 +221,7 @@ function GameInterface({ characterId }: { characterId: string }) {
         console.error("Failed to initialize game:", err);
       } finally {
         setIsProcessing(false); // Reset processing state after everything is done
+        setLoadingFromDB(false);
       }
     }
 
@@ -231,6 +240,7 @@ function GameInterface({ characterId }: { characterId: string }) {
     session,
     gameState,
     loadNarrativeHistory,
+    isProcessing,
   ]);
 
   // Save narrative history when it changes
@@ -272,7 +282,9 @@ function GameInterface({ characterId }: { characterId: string }) {
     if (gameState && !currentResponse && !isProcessing && initialized) {
       const setupNarrative = async () => {
         try {
-          setIsProcessing(true);
+          // Set a local processing flag to avoid setting the global flag
+          // This prevents showing the loading screen again
+          let localProcessing = true;
 
           // Only create a character if we don't already have one
           if (!playerCharacter) {
@@ -315,6 +327,9 @@ function GameInterface({ characterId }: { characterId: string }) {
 
           // Start the narrative if we don't have any history
           if (narrativeHistory.length === 0) {
+            // Only now set the global processing flag when we actually need to show the loading screen
+            setIsProcessing(true);
+
             const initialPrompt = "I look around, taking in my surroundings.";
             try {
               const response = await generateNarrativeResponse(
@@ -399,6 +414,8 @@ function GameInterface({ characterId }: { characterId: string }) {
               ]);
             }
           }
+
+          localProcessing = false;
         } catch (err) {
           console.error("Failed to start narrative:", err);
           // Add global error state for component rendering
@@ -649,12 +666,13 @@ function GameInterface({ characterId }: { characterId: string }) {
     }
   };
 
+  // Loading screen UI
   if (isLoading || isProcessing) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <p className="text-xl text-amber-400">
-          {isLoading ? "Loading your adventure..." : "The story unfolds..."}
+          {loadingFromDB ? "Loading your adventure..." : "The story unfolds..."}
         </p>
       </div>
     );
