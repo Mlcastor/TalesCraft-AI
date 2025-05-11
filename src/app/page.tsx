@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -18,16 +19,37 @@ const getImagePath = (name: string) => {
 
 export default function Home() {
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const [nextBgIndex, setNextBgIndex] = useState(1); // Track the next background to preload
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const { isLoaded, userId } = useAuth();
   const router = useRouter();
 
-  const backgrounds = [
-    getImagePath("bg-fantasy"),
-    getImagePath("bg-scifi"),
-    getImagePath("bg-dungeon"),
-    getImagePath("bg-cyberpunk"),
-    getImagePath("bg-postapocalyptic"),
-  ];
+  const backgrounds = useMemo(
+    () => [
+      getImagePath("bg-fantasy"),
+      getImagePath("bg-scifi"),
+      getImagePath("bg-dungeon"),
+      getImagePath("bg-cyberpunk"),
+      getImagePath("bg-postapocalyptic"),
+    ],
+    []
+  );
+
+  const changeBackground = useCallback(() => {
+    setIsTransitioning(true);
+
+    // Prepare the next background index
+    const nextIndex = (currentBgIndex + 1) % backgrounds.length;
+    setNextBgIndex(nextIndex);
+
+    // After a short delay, update the current background and reset transition state
+    setTimeout(() => {
+      setCurrentBgIndex(nextIndex);
+      setIsTransitioning(false);
+      // Preload the next image in sequence
+      setNextBgIndex((nextIndex + 1) % backgrounds.length);
+    }, 1000); // 1 second for transition
+  }, [currentBgIndex, backgrounds.length]);
 
   useEffect(() => {
     // Skip animation for users who prefer reduced motion
@@ -38,12 +60,9 @@ export default function Home() {
       return;
     }
 
-    const interval = setInterval(() => {
-      setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
-    }, 7000); // Change every 7 seconds
-
+    const interval = setInterval(changeBackground, 7000); // Change every 7 seconds
     return () => clearInterval(interval);
-  }, [backgrounds.length]);
+  }, [changeBackground]);
 
   /**
    * Handles redirection based on authentication status
@@ -62,19 +81,37 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
       {/* Hero Section with changing background */}
       <div className="relative w-full flex flex-col items-center justify-center px-4 py-24 text-center overflow-hidden">
-        {/* Background images with crossfade */}
-        {backgrounds.map((bg, index) => (
+        {/* Background container - only render current and next backgrounds */}
+        <div className="absolute top-0 left-0 w-full h-full">
+          {/* Current background */}
           <div
-            key={bg}
-            className="absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover transition-opacity duration-2000"
+            className={`absolute inset-0 bg-no-repeat bg-cover transition-opacity ${
+              isTransitioning ? "opacity-0" : "opacity-20"
+            }`}
             style={{
-              backgroundImage: `url(${bg})`,
-              opacity: currentBgIndex === index ? 0.2 : 0,
-              zIndex: 0,
+              backgroundImage: `url(${backgrounds[currentBgIndex]})`,
+              transitionDuration: "1000ms",
+              willChange: "opacity",
             }}
             aria-hidden="true"
           />
-        ))}
+
+          {/* Next background (preloaded) */}
+          <div
+            className={`absolute inset-0 bg-no-repeat bg-cover transition-opacity ${
+              isTransitioning ? "opacity-20" : "opacity-0"
+            }`}
+            style={{
+              backgroundImage: `url(${backgrounds[nextBgIndex]})`,
+              transitionDuration: "1000ms",
+              willChange: "opacity",
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Preload the next image without displaying it */}
+          <link rel="preload" as="image" href={backgrounds[nextBgIndex]} />
+        </div>
 
         <div className="z-10 max-w-5xl">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500">
