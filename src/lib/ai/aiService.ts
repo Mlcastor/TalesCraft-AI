@@ -2,6 +2,14 @@
  * AI Service for handling LLM interactions in Tales Craft AI
  */
 
+import { Groq } from "groq-sdk";
+import {
+  AIProvider,
+  GroqModel,
+  getProviderConfig,
+  isProviderConfigured,
+} from "./aiConfig";
+
 /**
  * Represents the possible AI agent roles in the game
  */
@@ -105,8 +113,8 @@ export interface Location {
 export interface PreviousDecision {
   decisionPointId: string;
   context: string;
-  playerChoice: string;
-  consequences: string;
+  playerChoice: number;
+  consequences: Record<string, any>;
   relatedNpcIds?: string[];
   location?: string;
   timestamp: string;
@@ -145,42 +153,262 @@ export interface AIRequestContext {
 }
 
 /**
+ * Context history for AI requests
+ */
+export interface AIContextHistory {
+  contextType: string;
+  promptTokens: number;
+  completionTokens: number;
+  promptText?: string;
+  completionText?: string;
+  timestamp: string;
+  relevanceScore?: number;
+}
+
+/**
+ * Configuration options for AI response generation
+ */
+export interface AIResponseOptions {
+  modelName?: string;
+  temperature?: number;
+  maxTokens?: number;
+  provider?: AIProvider;
+  streamResponse?: boolean;
+}
+
+/**
  * Sends a request to the AI LLM and returns the response
  *
  * @param context - The context information for the AI request
+ * @param options - Configuration options for the request
  * @returns Promise with the AI response
  */
 export async function getAIResponse(
-  context: AIRequestContext
+  context: AIRequestContext,
+  options: AIResponseOptions = {}
 ): Promise<AIResponse> {
-  // This is a placeholder - will be implemented when integrating with actual LLM API
+  try {
+    // Get provider configuration
+    const provider = options.provider || AIProvider.GROQ;
+
+    // Check if provider is configured
+    if (!isProviderConfigured(provider)) {
+      throw new Error(
+        `AI provider ${provider} is not properly configured. Missing API key.`
+      );
+    }
+
+    const providerConfig = getProviderConfig(provider);
+
+    // Initialize the Groq client
+    const groq = new Groq({
+      apiKey: providerConfig.apiKey,
+    });
+
+    // Get system prompt based on agent role
+    const systemPrompt = getSystemPrompt(context.agentRole, context);
+
+    // Prepare conversation history for the model
+    const trimmedHistory = trimConversationContext(context.conversationHistory);
+
+    // Format conversation history for Groq
+    const messages = [
+      { role: "system", content: systemPrompt },
+      ...trimmedHistory.map((msg) => ({
+        role: msg.role === "npc" ? "assistant" : msg.role, // Map "npc" to "assistant" for LLM
+        content: msg.content,
+      })),
+      { role: "user", content: context.prompt },
+    ];
+
+    // Construct a simplified output format instruction
+    const formatInstruction = `
+    Important: Format your response in JSON with these fields:
+    1. "text": Your main narrative text response
+    2. "choices": A simple array of 2-4 strings representing player options/choices
+
+    Example format:
+    {
+      "text": "The narrative description...",
+      "choices": ["First option", "Second option"]
+    }
+
+    Do not include any other fields or explanations outside this JSON structure.`;
+
+    // Add the formatting instruction to the user's last message
+    messages[messages.length - 1].content += `\n\n${formatInstruction}`;
+
+    // Call Groq API with the prepared messages
+    const completion = await groq.chat.completions.create({
+      messages: messages as any, // Type assertion for compatibility
+      model: options.modelName || providerConfig.defaultModel,
+      temperature: options.temperature ?? providerConfig.temperature,
+      max_tokens: options.maxTokens ?? providerConfig.maxTokens,
+    });
+
+    // Extract the response text
+    const responseText = completion.choices[0]?.message?.content || "";
+
+    try {
+      // Try to parse the JSON response
+      const jsonStart = responseText.indexOf("{");
+      const jsonEnd = responseText.lastIndexOf("}");
+
+      if (jsonStart >= 0 && jsonEnd > jsonStart) {
+        const jsonStr = responseText.substring(jsonStart, jsonEnd + 1);
+        const parsedResponse = JSON.parse(jsonStr);
+
+        // Extract text and raw choices
+        const narrativeText =
+          parsedResponse.text || "The narrative continues...";
+        const rawChoices = Array.isArray(parsedResponse.choices)
+          ? parsedResponse.choices
+          : [];
+
+        // Generate properly formatted choices
+        const formattedChoices = rawChoices.map(
+          (choice: string, index: number) => ({
+            id: `choice_${index + 1}`,
+            text: choice,
+          })
+        );
+
+        // Generate metadata programmatically based on context
+        const metadata = generateMetadata(narrativeText, context);
+
+        // Return the properly formatted AIResponse
+        return {
+          text: narrativeText,
+          choices:
+            formattedChoices.length > 0
+              ? formattedChoices
+              : generateDefaultChoices(),
+          metadata: metadata,
+        };
+      }
+    } catch (parseError) {
+      console.error("Error parsing AI response as JSON:", parseError);
+    }
+
+    // Fallback if JSON parsing fails
+    return {
+      text:
+        extractPlainTextNarrative(responseText) || "The narrative continues...",
+      choices: generateDefaultChoices(),
+      metadata: generateMetadata("", context),
+    };
+  } catch (error) {
+    console.error("Error calling AI API:", error);
+
+    // Graceful error handling with fallback response
+    return {
+      text: "As you proceed on your journey, the path ahead seems momentarily unclear... (There was an issue connecting to the storyteller. Please try again shortly.)",
+      choices: [
+        {
+          id: "retry",
+          text: "Try again",
+        },
+        {
+          id: "wait",
+          text: "Wait a moment",
+        },
+      ],
+      metadata: {
+        mood: NarrativeMood.MYSTERIOUS,
+        danger: DangerLevel.NONE,
+      },
+    };
+  }
+}
+
+/**
+ * Generates metadata based on narrative text and context
+ *
+ * @param narrativeText - The AI-generated narrative text
+ * @param context - The AI request context
+ * @returns Generated metadata for the response
+ */
+function generateMetadata(
+  narrativeText: string,
+  context: AIRequestContext
+): AIResponseMetadata {
+  // Get danger level from context if available
+  const dangerLevel = context.currentLocation?.dangerLevel || DangerLevel.LOW;
+
+  // Determine mood based on narrative content (simplified logic)
+  let mood = NarrativeMood.NEUTRAL;
+  if (
+    narrativeText.toLowerCase().includes("danger") ||
+    narrativeText.toLowerCase().includes("threat")
+  ) {
+    mood = NarrativeMood.HOSTILE;
+  } else if (
+    narrativeText.toLowerCase().includes("mystery") ||
+    narrativeText.toLowerCase().includes("strange")
+  ) {
+    mood = NarrativeMood.MYSTERIOUS;
+  } else if (
+    narrativeText.toLowerCase().includes("joy") ||
+    narrativeText.toLowerCase().includes("happy")
+  ) {
+    mood = NarrativeMood.JOYFUL;
+  }
+
+  // Extract location relevance
+  const locationRelevance = context.currentLocation
+    ? [context.currentLocation.name]
+    : [];
+
+  // Extract NPC mentions if an NPC is present
+  const npcMentioned = context.currentNpc ? [context.currentNpc.name] : [];
+
+  // Use connected locations for suggested next locations
+  const suggestedNextLocations =
+    context.currentLocation?.connectedLocations || [];
+
   return {
-    text: "This is a placeholder AI response. The actual LLM integration will be implemented later.",
-    choices: [
-      {
-        id: "option1",
-        text: "Continue exploring this area",
-        consequence: "You might discover hidden treasures.",
-      },
-      {
-        id: "option2",
-        text: "Talk to the mysterious stranger",
-        consequence: "You might learn valuable information.",
-      },
-      {
-        id: "option3",
-        text: "Move to the next location",
-        consequence: "You'll progress in your journey.",
-      },
-    ],
-    metadata: {
-      mood: NarrativeMood.MYSTERIOUS,
-      danger: DangerLevel.LOW,
-      locationRelevance: ["ancient ruins", "forgotten temple"],
-      npcMentioned: ["village elder", "mysterious stranger"],
-      loreRevealed: ["ancient civilization"],
-    },
+    mood,
+    danger: dangerLevel,
+    locationRelevance,
+    npcMentioned,
+    suggestedNextLocations,
+    loreRevealed: [], // Can be populated with more sophisticated logic in the future
   };
+}
+
+/**
+ * Generates default choices when none are available
+ *
+ * @returns Default set of choices
+ */
+function generateDefaultChoices() {
+  return [
+    {
+      id: "choice_1",
+      text: "Continue exploring",
+    },
+    {
+      id: "choice_2",
+      text: "Take a different approach",
+    },
+  ];
+}
+
+/**
+ * Extracts narrative text from API response when JSON parsing fails
+ *
+ * @param responseText - The raw response from the API
+ * @returns Extracted narrative text or empty string
+ */
+function extractPlainTextNarrative(responseText: string): string {
+  // First try to extract just the narrative part if there seems to be other content
+  const narrativeMatch = responseText.match(/(.+?)(?:(?:choice|option)s?:|{)/i);
+  if (narrativeMatch && narrativeMatch[1]) {
+    return narrativeMatch[1].trim();
+  }
+
+  // Otherwise return the whole text
+  return responseText;
 }
 
 /**
