@@ -47,6 +47,12 @@ interface ExtendedGameState extends Omit<GameState, "characterState"> {
   characterState?: Record<string, any>;
 }
 
+// Define types for narrative history items
+interface NarrativeItem {
+  type: "narrative" | "playerResponse";
+  content: AIResponse | string;
+}
+
 // Wrapper component that provides the GameEngine context
 export default function GameClient({
   characterId,
@@ -72,7 +78,7 @@ function GameInterface({ characterId }: { characterId: string }) {
     useGameEngine();
 
   const [initialized, setInitialized] = useState(false);
-  const [narrativeHistory, setNarrativeHistory] = useState<AIResponse[]>([]);
+  const [narrativeHistory, setNarrativeHistory] = useState<NarrativeItem[]>([]);
   const [currentResponse, setCurrentResponse] = useState<AIResponse | null>(
     null
   );
@@ -175,7 +181,10 @@ function GameInterface({ characterId }: { characterId: string }) {
               }
 
               setCurrentResponse(response);
-              setNarrativeHistory((prev) => [...prev, response]);
+              setNarrativeHistory((prev) => [
+                ...prev,
+                { type: "narrative", content: response },
+              ]);
 
               // Update game state with narrative context
               await updateGameState({
@@ -229,25 +238,27 @@ function GameInterface({ characterId }: { characterId: string }) {
                 }`;
               }
 
+              const errorResponse: AIResponse = {
+                text: errorMessage,
+                choices: errorChoices,
+              };
+
               setNarrativeHistory([
-                {
-                  text: errorMessage,
-                  choices: errorChoices,
-                },
+                { type: "narrative", content: errorResponse },
               ]);
             }
           }
         } catch (err) {
           console.error("Failed to start narrative:", err);
           // Add global error state for component rendering
-          setNarrativeHistory([
-            {
-              text: `An error occurred while setting up the game: ${
-                err instanceof Error ? err.message : "Unknown error"
-              }`,
-              choices: [{ id: "retry", text: "Refresh and try again" }],
-            },
-          ]);
+          const errorResponse: AIResponse = {
+            text: `An error occurred while setting up the game: ${
+              err instanceof Error ? err.message : "Unknown error"
+            }`,
+            choices: [{ id: "retry", text: "Refresh and try again" }],
+          };
+
+          setNarrativeHistory([{ type: "narrative", content: errorResponse }]);
         } finally {
           setIsProcessing(false);
         }
@@ -275,6 +286,12 @@ function GameInterface({ characterId }: { characterId: string }) {
       const selectedChoice =
         currentResponse.choices?.[choiceIndex]?.text || "Unknown choice";
 
+      // Add the player's choice to the narrative history
+      setNarrativeHistory((prev) => [
+        ...prev,
+        { type: "playerResponse", content: selectedChoice },
+      ]);
+
       try {
         // Get the next narrative based on the player's choice
         const nextResponse = await continueNarrative(
@@ -294,7 +311,10 @@ function GameInterface({ characterId }: { characterId: string }) {
 
         // Update state
         setCurrentResponse(nextResponse);
-        setNarrativeHistory((prev) => [...prev, nextResponse]);
+        setNarrativeHistory((prev) => [
+          ...prev,
+          { type: "narrative", content: nextResponse },
+        ]);
 
         // Update game state with new narrative context
         await updateGameState({
@@ -347,7 +367,10 @@ function GameInterface({ characterId }: { characterId: string }) {
         };
 
         setCurrentResponse(errorResponse);
-        setNarrativeHistory((prev) => [...prev, errorResponse]);
+        setNarrativeHistory((prev) => [
+          ...prev,
+          { type: "narrative", content: errorResponse },
+        ]);
       }
     } catch (err) {
       console.error("Failed to process choice:", err);
@@ -364,7 +387,10 @@ function GameInterface({ characterId }: { characterId: string }) {
       };
 
       setCurrentResponse(errorResponse);
-      setNarrativeHistory((prev) => [...prev, errorResponse]);
+      setNarrativeHistory((prev) => [
+        ...prev,
+        { type: "narrative", content: errorResponse },
+      ]);
     } finally {
       setIsProcessing(false);
     }
@@ -439,28 +465,43 @@ function GameInterface({ characterId }: { characterId: string }) {
 
       {/* Narrative history */}
       <div className="flex-grow bg-gray-800 p-4 overflow-y-auto">
-        <div className="space-y-6">
-          {narrativeHistory.map((response, index) => (
-            <div key={index} className="space-y-4">
-              <div className="bg-gray-700 p-4 rounded-lg">
-                <p className="text-white leading-relaxed">{response.text}</p>
-              </div>
-
-              {/* Only show choices for the current response */}
-              {index === narrativeHistory.length - 1 && response.choices && (
-                <div className="space-y-2">
-                  {response.choices.map((choice, choiceIndex) => (
-                    <button
-                      key={choice.id}
-                      onClick={() => handleChoiceSelected(choiceIndex)}
-                      disabled={isProcessing}
-                      className="w-full text-left p-3 bg-amber-700 hover:bg-amber-600 text-white rounded-md transition"
-                    >
-                      {choice.text}
-                    </button>
-                  ))}
+        <div className="space-y-4">
+          {narrativeHistory.map((item, index) => (
+            <div key={index}>
+              {item.type === "narrative" ? (
+                <div className="bg-gray-700 p-4 rounded-lg mb-4">
+                  <p className="text-white leading-relaxed">
+                    {(item.content as AIResponse).text}
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-amber-800 p-3 rounded-lg mb-4 ml-8 border-l-4 border-amber-500">
+                  <p className="text-white leading-relaxed">
+                    <span className="text-amber-300 font-semibold">» </span>
+                    {item.content as string}
+                  </p>
                 </div>
               )}
+
+              {/* Only show choices for the current narrative response at the end */}
+              {index === narrativeHistory.length - 1 &&
+                item.type === "narrative" &&
+                (item.content as AIResponse).choices && (
+                  <div className="space-y-2 mt-4">
+                    {(item.content as AIResponse).choices?.map(
+                      (choice, choiceIndex) => (
+                        <button
+                          key={choice.id}
+                          onClick={() => handleChoiceSelected(choiceIndex)}
+                          disabled={isProcessing}
+                          className="w-full text-left p-3 bg-amber-700 hover:bg-amber-600 text-white rounded-md transition"
+                        >
+                          {choice.text}
+                        </button>
+                      )
+                    )}
+                  </div>
+                )}
             </div>
           ))}
         </div>

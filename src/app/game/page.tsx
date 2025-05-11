@@ -3,15 +3,15 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import GameClient from "./GameClient";
 import { resumeGameSession } from "@/app/api/game/actions";
 
-// Define the proper type for page props
+// Updated interface to match Next.js 15's PageProps constraint
 interface GamePageProps {
-  params: { slug?: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug?: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function GamePage({ searchParams }: GamePageProps) {
-  // Get the search params in a way that's compatible with Next.js 15
-  const searchParamsData = await Promise.resolve(searchParams);
+  // Get the search params by awaiting the Promise
+  const searchParamsData = await searchParams;
 
   // Get the characterId from the resolved search params
   const characterId =
