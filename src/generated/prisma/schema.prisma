@@ -82,6 +82,7 @@ model GameState {
   npcStates        NPCState[]
   decisions        Decision[]
   aiContextHistory AIContextHistory[]
+  narrativeHistory NarrativeHistory[]
 
   @@index([characterId])
   @@index([saveTimestamp(sort: Desc)])
@@ -181,4 +182,18 @@ model AIContextHistory {
   @@index([gameStateId])
   @@index([contextType, timestamp(sort: Desc)])
   @@map("ai_context_history")
+}
+
+// Narrative History model
+model NarrativeHistory {
+  id          String    @id @default(uuid())
+  gameStateId String    @map("game_state_id")
+  type        String // "narrative" or "playerResponse"
+  content     String // Serialized content
+  timestamp   DateTime  @default(now())
+  gameState   GameState @relation(fields: [gameStateId], references: [id], onDelete: Cascade)
+
+  @@index([gameStateId])
+  @@index([timestamp(sort: Asc)])
+  @@map("narrative_history")
 }

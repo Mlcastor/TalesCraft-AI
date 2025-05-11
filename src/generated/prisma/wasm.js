@@ -227,6 +227,14 @@ exports.Prisma.AIContextHistoryScalarFieldEnum = {
   relevanceScore: 'relevanceScore'
 };
 
+exports.Prisma.NarrativeHistoryScalarFieldEnum = {
+  id: 'id',
+  gameStateId: 'gameStateId',
+  type: 'type',
+  content: 'content',
+  timestamp: 'timestamp'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -263,7 +271,8 @@ exports.Prisma.ModelName = {
   LoreCategory: 'LoreCategory',
   WorldLore: 'WorldLore',
   Decision: 'Decision',
-  AIContextHistory: 'AIContextHistory'
+  AIContextHistory: 'AIContextHistory',
+  NarrativeHistory: 'NarrativeHistory'
 };
 
 /**

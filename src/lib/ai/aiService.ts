@@ -2,6 +2,15 @@
  * AI Service for handling LLM interactions in Tales Craft AI
  */
 
+import { Groq } from "groq-sdk";
+import {
+  AIProvider,
+  GroqModel,
+  getProviderConfig,
+  isProviderConfigured,
+} from "./aiConfig";
+import { debugEnvironmentVariables } from "./debugEnv";
+
 /**
  * Represents the possible AI agent roles in the game
  */
@@ -105,8 +114,8 @@ export interface Location {
 export interface PreviousDecision {
   decisionPointId: string;
   context: string;
-  playerChoice: string;
-  consequences: string;
+  playerChoice: number;
+  consequences: Record<string, any>;
   relatedNpcIds?: string[];
   location?: string;
   timestamp: string;
@@ -145,42 +154,289 @@ export interface AIRequestContext {
 }
 
 /**
- * Sends a request to the AI LLM and returns the response
+ * Context history for AI requests
+ */
+export interface AIContextHistory {
+  contextType: string;
+  promptTokens: number;
+  completionTokens: number;
+  promptText?: string;
+  completionText?: string;
+  timestamp: string;
+  relevanceScore?: number;
+}
+
+/**
+ * Configuration options for AI response generation
+ */
+export interface AIResponseOptions {
+  modelName?: string;
+  temperature?: number;
+  maxTokens?: number;
+  provider?: AIProvider;
+  streamResponse?: boolean;
+}
+
+/**
+ * Get an AI response for the given input
  *
- * @param context - The context information for the AI request
- * @returns Promise with the AI response
+ * @param input The input data for the AI request
+ * @param config Configuration options for the AI provider
+ * @returns A Promise that resolves to an AIResponse
  */
 export async function getAIResponse(
-  context: AIRequestContext
+  input: AIRequestContext,
+  config: AIResponseOptions = {}
 ): Promise<AIResponse> {
-  // This is a placeholder - will be implemented when integrating with actual LLM API
+  // For backward compatibility, continue logging if API key is properly configured
+  const isConfigured = isProviderConfigured();
+  if (!isConfigured) {
+    console.warn(
+      "AI Provider is not properly configured. Attempting to use server-side API endpoint."
+    );
+  }
+
+  try {
+    // Use the server-side API endpoint
+    const response = await fetch("/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: input.agentRole,
+        prompt: input.prompt,
+        character: input.playerCharacter,
+        location: input.currentLocation,
+        context: {
+          conversationHistory: input.conversationHistory,
+          mood: input.currentLocation?.dangerLevel || DangerLevel.LOW,
+          temperature: config.temperature || 0.7,
+          maxTokens: config.maxTokens || 1024,
+          modelName: config.modelName || GroqModel.LLAMA_4_MAVRICK,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      // Handle error response
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage =
+        errorData.error ||
+        `API error: ${response.status} ${response.statusText}`;
+      console.error("AI response error:", errorMessage);
+
+      if (process.env.NODE_ENV === "development") {
+        return generateMockResponse(
+          input,
+          config.provider || AIProvider.GROQ,
+          errorMessage
+        );
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    // Parse response
+    const aiResponse = await response.json();
+    return parseAIResponse(aiResponse, input);
+  } catch (error) {
+    console.error("Error in getAIResponse:", error);
+
+    if (process.env.NODE_ENV === "development") {
+      return generateMockResponse(
+        input,
+        config.provider || AIProvider.GROQ,
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * Generate a mock AI response for development purposes when API keys are missing
+ * @param context - The request context
+ * @param provider - The AI provider that was attempted
+ * @param errorDetails - Optional error details to include in the response
+ * @returns A mock AI response
+ */
+function generateMockResponse(
+  context: AIRequestContext,
+  provider: AIProvider,
+  errorDetails?: string
+): AIResponse {
+  console.log(`Generating mock response for ${provider} with context:`, {
+    agentRole: context.agentRole,
+    prompt: context.prompt,
+    error: errorDetails || "No API key configured",
+  });
+
+  // Get location name if available
+  const locationName = context.currentLocation?.name || "this mysterious place";
+
+  // Create an appropriate mock message based on whether error details are provided
+  const mockText = errorDetails
+    ? `[MOCK RESPONSE] You are in ${locationName}. The system encountered an error: ${errorDetails}. This is a development fallback response.`
+    : `[MOCK RESPONSE] You are in ${locationName}. The ${provider.toUpperCase()} API key is missing, so this is a development fallback response. Please configure your API key to see actual AI-generated content.`;
+
   return {
-    text: "This is a placeholder AI response. The actual LLM integration will be implemented later.",
+    text: mockText,
     choices: [
-      {
-        id: "option1",
-        text: "Continue exploring this area",
-        consequence: "You might discover hidden treasures.",
-      },
-      {
-        id: "option2",
-        text: "Talk to the mysterious stranger",
-        consequence: "You might learn valuable information.",
-      },
-      {
-        id: "option3",
-        text: "Move to the next location",
-        consequence: "You'll progress in your journey.",
-      },
+      { id: "mock-1", text: "Continue exploring (mock choice)" },
+      { id: "mock-2", text: "Check for hidden secrets (mock choice)" },
+      { id: "mock-3", text: "Return to safety (mock choice)" },
     ],
     metadata: {
-      mood: NarrativeMood.MYSTERIOUS,
-      danger: DangerLevel.LOW,
-      locationRelevance: ["ancient ruins", "forgotten temple"],
-      npcMentioned: ["village elder", "mysterious stranger"],
-      loreRevealed: ["ancient civilization"],
+      mood: NarrativeMood.NEUTRAL,
+      danger: DangerLevel.NONE,
+      isMockResponse: true,
+      mockReason: errorDetails || "Missing API key",
     },
   };
+}
+
+/**
+ * Parse the raw AI response text into a structured AIResponse object
+ * @param responseText - The raw response text from the AI
+ * @param context - The original request context
+ * @returns A structured AI response
+ */
+function parseAIResponse(
+  responseText: string,
+  context: AIRequestContext
+): AIResponse {
+  try {
+    // Parse the JSON response - should be valid JSON since we used json_object format
+    const parsedResponse = JSON.parse(responseText);
+
+    // Extract text and raw choices
+    const narrativeText = parsedResponse.text || "The narrative continues...";
+    const rawChoices = Array.isArray(parsedResponse.choices)
+      ? parsedResponse.choices
+      : [];
+
+    // Generate properly formatted choices
+    const formattedChoices = rawChoices.map(
+      (choice: string, index: number) => ({
+        id: `choice_${index + 1}`,
+        text: choice,
+      })
+    );
+
+    // Generate metadata programmatically based on context
+    const metadata = generateMetadata(narrativeText, context);
+
+    // Return the properly formatted AIResponse
+    return {
+      text: narrativeText,
+      choices:
+        formattedChoices.length > 0
+          ? formattedChoices
+          : generateDefaultChoices(),
+      metadata: metadata,
+    };
+  } catch (parseError) {
+    console.error("Error parsing AI response as JSON:", parseError);
+
+    // Fallback if JSON parsing fails - this should be rare with response_format: json_object
+    return {
+      text: "The narrative takes an unexpected turn... (There was an issue with the storyteller's response.)",
+      choices: generateDefaultChoices(),
+      metadata: generateMetadata("", context),
+    };
+  }
+}
+
+/**
+ * Generates metadata based on narrative text and context
+ *
+ * @param narrativeText - The AI-generated narrative text
+ * @param context - The AI request context
+ * @returns Generated metadata for the response
+ */
+function generateMetadata(
+  narrativeText: string,
+  context: AIRequestContext
+): AIResponseMetadata {
+  // Get danger level from context if available
+  const dangerLevel = context.currentLocation?.dangerLevel || DangerLevel.LOW;
+
+  // Determine mood based on narrative content (simplified logic)
+  let mood = NarrativeMood.NEUTRAL;
+  if (
+    narrativeText.toLowerCase().includes("danger") ||
+    narrativeText.toLowerCase().includes("threat")
+  ) {
+    mood = NarrativeMood.HOSTILE;
+  } else if (
+    narrativeText.toLowerCase().includes("mystery") ||
+    narrativeText.toLowerCase().includes("strange")
+  ) {
+    mood = NarrativeMood.MYSTERIOUS;
+  } else if (
+    narrativeText.toLowerCase().includes("joy") ||
+    narrativeText.toLowerCase().includes("happy")
+  ) {
+    mood = NarrativeMood.JOYFUL;
+  }
+
+  // Extract location relevance
+  const locationRelevance = context.currentLocation
+    ? [context.currentLocation.name]
+    : [];
+
+  // Extract NPC mentions if an NPC is present
+  const npcMentioned = context.currentNpc ? [context.currentNpc.name] : [];
+
+  // Use connected locations for suggested next locations
+  const suggestedNextLocations =
+    context.currentLocation?.connectedLocations || [];
+
+  return {
+    mood,
+    danger: dangerLevel,
+    locationRelevance,
+    npcMentioned,
+    suggestedNextLocations,
+    loreRevealed: [], // Can be populated with more sophisticated logic in the future
+  };
+}
+
+/**
+ * Generates default choices when none are available
+ *
+ * @returns Default set of choices
+ */
+function generateDefaultChoices() {
+  return [
+    {
+      id: "choice_1",
+      text: "Continue exploring",
+    },
+    {
+      id: "choice_2",
+      text: "Take a different approach",
+    },
+  ];
+}
+
+/**
+ * Extracts narrative text from API response when JSON parsing fails
+ *
+ * @param responseText - The raw response from the API
+ * @returns Extracted narrative text or empty string
+ */
+function extractPlainTextNarrative(responseText: string): string {
+  // First try to extract just the narrative part if there seems to be other content
+  const narrativeMatch = responseText.match(/(.+?)(?:(?:choice|option)s?:|{)/i);
+  if (narrativeMatch && narrativeMatch[1]) {
+    return narrativeMatch[1].trim();
+  }
+
+  // Otherwise return the whole text
+  return responseText;
 }
 
 /**
