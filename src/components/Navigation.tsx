@@ -20,10 +20,10 @@ export default function Navigation() {
         <div className="flex items-center gap-6">
           <SignedIn>
             <Link
-              href="/characters"
+              href="/hub"
               className="text-white hover:text-amber-400 transition-colors"
             >
-              My Adventures
+              My Hub
             </Link>
             <Link
               href="/profile"
