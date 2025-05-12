@@ -1,15 +1,16 @@
-import { ClerkProvider } from '@clerk/nextjs';
-import { Inter } from 'next/font/google';
-import { Analytics } from '@vercel/analytics/next';
-import Navigation from '@/components/Navigation';
-import { UserSyncWrapper } from '@/components/UserSyncWrapper';
-import './globals.css';
+import { ClerkProvider } from "@clerk/nextjs";
+import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import Navigation from "@/components/Navigation";
+import { UserSyncWrapper } from "@/components/UserSyncWrapper";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'Tales Craft AI - AI-Powered Text Adventure',
-  description: 'Forge your destiny in an AI-powered text adventure where your choices shape the story',
+  title: "Tales Craft AI - AI-Powered Text Adventure Game",
+  description:
+    "Forge your destiny in an AI-powered text adventure game where your choices shape the story",
 };
 
 export default function RootLayout({
@@ -22,9 +23,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Navigation />
-          <UserSyncWrapper>
-            {children}
-          </UserSyncWrapper>
+          <UserSyncWrapper>{children}</UserSyncWrapper>
           <Analytics />
         </body>
       </html>

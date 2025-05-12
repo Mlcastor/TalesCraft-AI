@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { UserButton, SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import {
+  UserButton,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 
 export default function Navigation() {
   return (
@@ -13,24 +19,30 @@ export default function Navigation() {
 
         <div className="flex items-center gap-6">
           <SignedIn>
-            <Link href="/game" className="text-white hover:text-amber-400 transition-colors">
+            <Link
+              href="/characters"
+              className="text-white hover:text-amber-400 transition-colors"
+            >
               My Adventures
             </Link>
-            <Link href="/profile" className="text-white hover:text-amber-400 transition-colors">
+            <Link
+              href="/profile"
+              className="text-white hover:text-amber-400 transition-colors"
+            >
               Profile
             </Link>
             <UserButton afterSignOutUrl="/" />
           </SignedIn>
-          
+
           <SignedOut>
-            <Link 
-              href="/sign-in" 
+            <Link
+              href="/sign-in"
               className="text-white hover:text-amber-400 transition-colors"
             >
               Sign In
             </Link>
-            <Link 
-              href="/sign-up" 
+            <Link
+              href="/sign-up"
               className="px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-white rounded-md hover:from-amber-600 hover:to-yellow-700 transition-colors"
             >
               Sign Up
@@ -40,4 +52,4 @@ export default function Navigation() {
       </div>
     </nav>
   );
-} 
+}
