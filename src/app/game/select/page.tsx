@@ -5,15 +5,19 @@ import { characterRepository } from "@/lib/db/character";
 import { upsertCharacterWorldState } from "@/lib/db/characterWorldState";
 import { getWorldWithStartingLocations } from "@/lib/db/world";
 
+// Updated interface to match Next.js 15's PageProps constraint
+interface GameSelectPageProps {
+  params: Promise<{ [key: string]: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
 /**
  * Game Select Page - Handles character and world selection before launching the game
- * This page redirects to the game page with the selected characters and world
+ * This page redirects to the game page with the selected character and world
  */
 export default async function GameSelectPage({
   searchParams,
-}: {
-  searchParams: { characterId: string; worldId: string };
-}) {
+}: GameSelectPageProps) {
   const { userId } = await auth();
   const user = await currentUser();
 
@@ -21,7 +25,23 @@ export default async function GameSelectPage({
     redirect("/sign-in");
   }
 
-  const { characterId, worldId } = searchParams;
+  // Get the search params by awaiting the Promise
+  const searchParamsData = await searchParams;
+
+  // Get the characterId and worldId from the resolved search params
+  const characterId =
+    typeof searchParamsData.characterId === "string"
+      ? searchParamsData.characterId
+      : Array.isArray(searchParamsData.characterId)
+      ? searchParamsData.characterId[0]
+      : undefined;
+
+  const worldId =
+    typeof searchParamsData.worldId === "string"
+      ? searchParamsData.worldId
+      : Array.isArray(searchParamsData.worldId)
+      ? searchParamsData.worldId[0]
+      : undefined;
 
   // Validate parameters
   if (!characterId || !worldId) {

@@ -1,6 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getWorldWithRelatedData } from "@/lib/db/world";
 import { characterRepository } from "@/lib/db/character";
 import {
@@ -9,16 +10,18 @@ import {
 } from "@/lib/db/characterWorldState";
 import { CharacterWorldStateWithWorld } from "@/types/database";
 
+// Updated interface to match Next.js 15's PageProps constraint
 interface WorldSelectionPageProps {
-  params: {
-    worldId: string;
-  };
+  params: Promise<{ worldId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function WorldSelectionPage({
   params,
 }: WorldSelectionPageProps) {
-  const { worldId } = params;
+  // Get the params by awaiting the Promise
+  const { worldId } = await params;
+
   const { userId } = await auth();
   const user = await currentUser();
 
@@ -90,10 +93,13 @@ export default async function WorldSelectionPage({
         {/* World Banner/Image */}
         {world.thumbnailUrl && (
           <div className="mb-8 rounded-lg overflow-hidden h-48 md:h-64 bg-gray-700">
-            <img
+            <Image
               src={world.thumbnailUrl}
               alt={world.name}
+              width={1024}
+              height={256}
               className="w-full h-full object-cover"
+              priority
             />
           </div>
         )}
