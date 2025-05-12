@@ -67,7 +67,6 @@ model World {
 
 // Character-World Association
 model CharacterWorldState {
-  id              String    @id @default(uuid())
   characterId     String    @map("character_id")
   worldId         String    @map("world_id")
   currentLocation String?   @map("current_location")
@@ -75,6 +74,7 @@ model CharacterWorldState {
   character       Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
   world           World     @relation(fields: [worldId], references: [id], onDelete: Cascade)
 
+  @@id([characterId, worldId])
   @@unique([characterId, worldId])
   @@map("character_world_states")
 }

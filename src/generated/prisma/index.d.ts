@@ -5835,7 +5835,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateMinAggregateOutputType = {
-    id: string | null
     characterId: string | null
     worldId: string | null
     currentLocation: string | null
@@ -5843,7 +5842,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateMaxAggregateOutputType = {
-    id: string | null
     characterId: string | null
     worldId: string | null
     currentLocation: string | null
@@ -5851,7 +5849,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCountAggregateOutputType = {
-    id: number
     characterId: number
     worldId: number
     currentLocation: number
@@ -5861,7 +5858,6 @@ export namespace Prisma {
 
 
   export type CharacterWorldStateMinAggregateInputType = {
-    id?: true
     characterId?: true
     worldId?: true
     currentLocation?: true
@@ -5869,7 +5865,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateMaxAggregateInputType = {
-    id?: true
     characterId?: true
     worldId?: true
     currentLocation?: true
@@ -5877,7 +5872,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCountAggregateInputType = {
-    id?: true
     characterId?: true
     worldId?: true
     currentLocation?: true
@@ -5958,7 +5952,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateGroupByOutputType = {
-    id: string
     characterId: string
     worldId: string
     currentLocation: string | null
@@ -5983,7 +5976,6 @@ export namespace Prisma {
 
 
   export type CharacterWorldStateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     characterId?: boolean
     worldId?: boolean
     currentLocation?: boolean
@@ -5993,7 +5985,6 @@ export namespace Prisma {
   }, ExtArgs["result"]["characterWorldState"]>
 
   export type CharacterWorldStateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     characterId?: boolean
     worldId?: boolean
     currentLocation?: boolean
@@ -6003,7 +5994,6 @@ export namespace Prisma {
   }, ExtArgs["result"]["characterWorldState"]>
 
   export type CharacterWorldStateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
     characterId?: boolean
     worldId?: boolean
     currentLocation?: boolean
@@ -6013,14 +6003,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["characterWorldState"]>
 
   export type CharacterWorldStateSelectScalar = {
-    id?: boolean
     characterId?: boolean
     worldId?: boolean
     currentLocation?: boolean
     lastPlayedAt?: boolean
   }
 
-  export type CharacterWorldStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "characterId" | "worldId" | "currentLocation" | "lastPlayedAt", ExtArgs["result"]["characterWorldState"]>
+  export type CharacterWorldStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"characterId" | "worldId" | "currentLocation" | "lastPlayedAt", ExtArgs["result"]["characterWorldState"]>
   export type CharacterWorldStateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     character?: boolean | CharacterDefaultArgs<ExtArgs>
     world?: boolean | WorldDefaultArgs<ExtArgs>
@@ -6041,7 +6030,6 @@ export namespace Prisma {
       world: Prisma.$WorldPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: string
       characterId: string
       worldId: string
       currentLocation: string | null
@@ -6129,8 +6117,8 @@ export namespace Prisma {
      * // Get first 10 CharacterWorldStates
      * const characterWorldStates = await prisma.characterWorldState.findMany({ take: 10 })
      * 
-     * // Only select the `id`
-     * const characterWorldStateWithIdOnly = await prisma.characterWorldState.findMany({ select: { id: true } })
+     * // Only select the `characterId`
+     * const characterWorldStateWithCharacterIdOnly = await prisma.characterWorldState.findMany({ select: { characterId: true } })
      * 
      */
     findMany<T extends CharacterWorldStateFindManyArgs>(args?: SelectSubset<T, CharacterWorldStateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -6174,9 +6162,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many CharacterWorldStates and only return the `id`
-     * const characterWorldStateWithIdOnly = await prisma.characterWorldState.createManyAndReturn({
-     *   select: { id: true },
+     * // Create many CharacterWorldStates and only return the `characterId`
+     * const characterWorldStateWithCharacterIdOnly = await prisma.characterWorldState.createManyAndReturn({
+     *   select: { characterId: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -6265,9 +6253,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more CharacterWorldStates and only return the `id`
-     * const characterWorldStateWithIdOnly = await prisma.characterWorldState.updateManyAndReturn({
-     *   select: { id: true },
+     * // Update zero or more CharacterWorldStates and only return the `characterId`
+     * const characterWorldStateWithCharacterIdOnly = await prisma.characterWorldState.updateManyAndReturn({
+     *   select: { characterId: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6471,7 +6459,6 @@ export namespace Prisma {
    * Fields of the CharacterWorldState model
    */
   interface CharacterWorldStateFieldRefs {
-    readonly id: FieldRef<"CharacterWorldState", 'String'>
     readonly characterId: FieldRef<"CharacterWorldState", 'String'>
     readonly worldId: FieldRef<"CharacterWorldState", 'String'>
     readonly currentLocation: FieldRef<"CharacterWorldState", 'String'>
@@ -18335,7 +18322,6 @@ export namespace Prisma {
 
 
   export const CharacterWorldStateScalarFieldEnum: {
-    id: 'id',
     characterId: 'characterId',
     worldId: 'worldId',
     currentLocation: 'currentLocation',
@@ -18833,7 +18819,6 @@ export namespace Prisma {
     AND?: CharacterWorldStateWhereInput | CharacterWorldStateWhereInput[]
     OR?: CharacterWorldStateWhereInput[]
     NOT?: CharacterWorldStateWhereInput | CharacterWorldStateWhereInput[]
-    id?: StringFilter<"CharacterWorldState"> | string
     characterId?: StringFilter<"CharacterWorldState"> | string
     worldId?: StringFilter<"CharacterWorldState"> | string
     currentLocation?: StringNullableFilter<"CharacterWorldState"> | string | null
@@ -18843,7 +18828,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateOrderByWithRelationInput = {
-    id?: SortOrder
     characterId?: SortOrder
     worldId?: SortOrder
     currentLocation?: SortOrderInput | SortOrder
@@ -18853,7 +18837,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
     characterId_worldId?: CharacterWorldStateCharacterIdWorldIdCompoundUniqueInput
     AND?: CharacterWorldStateWhereInput | CharacterWorldStateWhereInput[]
     OR?: CharacterWorldStateWhereInput[]
@@ -18864,10 +18847,9 @@ export namespace Prisma {
     lastPlayedAt?: DateTimeNullableFilter<"CharacterWorldState"> | Date | string | null
     character?: XOR<CharacterScalarRelationFilter, CharacterWhereInput>
     world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
-  }, "id" | "characterId_worldId">
+  }, "characterId_worldId" | "characterId_worldId">
 
   export type CharacterWorldStateOrderByWithAggregationInput = {
-    id?: SortOrder
     characterId?: SortOrder
     worldId?: SortOrder
     currentLocation?: SortOrderInput | SortOrder
@@ -18881,7 +18863,6 @@ export namespace Prisma {
     AND?: CharacterWorldStateScalarWhereWithAggregatesInput | CharacterWorldStateScalarWhereWithAggregatesInput[]
     OR?: CharacterWorldStateScalarWhereWithAggregatesInput[]
     NOT?: CharacterWorldStateScalarWhereWithAggregatesInput | CharacterWorldStateScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"CharacterWorldState"> | string
     characterId?: StringWithAggregatesFilter<"CharacterWorldState"> | string
     worldId?: StringWithAggregatesFilter<"CharacterWorldState"> | string
     currentLocation?: StringNullableWithAggregatesFilter<"CharacterWorldState"> | string | null
@@ -19890,7 +19871,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCreateInput = {
-    id?: string
     currentLocation?: string | null
     lastPlayedAt?: Date | string | null
     character: CharacterCreateNestedOneWithoutCharacterWorldStatesInput
@@ -19898,7 +19878,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateUncheckedCreateInput = {
-    id?: string
     characterId: string
     worldId: string
     currentLocation?: string | null
@@ -19906,7 +19885,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     character?: CharacterUpdateOneRequiredWithoutCharacterWorldStatesNestedInput
@@ -19914,7 +19892,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
     worldId?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19922,7 +19899,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCreateManyInput = {
-    id?: string
     characterId: string
     worldId: string
     currentLocation?: string | null
@@ -19930,13 +19906,11 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CharacterWorldStateUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
     worldId?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21110,7 +21084,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCountOrderByAggregateInput = {
-    id?: SortOrder
     characterId?: SortOrder
     worldId?: SortOrder
     currentLocation?: SortOrder
@@ -21118,7 +21091,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateMaxOrderByAggregateInput = {
-    id?: SortOrder
     characterId?: SortOrder
     worldId?: SortOrder
     currentLocation?: SortOrder
@@ -21126,7 +21098,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateMinOrderByAggregateInput = {
-    id?: SortOrder
     characterId?: SortOrder
     worldId?: SortOrder
     currentLocation?: SortOrder
@@ -23079,14 +23050,12 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCreateWithoutCharacterInput = {
-    id?: string
     currentLocation?: string | null
     lastPlayedAt?: Date | string | null
     world: WorldCreateNestedOneWithoutCharacterStatesInput
   }
 
   export type CharacterWorldStateUncheckedCreateWithoutCharacterInput = {
-    id?: string
     worldId: string
     currentLocation?: string | null
     lastPlayedAt?: Date | string | null
@@ -23215,7 +23184,6 @@ export namespace Prisma {
     AND?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
     OR?: CharacterWorldStateScalarWhereInput[]
     NOT?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
-    id?: StringFilter<"CharacterWorldState"> | string
     characterId?: StringFilter<"CharacterWorldState"> | string
     worldId?: StringFilter<"CharacterWorldState"> | string
     currentLocation?: StringNullableFilter<"CharacterWorldState"> | string | null
@@ -23223,14 +23191,12 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCreateWithoutWorldInput = {
-    id?: string
     currentLocation?: string | null
     lastPlayedAt?: Date | string | null
     character: CharacterCreateNestedOneWithoutCharacterWorldStatesInput
   }
 
   export type CharacterWorldStateUncheckedCreateWithoutWorldInput = {
-    id?: string
     characterId: string
     currentLocation?: string | null
     lastPlayedAt?: Date | string | null
@@ -25216,7 +25182,6 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateCreateManyCharacterInput = {
-    id?: string
     worldId: string
     currentLocation?: string | null
     lastPlayedAt?: Date | string | null
@@ -25305,28 +25270,24 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateUpdateWithoutCharacterInput = {
-    id?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     world?: WorldUpdateOneRequiredWithoutCharacterStatesNestedInput
   }
 
   export type CharacterWorldStateUncheckedUpdateWithoutCharacterInput = {
-    id?: StringFieldUpdateOperationsInput | string
     worldId?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CharacterWorldStateUncheckedUpdateManyWithoutCharacterInput = {
-    id?: StringFieldUpdateOperationsInput | string
     worldId?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CharacterWorldStateCreateManyWorldInput = {
-    id?: string
     characterId: string
     currentLocation?: string | null
     lastPlayedAt?: Date | string | null
@@ -25379,21 +25340,18 @@ export namespace Prisma {
   }
 
   export type CharacterWorldStateUpdateWithoutWorldInput = {
-    id?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     character?: CharacterUpdateOneRequiredWithoutCharacterWorldStatesNestedInput
   }
 
   export type CharacterWorldStateUncheckedUpdateWithoutWorldInput = {
-    id?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CharacterWorldStateUncheckedUpdateManyWithoutWorldInput = {
-    id?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
     currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

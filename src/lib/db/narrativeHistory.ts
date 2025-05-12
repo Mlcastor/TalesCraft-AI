@@ -4,6 +4,8 @@ import type {
   NarrativeHistoryCreate,
   NarrativeHistory,
 } from "@/types/database";
+import { BaseRepository } from "./base/BaseRepository";
+import { RecordNotFoundError } from "@/lib/errors/DatabaseError";
 
 /**
  * Helper function to safely parse content from string to object
@@ -68,8 +70,16 @@ function parseContent(content: string, type: string): any {
 
 /**
  * Repository for narrative history-related database operations
+ * Extends BaseRepository to inherit common functionality for error handling and transactions
  */
-export const narrativeHistoryRepository = {
+export class NarrativeHistoryRepository extends BaseRepository {
+  /**
+   * Create a new NarrativeHistoryRepository instance
+   */
+  constructor() {
+    super("NarrativeHistory");
+  }
+
   /**
    * Create a new narrative history item
    *
@@ -77,29 +87,88 @@ export const narrativeHistoryRepository = {
    * @returns The created narrative history item
    */
   async createNarrativeHistoryItem(data: NarrativeHistoryCreate) {
-    return prisma.narrativeHistory.create({
-      data,
-    });
-  },
+    return this.executeOperation(
+      (client) =>
+        client.narrativeHistory.create({
+          data,
+        }),
+      "createNarrativeHistoryItem"
+    );
+  }
 
   /**
    * Get all narrative history items for a game state
    *
    * @param gameStateId Game state ID
+   * @param options Optional pagination options
    * @returns Array of narrative history items
    */
-  async getNarrativeHistoryByGameStateId(gameStateId: string) {
-    const history = await prisma.narrativeHistory.findMany({
-      where: { gameStateId },
-      orderBy: { timestamp: "asc" }, // Order by timestamp ascending to maintain conversation flow
-    });
+  async getNarrativeHistoryByGameStateId(
+    gameStateId: string,
+    options?: { limit?: number; offset?: number }
+  ) {
+    return this.executeOperation(async (client) => {
+      const history = await client.narrativeHistory.findMany({
+        where: { gameStateId },
+        orderBy: { timestamp: "asc" }, // Order by timestamp ascending to maintain conversation flow
+        ...(options?.limit ? { take: options.limit } : {}),
+        ...(options?.offset ? { skip: options.offset } : {}),
+      });
 
-    // Parse content for each item based on its type
-    return history.map((item) => ({
-      ...item,
-      content: parseContent(item.content, item.type),
-    }));
-  },
+      // Parse content for each item based on its type
+      return history.map((item) => ({
+        ...item,
+        content: parseContent(item.content, item.type),
+      }));
+    }, "getNarrativeHistoryByGameStateId");
+  }
+
+  /**
+   * Get a single narrative history item by ID
+   *
+   * @param id Narrative history item ID
+   * @returns The narrative history item
+   * @throws RecordNotFoundError if the item does not exist
+   */
+  async getNarrativeHistoryItemById(id: string) {
+    return this.executeOperation(async (client) => {
+      const item = await client.narrativeHistory.findUnique({
+        where: { id },
+      });
+
+      if (!item) {
+        throw new RecordNotFoundError("NarrativeHistory", id);
+      }
+
+      return {
+        ...item,
+        content: parseContent(item.content, item.type),
+      };
+    }, "getNarrativeHistoryItemById");
+  }
+
+  /**
+   * Find a narrative history item by ID (returns null if not found)
+   *
+   * @param id Narrative history item ID
+   * @returns The narrative history item or null if not found
+   */
+  async findNarrativeHistoryItemById(id: string) {
+    return this.executeOperation(async (client) => {
+      const item = await client.narrativeHistory.findUnique({
+        where: { id },
+      });
+
+      if (!item) {
+        return null;
+      }
+
+      return {
+        ...item,
+        content: parseContent(item.content, item.type),
+      };
+    }, "findNarrativeHistoryItemById");
+  }
 
   /**
    * Save multiple narrative history items at once
@@ -115,64 +184,68 @@ export const narrativeHistoryRepository = {
       content: AIResponse | string;
     }>
   ) {
-    // First delete existing narrative history for this game state
-    await prisma.narrativeHistory.deleteMany({
-      where: { gameStateId },
-    });
+    return this.executeTransaction(async (tx) => {
+      // First delete existing narrative history for this game state
+      await tx.narrativeHistory.deleteMany({
+        where: { gameStateId },
+      });
 
-    if (items.length === 0) {
-      return [];
-    }
-
-    // Then serialize each content item
-    const serializedItems = items.map((item) => {
-      // Handle content serialization based on type
-      let serializedContent: string;
-
-      if (item.type === "playerResponse") {
-        // For player responses, just store the string content
-        serializedContent =
-          typeof item.content === "string"
-            ? item.content
-            : String(item.content);
-      } else {
-        // For narrative items, ensure it's a properly formatted AIResponse
-        if (typeof item.content === "string") {
-          // If it's already a string, just use it
-          serializedContent = item.content;
-        } else {
-          // Make sure the AIResponse has required properties before serializing
-          const aiResponse = item.content as AIResponse;
-
-          // Ensure choices exist and are properly formatted
-          if (!aiResponse.choices || !Array.isArray(aiResponse.choices)) {
-            aiResponse.choices = [
-              { id: "save_1", text: "Continue exploring" },
-              { id: "save_2", text: "Look around more carefully" },
-            ];
-          }
-
-          // Serialize to JSON
-          serializedContent = JSON.stringify(aiResponse);
-        }
+      if (items.length === 0) {
+        return [];
       }
 
-      return {
-        gameState: {
-          connect: { id: gameStateId },
-        },
-        type: item.type,
-        content: serializedContent,
-      };
-    });
+      // Then serialize each content item
+      const serializedItems = items.map((item) => {
+        // Handle content serialization based on type
+        let serializedContent: string;
 
-    // Use a transaction to save all items
-    return prisma.$transaction(
-      serializedItems.map((item) =>
-        prisma.narrativeHistory.create({ data: item })
-      )
-    );
-  },
+        if (item.type === "playerResponse") {
+          // For player responses, just store the string content
+          serializedContent =
+            typeof item.content === "string"
+              ? item.content
+              : String(item.content);
+        } else {
+          // For narrative items, ensure it's a properly formatted AIResponse
+          if (typeof item.content === "string") {
+            // If it's already a string, just use it
+            serializedContent = item.content;
+          } else {
+            // Make sure the AIResponse has required properties before serializing
+            const aiResponse = item.content as AIResponse;
+
+            // Ensure choices exist and are properly formatted
+            if (!aiResponse.choices || !Array.isArray(aiResponse.choices)) {
+              aiResponse.choices = [
+                { id: "save_1", text: "Continue exploring" },
+                { id: "save_2", text: "Look around more carefully" },
+              ];
+            }
+
+            // Serialize to JSON
+            serializedContent = JSON.stringify(aiResponse);
+          }
+        }
+
+        return {
+          gameState: {
+            connect: { id: gameStateId },
+          },
+          type: item.type,
+          content: serializedContent,
+        };
+      });
+
+      // Create all items in the transaction
+      const results: NarrativeHistory[] = [];
+      for (const item of serializedItems) {
+        const result = await tx.narrativeHistory.create({ data: item });
+        results.push(result);
+      }
+
+      return results;
+    });
+  }
 
   /**
    * Delete all narrative history for a game state
@@ -181,8 +254,51 @@ export const narrativeHistoryRepository = {
    * @returns Object with count of deleted items
    */
   async deleteNarrativeHistoryByGameStateId(gameStateId: string) {
-    return prisma.narrativeHistory.deleteMany({
-      where: { gameStateId },
-    });
-  },
-};
+    return this.executeOperation(
+      (client) =>
+        client.narrativeHistory.deleteMany({
+          where: { gameStateId },
+        }),
+      "deleteNarrativeHistoryByGameStateId"
+    );
+  }
+
+  /**
+   * Count narrative history items for a game state
+   *
+   * @param gameStateId Game state ID
+   * @returns Number of narrative history items
+   */
+  async countNarrativeHistoryByGameStateId(
+    gameStateId: string
+  ): Promise<number> {
+    return this.executeOperation(
+      (client) =>
+        client.narrativeHistory.count({
+          where: { gameStateId },
+        }),
+      "countNarrativeHistoryByGameStateId"
+    );
+  }
+}
+
+// Export singleton instance
+export const narrativeHistoryRepository = new NarrativeHistoryRepository();
+
+// Backwards compatibility exports
+export const createNarrativeHistoryItem =
+  narrativeHistoryRepository.createNarrativeHistoryItem.bind(
+    narrativeHistoryRepository
+  );
+export const getNarrativeHistoryByGameStateId =
+  narrativeHistoryRepository.getNarrativeHistoryByGameStateId.bind(
+    narrativeHistoryRepository
+  );
+export const saveNarrativeHistory =
+  narrativeHistoryRepository.saveNarrativeHistory.bind(
+    narrativeHistoryRepository
+  );
+export const deleteNarrativeHistoryByGameStateId =
+  narrativeHistoryRepository.deleteNarrativeHistoryByGameStateId.bind(
+    narrativeHistoryRepository
+  );

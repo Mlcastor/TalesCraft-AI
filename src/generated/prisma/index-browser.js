@@ -151,7 +151,6 @@ exports.Prisma.WorldScalarFieldEnum = {
 };
 
 exports.Prisma.CharacterWorldStateScalarFieldEnum = {
-  id: 'id',
   characterId: 'characterId',
   worldId: 'worldId',
   currentLocation: 'currentLocation',

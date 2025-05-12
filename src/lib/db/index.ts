@@ -1,5 +1,15 @@
+// Database connection utilities
+export {
+  prisma,
+  connectDatabase,
+  disconnectDatabase,
+  checkDatabaseHealth,
+} from "./prisma";
+
+// Base classes
+export { BaseRepository } from "./base/BaseRepository";
+
 // Core and User-related exports
-export * from "./prisma";
 export * from "./user";
 export * from "./character";
 

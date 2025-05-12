@@ -67,7 +67,6 @@ model World {
 
 // Character-World Association
 model CharacterWorldState {
-  id              String    @id @default(uuid())
   characterId     String    @map("character_id")
   worldId         String    @map("world_id")
   currentLocation String?   @map("current_location")
@@ -77,6 +76,7 @@ model CharacterWorldState {
 
   @@unique([characterId, worldId])
   @@map("character_world_states")
+  @@id([characterId, worldId])
 }
 
 // Location model
