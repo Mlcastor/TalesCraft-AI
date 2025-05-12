@@ -29,22 +29,103 @@ model User {
 
 // Character model
 model Character {
-  id                    String        @id @default(uuid())
-  userId                String        @map("user_id")
+  id                    String                @id @default(uuid())
+  userId                String                @map("user_id")
   name                  String
   backstory             String?
-  appearanceDescription String?       @map("appearance_description")
-  personalityTraits     Json          @default("[]") @map("personality_traits")
-  createdAt             DateTime      @default(now()) @map("created_at")
-  lastPlayedAt          DateTime?     @map("last_played_at")
-  isActive              Boolean       @default(true) @map("is_active")
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appearanceDescription String?               @map("appearance_description")
+  personalityTraits     Json                  @default("[]") @map("personality_traits")
+  createdAt             DateTime              @default(now()) @map("created_at")
+  lastPlayedAt          DateTime?             @map("last_played_at")
+  isActive              Boolean               @default(true) @map("is_active")
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   gameSessions          GameSession[]
   gameStates            GameState[]
+  characterWorldStates  CharacterWorldState[]
 
   @@unique([userId, name])
   @@index([userId])
   @@map("characters")
+}
+
+// World model
+model World {
+  id              String                @id @default(uuid())
+  name            String
+  description     String?
+  thumbnailUrl    String?               @map("thumbnail_url")
+  isActive        Boolean               @default(true) @map("is_active")
+  createdAt       DateTime              @default(now()) @map("created_at")
+  characterStates CharacterWorldState[]
+  gameStates      GameState[]
+  locations       Location[]
+  loreFragments   LoreFragment[]
+  events          Event[]
+
+  @@map("worlds")
+}
+
+// Character-World Association
+model CharacterWorldState {
+  id              String    @id @default(uuid())
+  characterId     String    @map("character_id")
+  worldId         String    @map("world_id")
+  currentLocation String?   @map("current_location")
+  lastPlayedAt    DateTime? @map("last_played_at")
+  character       Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  world           World     @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, worldId])
+  @@map("character_world_states")
+}
+
+// Location model
+model Location {
+  id                   String      @id @default(uuid())
+  worldId              String      @map("world_id")
+  name                 String
+  description          String?
+  isStartingLocation   Boolean     @default(false) @map("is_starting_location")
+  connectedLocationIds String[]    @map("connected_location_ids")
+  thumbnailUrl         String?     @map("thumbnail_url")
+  world                World       @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  events               Event[]
+  gameStates           GameState[]
+
+  @@unique([worldId, name])
+  @@map("locations")
+}
+
+// Lore Fragment model
+model LoreFragment {
+  id         String   @id @default(uuid())
+  worldId    String   @map("world_id")
+  title      String
+  content    String
+  type       String
+  contextId  String?  @map("context_id")
+  isRevealed Boolean  @default(true) @map("is_revealed")
+  keywords   String[]
+  world      World    @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  @@map("lore_fragments")
+}
+
+// Event model
+model Event {
+  id                String    @id @default(uuid())
+  worldId           String    @map("world_id")
+  locationId        String?   @map("location_id")
+  title             String
+  description       String
+  eventType         String    @map("event_type")
+  triggerConditions Json      @default("{}") @map("trigger_conditions")
+  outcomes          Json      @default("[]") @map("outcomes")
+  isRepeatable      Boolean   @default(false) @map("is_repeatable")
+  world             World     @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  location          Location? @relation(fields: [locationId], references: [id])
+
+  @@map("events")
 }
 
 // Game Session model
@@ -68,6 +149,8 @@ model GameState {
   id               String             @id @default(uuid())
   sessionId        String             @map("session_id")
   characterId      String             @map("character_id")
+  worldId          String?            @map("world_id")
+  locationId       String?            @map("location_id")
   savePointName    String?            @map("save_point_name")
   currentLocation  String             @map("current_location")
   saveTimestamp    DateTime           @default(now()) @map("save_timestamp")
@@ -79,12 +162,16 @@ model GameState {
   isCompleted      Boolean            @default(false) @map("is_completed")
   session          GameSession        @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   character        Character          @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  world            World?             @relation(fields: [worldId], references: [id])
+  location         Location?          @relation(fields: [locationId], references: [id])
   npcStates        NPCState[]
   decisions        Decision[]
   aiContextHistory AIContextHistory[]
   narrativeHistory NarrativeHistory[]
 
   @@index([characterId])
+  @@index([worldId])
+  @@index([locationId])
   @@index([saveTimestamp(sort: Desc)])
   @@map("game_states")
 }
@@ -118,34 +205,6 @@ model NPCState {
   @@unique([gameStateId, npcTemplateId])
   @@index([gameStateId])
   @@map("npc_states")
-}
-
-// Lore Categories model
-model LoreCategory {
-  id               String         @id @default(uuid())
-  name             String         @unique
-  description      String?
-  parentCategoryId String?        @map("parent_category_id")
-  parentCategory   LoreCategory?  @relation("CategoryToSubcategory", fields: [parentCategoryId], references: [id])
-  subcategories    LoreCategory[] @relation("CategoryToSubcategory")
-  worldLore        WorldLore[]
-
-  @@map("lore_categories")
-}
-
-// World Lore model
-model WorldLore {
-  id                  String        @id @default(uuid())
-  categoryId          String?       @map("category_id")
-  title               String
-  content             String
-  isDiscoverable      Boolean       @default(true) @map("is_discoverable")
-  discoveryConditions Json          @default("{}") @map("discovery_conditions")
-  keywords            String[]
-  category            LoreCategory? @relation(fields: [categoryId], references: [id])
-
-  @@index([categoryId])
-  @@map("world_lore")
 }
 
 // Decision model

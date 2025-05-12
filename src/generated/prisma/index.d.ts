@@ -24,6 +24,31 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Character = $Result.DefaultSelection<Prisma.$CharacterPayload>
 /**
+ * Model World
+ * 
+ */
+export type World = $Result.DefaultSelection<Prisma.$WorldPayload>
+/**
+ * Model CharacterWorldState
+ * 
+ */
+export type CharacterWorldState = $Result.DefaultSelection<Prisma.$CharacterWorldStatePayload>
+/**
+ * Model Location
+ * 
+ */
+export type Location = $Result.DefaultSelection<Prisma.$LocationPayload>
+/**
+ * Model LoreFragment
+ * 
+ */
+export type LoreFragment = $Result.DefaultSelection<Prisma.$LoreFragmentPayload>
+/**
+ * Model Event
+ * 
+ */
+export type Event = $Result.DefaultSelection<Prisma.$EventPayload>
+/**
  * Model GameSession
  * 
  */
@@ -43,16 +68,6 @@ export type NPCTemplate = $Result.DefaultSelection<Prisma.$NPCTemplatePayload>
  * 
  */
 export type NPCState = $Result.DefaultSelection<Prisma.$NPCStatePayload>
-/**
- * Model LoreCategory
- * 
- */
-export type LoreCategory = $Result.DefaultSelection<Prisma.$LoreCategoryPayload>
-/**
- * Model WorldLore
- * 
- */
-export type WorldLore = $Result.DefaultSelection<Prisma.$WorldLorePayload>
 /**
  * Model Decision
  * 
@@ -215,6 +230,56 @@ export class PrismaClient<
   get character(): Prisma.CharacterDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.world`: Exposes CRUD operations for the **World** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Worlds
+    * const worlds = await prisma.world.findMany()
+    * ```
+    */
+  get world(): Prisma.WorldDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.characterWorldState`: Exposes CRUD operations for the **CharacterWorldState** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CharacterWorldStates
+    * const characterWorldStates = await prisma.characterWorldState.findMany()
+    * ```
+    */
+  get characterWorldState(): Prisma.CharacterWorldStateDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.location`: Exposes CRUD operations for the **Location** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Locations
+    * const locations = await prisma.location.findMany()
+    * ```
+    */
+  get location(): Prisma.LocationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.loreFragment`: Exposes CRUD operations for the **LoreFragment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LoreFragments
+    * const loreFragments = await prisma.loreFragment.findMany()
+    * ```
+    */
+  get loreFragment(): Prisma.LoreFragmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.event`: Exposes CRUD operations for the **Event** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Events
+    * const events = await prisma.event.findMany()
+    * ```
+    */
+  get event(): Prisma.EventDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.gameSession`: Exposes CRUD operations for the **GameSession** model.
     * Example usage:
     * ```ts
@@ -253,26 +318,6 @@ export class PrismaClient<
     * ```
     */
   get nPCState(): Prisma.NPCStateDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.loreCategory`: Exposes CRUD operations for the **LoreCategory** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more LoreCategories
-    * const loreCategories = await prisma.loreCategory.findMany()
-    * ```
-    */
-  get loreCategory(): Prisma.LoreCategoryDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.worldLore`: Exposes CRUD operations for the **WorldLore** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more WorldLores
-    * const worldLores = await prisma.worldLore.findMany()
-    * ```
-    */
-  get worldLore(): Prisma.WorldLoreDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.decision`: Exposes CRUD operations for the **Decision** model.
@@ -745,12 +790,15 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Character: 'Character',
+    World: 'World',
+    CharacterWorldState: 'CharacterWorldState',
+    Location: 'Location',
+    LoreFragment: 'LoreFragment',
+    Event: 'Event',
     GameSession: 'GameSession',
     GameState: 'GameState',
     NPCTemplate: 'NPCTemplate',
     NPCState: 'NPCState',
-    LoreCategory: 'LoreCategory',
-    WorldLore: 'WorldLore',
     Decision: 'Decision',
     AIContextHistory: 'AIContextHistory',
     NarrativeHistory: 'NarrativeHistory'
@@ -772,7 +820,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "character" | "gameSession" | "gameState" | "nPCTemplate" | "nPCState" | "loreCategory" | "worldLore" | "decision" | "aIContextHistory" | "narrativeHistory"
+      modelProps: "user" | "character" | "world" | "characterWorldState" | "location" | "loreFragment" | "event" | "gameSession" | "gameState" | "nPCTemplate" | "nPCState" | "decision" | "aIContextHistory" | "narrativeHistory"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -921,6 +969,376 @@ export namespace Prisma {
           count: {
             args: Prisma.CharacterCountArgs<ExtArgs>
             result: $Utils.Optional<CharacterCountAggregateOutputType> | number
+          }
+        }
+      }
+      World: {
+        payload: Prisma.$WorldPayload<ExtArgs>
+        fields: Prisma.WorldFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WorldFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WorldFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>
+          }
+          findFirst: {
+            args: Prisma.WorldFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WorldFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>
+          }
+          findMany: {
+            args: Prisma.WorldFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>[]
+          }
+          create: {
+            args: Prisma.WorldCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>
+          }
+          createMany: {
+            args: Prisma.WorldCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WorldCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>[]
+          }
+          delete: {
+            args: Prisma.WorldDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>
+          }
+          update: {
+            args: Prisma.WorldUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>
+          }
+          deleteMany: {
+            args: Prisma.WorldDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WorldUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WorldUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>[]
+          }
+          upsert: {
+            args: Prisma.WorldUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorldPayload>
+          }
+          aggregate: {
+            args: Prisma.WorldAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWorld>
+          }
+          groupBy: {
+            args: Prisma.WorldGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WorldGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WorldCountArgs<ExtArgs>
+            result: $Utils.Optional<WorldCountAggregateOutputType> | number
+          }
+        }
+      }
+      CharacterWorldState: {
+        payload: Prisma.$CharacterWorldStatePayload<ExtArgs>
+        fields: Prisma.CharacterWorldStateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CharacterWorldStateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CharacterWorldStateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>
+          }
+          findFirst: {
+            args: Prisma.CharacterWorldStateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CharacterWorldStateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>
+          }
+          findMany: {
+            args: Prisma.CharacterWorldStateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>[]
+          }
+          create: {
+            args: Prisma.CharacterWorldStateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>
+          }
+          createMany: {
+            args: Prisma.CharacterWorldStateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CharacterWorldStateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>[]
+          }
+          delete: {
+            args: Prisma.CharacterWorldStateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>
+          }
+          update: {
+            args: Prisma.CharacterWorldStateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>
+          }
+          deleteMany: {
+            args: Prisma.CharacterWorldStateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CharacterWorldStateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CharacterWorldStateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>[]
+          }
+          upsert: {
+            args: Prisma.CharacterWorldStateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CharacterWorldStatePayload>
+          }
+          aggregate: {
+            args: Prisma.CharacterWorldStateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCharacterWorldState>
+          }
+          groupBy: {
+            args: Prisma.CharacterWorldStateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CharacterWorldStateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CharacterWorldStateCountArgs<ExtArgs>
+            result: $Utils.Optional<CharacterWorldStateCountAggregateOutputType> | number
+          }
+        }
+      }
+      Location: {
+        payload: Prisma.$LocationPayload<ExtArgs>
+        fields: Prisma.LocationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LocationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LocationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          findFirst: {
+            args: Prisma.LocationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LocationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          findMany: {
+            args: Prisma.LocationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>[]
+          }
+          create: {
+            args: Prisma.LocationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          createMany: {
+            args: Prisma.LocationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LocationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>[]
+          }
+          delete: {
+            args: Prisma.LocationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          update: {
+            args: Prisma.LocationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          deleteMany: {
+            args: Prisma.LocationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LocationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LocationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>[]
+          }
+          upsert: {
+            args: Prisma.LocationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          aggregate: {
+            args: Prisma.LocationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLocation>
+          }
+          groupBy: {
+            args: Prisma.LocationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LocationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LocationCountArgs<ExtArgs>
+            result: $Utils.Optional<LocationCountAggregateOutputType> | number
+          }
+        }
+      }
+      LoreFragment: {
+        payload: Prisma.$LoreFragmentPayload<ExtArgs>
+        fields: Prisma.LoreFragmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LoreFragmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LoreFragmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>
+          }
+          findFirst: {
+            args: Prisma.LoreFragmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LoreFragmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>
+          }
+          findMany: {
+            args: Prisma.LoreFragmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>[]
+          }
+          create: {
+            args: Prisma.LoreFragmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>
+          }
+          createMany: {
+            args: Prisma.LoreFragmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LoreFragmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>[]
+          }
+          delete: {
+            args: Prisma.LoreFragmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>
+          }
+          update: {
+            args: Prisma.LoreFragmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.LoreFragmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LoreFragmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LoreFragmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.LoreFragmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoreFragmentPayload>
+          }
+          aggregate: {
+            args: Prisma.LoreFragmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLoreFragment>
+          }
+          groupBy: {
+            args: Prisma.LoreFragmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LoreFragmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LoreFragmentCountArgs<ExtArgs>
+            result: $Utils.Optional<LoreFragmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      Event: {
+        payload: Prisma.$EventPayload<ExtArgs>
+        fields: Prisma.EventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          findFirst: {
+            args: Prisma.EventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          findMany: {
+            args: Prisma.EventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>[]
+          }
+          create: {
+            args: Prisma.EventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          createMany: {
+            args: Prisma.EventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>[]
+          }
+          delete: {
+            args: Prisma.EventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          update: {
+            args: Prisma.EventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          deleteMany: {
+            args: Prisma.EventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>[]
+          }
+          upsert: {
+            args: Prisma.EventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          aggregate: {
+            args: Prisma.EventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvent>
+          }
+          groupBy: {
+            args: Prisma.EventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EventCountArgs<ExtArgs>
+            result: $Utils.Optional<EventCountAggregateOutputType> | number
           }
         }
       }
@@ -1217,154 +1635,6 @@ export namespace Prisma {
           count: {
             args: Prisma.NPCStateCountArgs<ExtArgs>
             result: $Utils.Optional<NPCStateCountAggregateOutputType> | number
-          }
-        }
-      }
-      LoreCategory: {
-        payload: Prisma.$LoreCategoryPayload<ExtArgs>
-        fields: Prisma.LoreCategoryFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.LoreCategoryFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.LoreCategoryFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>
-          }
-          findFirst: {
-            args: Prisma.LoreCategoryFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.LoreCategoryFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>
-          }
-          findMany: {
-            args: Prisma.LoreCategoryFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>[]
-          }
-          create: {
-            args: Prisma.LoreCategoryCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>
-          }
-          createMany: {
-            args: Prisma.LoreCategoryCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.LoreCategoryCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>[]
-          }
-          delete: {
-            args: Prisma.LoreCategoryDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>
-          }
-          update: {
-            args: Prisma.LoreCategoryUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>
-          }
-          deleteMany: {
-            args: Prisma.LoreCategoryDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.LoreCategoryUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.LoreCategoryUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>[]
-          }
-          upsert: {
-            args: Prisma.LoreCategoryUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$LoreCategoryPayload>
-          }
-          aggregate: {
-            args: Prisma.LoreCategoryAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateLoreCategory>
-          }
-          groupBy: {
-            args: Prisma.LoreCategoryGroupByArgs<ExtArgs>
-            result: $Utils.Optional<LoreCategoryGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.LoreCategoryCountArgs<ExtArgs>
-            result: $Utils.Optional<LoreCategoryCountAggregateOutputType> | number
-          }
-        }
-      }
-      WorldLore: {
-        payload: Prisma.$WorldLorePayload<ExtArgs>
-        fields: Prisma.WorldLoreFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.WorldLoreFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.WorldLoreFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>
-          }
-          findFirst: {
-            args: Prisma.WorldLoreFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.WorldLoreFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>
-          }
-          findMany: {
-            args: Prisma.WorldLoreFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>[]
-          }
-          create: {
-            args: Prisma.WorldLoreCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>
-          }
-          createMany: {
-            args: Prisma.WorldLoreCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.WorldLoreCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>[]
-          }
-          delete: {
-            args: Prisma.WorldLoreDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>
-          }
-          update: {
-            args: Prisma.WorldLoreUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>
-          }
-          deleteMany: {
-            args: Prisma.WorldLoreDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.WorldLoreUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.WorldLoreUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>[]
-          }
-          upsert: {
-            args: Prisma.WorldLoreUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorldLorePayload>
-          }
-          aggregate: {
-            args: Prisma.WorldLoreAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateWorldLore>
-          }
-          groupBy: {
-            args: Prisma.WorldLoreGroupByArgs<ExtArgs>
-            result: $Utils.Optional<WorldLoreGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.WorldLoreCountArgs<ExtArgs>
-            result: $Utils.Optional<WorldLoreCountAggregateOutputType> | number
           }
         }
       }
@@ -1676,12 +1946,15 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     character?: CharacterOmit
+    world?: WorldOmit
+    characterWorldState?: CharacterWorldStateOmit
+    location?: LocationOmit
+    loreFragment?: LoreFragmentOmit
+    event?: EventOmit
     gameSession?: GameSessionOmit
     gameState?: GameStateOmit
     nPCTemplate?: NPCTemplateOmit
     nPCState?: NPCStateOmit
-    loreCategory?: LoreCategoryOmit
-    worldLore?: WorldLoreOmit
     decision?: DecisionOmit
     aIContextHistory?: AIContextHistoryOmit
     narrativeHistory?: NarrativeHistoryOmit
@@ -1812,11 +2085,13 @@ export namespace Prisma {
   export type CharacterCountOutputType = {
     gameSessions: number
     gameStates: number
+    characterWorldStates: number
   }
 
   export type CharacterCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     gameSessions?: boolean | CharacterCountOutputTypeCountGameSessionsArgs
     gameStates?: boolean | CharacterCountOutputTypeCountGameStatesArgs
+    characterWorldStates?: boolean | CharacterCountOutputTypeCountCharacterWorldStatesArgs
   }
 
   // Custom InputTypes
@@ -1841,6 +2116,120 @@ export namespace Prisma {
    * CharacterCountOutputType without action
    */
   export type CharacterCountOutputTypeCountGameStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GameStateWhereInput
+  }
+
+  /**
+   * CharacterCountOutputType without action
+   */
+  export type CharacterCountOutputTypeCountCharacterWorldStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CharacterWorldStateWhereInput
+  }
+
+
+  /**
+   * Count Type WorldCountOutputType
+   */
+
+  export type WorldCountOutputType = {
+    characterStates: number
+    gameStates: number
+    locations: number
+    loreFragments: number
+    events: number
+  }
+
+  export type WorldCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    characterStates?: boolean | WorldCountOutputTypeCountCharacterStatesArgs
+    gameStates?: boolean | WorldCountOutputTypeCountGameStatesArgs
+    locations?: boolean | WorldCountOutputTypeCountLocationsArgs
+    loreFragments?: boolean | WorldCountOutputTypeCountLoreFragmentsArgs
+    events?: boolean | WorldCountOutputTypeCountEventsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * WorldCountOutputType without action
+   */
+  export type WorldCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorldCountOutputType
+     */
+    select?: WorldCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * WorldCountOutputType without action
+   */
+  export type WorldCountOutputTypeCountCharacterStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CharacterWorldStateWhereInput
+  }
+
+  /**
+   * WorldCountOutputType without action
+   */
+  export type WorldCountOutputTypeCountGameStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GameStateWhereInput
+  }
+
+  /**
+   * WorldCountOutputType without action
+   */
+  export type WorldCountOutputTypeCountLocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LocationWhereInput
+  }
+
+  /**
+   * WorldCountOutputType without action
+   */
+  export type WorldCountOutputTypeCountLoreFragmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LoreFragmentWhereInput
+  }
+
+  /**
+   * WorldCountOutputType without action
+   */
+  export type WorldCountOutputTypeCountEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventWhereInput
+  }
+
+
+  /**
+   * Count Type LocationCountOutputType
+   */
+
+  export type LocationCountOutputType = {
+    events: number
+    gameStates: number
+  }
+
+  export type LocationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    events?: boolean | LocationCountOutputTypeCountEventsArgs
+    gameStates?: boolean | LocationCountOutputTypeCountGameStatesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LocationCountOutputType
+     */
+    select?: LocationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeCountEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventWhereInput
+  }
+
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeCountGameStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: GameStateWhereInput
   }
 
@@ -1962,46 +2351,6 @@ export namespace Prisma {
    */
   export type NPCTemplateCountOutputTypeCountNpcStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NPCStateWhereInput
-  }
-
-
-  /**
-   * Count Type LoreCategoryCountOutputType
-   */
-
-  export type LoreCategoryCountOutputType = {
-    subcategories: number
-    worldLore: number
-  }
-
-  export type LoreCategoryCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subcategories?: boolean | LoreCategoryCountOutputTypeCountSubcategoriesArgs
-    worldLore?: boolean | LoreCategoryCountOutputTypeCountWorldLoreArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * LoreCategoryCountOutputType without action
-   */
-  export type LoreCategoryCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategoryCountOutputType
-     */
-    select?: LoreCategoryCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * LoreCategoryCountOutputType without action
-   */
-  export type LoreCategoryCountOutputTypeCountSubcategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: LoreCategoryWhereInput
-  }
-
-  /**
-   * LoreCategoryCountOutputType without action
-   */
-  export type LoreCategoryCountOutputTypeCountWorldLoreArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WorldLoreWhereInput
   }
 
 
@@ -3283,6 +3632,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
     gameSessions?: boolean | Character$gameSessionsArgs<ExtArgs>
     gameStates?: boolean | Character$gameStatesArgs<ExtArgs>
+    characterWorldStates?: boolean | Character$characterWorldStatesArgs<ExtArgs>
     _count?: boolean | CharacterCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["character"]>
 
@@ -3329,6 +3679,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
     gameSessions?: boolean | Character$gameSessionsArgs<ExtArgs>
     gameStates?: boolean | Character$gameStatesArgs<ExtArgs>
+    characterWorldStates?: boolean | Character$characterWorldStatesArgs<ExtArgs>
     _count?: boolean | CharacterCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CharacterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3344,6 +3695,7 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
       gameSessions: Prisma.$GameSessionPayload<ExtArgs>[]
       gameStates: Prisma.$GameStatePayload<ExtArgs>[]
+      characterWorldStates: Prisma.$CharacterWorldStatePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3752,6 +4104,7 @@ export namespace Prisma {
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     gameSessions<T extends Character$gameSessionsArgs<ExtArgs> = {}>(args?: Subset<T, Character$gameSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     gameStates<T extends Character$gameStatesArgs<ExtArgs> = {}>(args?: Subset<T, Character$gameStatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    characterWorldStates<T extends Character$characterWorldStatesArgs<ExtArgs> = {}>(args?: Subset<T, Character$characterWorldStatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4234,6 +4587,30 @@ export namespace Prisma {
   }
 
   /**
+   * Character.characterWorldStates
+   */
+  export type Character$characterWorldStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    where?: CharacterWorldStateWhereInput
+    orderBy?: CharacterWorldStateOrderByWithRelationInput | CharacterWorldStateOrderByWithRelationInput[]
+    cursor?: CharacterWorldStateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CharacterWorldStateScalarFieldEnum | CharacterWorldStateScalarFieldEnum[]
+  }
+
+  /**
    * Character without action
    */
   export type CharacterDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4249,6 +4626,5627 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CharacterInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model World
+   */
+
+  export type AggregateWorld = {
+    _count: WorldCountAggregateOutputType | null
+    _min: WorldMinAggregateOutputType | null
+    _max: WorldMaxAggregateOutputType | null
+  }
+
+  export type WorldMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    thumbnailUrl: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type WorldMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    thumbnailUrl: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type WorldCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    thumbnailUrl: number
+    isActive: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type WorldMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    thumbnailUrl?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type WorldMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    thumbnailUrl?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type WorldCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    thumbnailUrl?: true
+    isActive?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type WorldAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which World to aggregate.
+     */
+    where?: WorldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Worlds to fetch.
+     */
+    orderBy?: WorldOrderByWithRelationInput | WorldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WorldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Worlds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Worlds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Worlds
+    **/
+    _count?: true | WorldCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WorldMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WorldMaxAggregateInputType
+  }
+
+  export type GetWorldAggregateType<T extends WorldAggregateArgs> = {
+        [P in keyof T & keyof AggregateWorld]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWorld[P]>
+      : GetScalarType<T[P], AggregateWorld[P]>
+  }
+
+
+
+
+  export type WorldGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WorldWhereInput
+    orderBy?: WorldOrderByWithAggregationInput | WorldOrderByWithAggregationInput[]
+    by: WorldScalarFieldEnum[] | WorldScalarFieldEnum
+    having?: WorldScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WorldCountAggregateInputType | true
+    _min?: WorldMinAggregateInputType
+    _max?: WorldMaxAggregateInputType
+  }
+
+  export type WorldGroupByOutputType = {
+    id: string
+    name: string
+    description: string | null
+    thumbnailUrl: string | null
+    isActive: boolean
+    createdAt: Date
+    _count: WorldCountAggregateOutputType | null
+    _min: WorldMinAggregateOutputType | null
+    _max: WorldMaxAggregateOutputType | null
+  }
+
+  type GetWorldGroupByPayload<T extends WorldGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WorldGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WorldGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WorldGroupByOutputType[P]>
+            : GetScalarType<T[P], WorldGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WorldSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    thumbnailUrl?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    characterStates?: boolean | World$characterStatesArgs<ExtArgs>
+    gameStates?: boolean | World$gameStatesArgs<ExtArgs>
+    locations?: boolean | World$locationsArgs<ExtArgs>
+    loreFragments?: boolean | World$loreFragmentsArgs<ExtArgs>
+    events?: boolean | World$eventsArgs<ExtArgs>
+    _count?: boolean | WorldCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["world"]>
+
+  export type WorldSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    thumbnailUrl?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["world"]>
+
+  export type WorldSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    thumbnailUrl?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["world"]>
+
+  export type WorldSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    thumbnailUrl?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }
+
+  export type WorldOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "thumbnailUrl" | "isActive" | "createdAt", ExtArgs["result"]["world"]>
+  export type WorldInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    characterStates?: boolean | World$characterStatesArgs<ExtArgs>
+    gameStates?: boolean | World$gameStatesArgs<ExtArgs>
+    locations?: boolean | World$locationsArgs<ExtArgs>
+    loreFragments?: boolean | World$loreFragmentsArgs<ExtArgs>
+    events?: boolean | World$eventsArgs<ExtArgs>
+    _count?: boolean | WorldCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type WorldIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type WorldIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $WorldPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "World"
+    objects: {
+      characterStates: Prisma.$CharacterWorldStatePayload<ExtArgs>[]
+      gameStates: Prisma.$GameStatePayload<ExtArgs>[]
+      locations: Prisma.$LocationPayload<ExtArgs>[]
+      loreFragments: Prisma.$LoreFragmentPayload<ExtArgs>[]
+      events: Prisma.$EventPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string | null
+      thumbnailUrl: string | null
+      isActive: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["world"]>
+    composites: {}
+  }
+
+  type WorldGetPayload<S extends boolean | null | undefined | WorldDefaultArgs> = $Result.GetResult<Prisma.$WorldPayload, S>
+
+  type WorldCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WorldFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WorldCountAggregateInputType | true
+    }
+
+  export interface WorldDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['World'], meta: { name: 'World' } }
+    /**
+     * Find zero or one World that matches the filter.
+     * @param {WorldFindUniqueArgs} args - Arguments to find a World
+     * @example
+     * // Get one World
+     * const world = await prisma.world.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WorldFindUniqueArgs>(args: SelectSubset<T, WorldFindUniqueArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one World that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WorldFindUniqueOrThrowArgs} args - Arguments to find a World
+     * @example
+     * // Get one World
+     * const world = await prisma.world.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WorldFindUniqueOrThrowArgs>(args: SelectSubset<T, WorldFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first World that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorldFindFirstArgs} args - Arguments to find a World
+     * @example
+     * // Get one World
+     * const world = await prisma.world.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WorldFindFirstArgs>(args?: SelectSubset<T, WorldFindFirstArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first World that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorldFindFirstOrThrowArgs} args - Arguments to find a World
+     * @example
+     * // Get one World
+     * const world = await prisma.world.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WorldFindFirstOrThrowArgs>(args?: SelectSubset<T, WorldFindFirstOrThrowArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Worlds that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorldFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Worlds
+     * const worlds = await prisma.world.findMany()
+     * 
+     * // Get first 10 Worlds
+     * const worlds = await prisma.world.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const worldWithIdOnly = await prisma.world.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WorldFindManyArgs>(args?: SelectSubset<T, WorldFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a World.
+     * @param {WorldCreateArgs} args - Arguments to create a World.
+     * @example
+     * // Create one World
+     * const World = await prisma.world.create({
+     *   data: {
+     *     // ... data to create a World
+     *   }
+     * })
+     * 
+     */
+    create<T extends WorldCreateArgs>(args: SelectSubset<T, WorldCreateArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Worlds.
+     * @param {WorldCreateManyArgs} args - Arguments to create many Worlds.
+     * @example
+     * // Create many Worlds
+     * const world = await prisma.world.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WorldCreateManyArgs>(args?: SelectSubset<T, WorldCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Worlds and returns the data saved in the database.
+     * @param {WorldCreateManyAndReturnArgs} args - Arguments to create many Worlds.
+     * @example
+     * // Create many Worlds
+     * const world = await prisma.world.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Worlds and only return the `id`
+     * const worldWithIdOnly = await prisma.world.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WorldCreateManyAndReturnArgs>(args?: SelectSubset<T, WorldCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a World.
+     * @param {WorldDeleteArgs} args - Arguments to delete one World.
+     * @example
+     * // Delete one World
+     * const World = await prisma.world.delete({
+     *   where: {
+     *     // ... filter to delete one World
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WorldDeleteArgs>(args: SelectSubset<T, WorldDeleteArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one World.
+     * @param {WorldUpdateArgs} args - Arguments to update one World.
+     * @example
+     * // Update one World
+     * const world = await prisma.world.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WorldUpdateArgs>(args: SelectSubset<T, WorldUpdateArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Worlds.
+     * @param {WorldDeleteManyArgs} args - Arguments to filter Worlds to delete.
+     * @example
+     * // Delete a few Worlds
+     * const { count } = await prisma.world.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WorldDeleteManyArgs>(args?: SelectSubset<T, WorldDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Worlds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorldUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Worlds
+     * const world = await prisma.world.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WorldUpdateManyArgs>(args: SelectSubset<T, WorldUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Worlds and returns the data updated in the database.
+     * @param {WorldUpdateManyAndReturnArgs} args - Arguments to update many Worlds.
+     * @example
+     * // Update many Worlds
+     * const world = await prisma.world.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Worlds and only return the `id`
+     * const worldWithIdOnly = await prisma.world.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WorldUpdateManyAndReturnArgs>(args: SelectSubset<T, WorldUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one World.
+     * @param {WorldUpsertArgs} args - Arguments to update or create a World.
+     * @example
+     * // Update or create a World
+     * const world = await prisma.world.upsert({
+     *   create: {
+     *     // ... data to create a World
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the World we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WorldUpsertArgs>(args: SelectSubset<T, WorldUpsertArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Worlds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorldCountArgs} args - Arguments to filter Worlds to count.
+     * @example
+     * // Count the number of Worlds
+     * const count = await prisma.world.count({
+     *   where: {
+     *     // ... the filter for the Worlds we want to count
+     *   }
+     * })
+    **/
+    count<T extends WorldCountArgs>(
+      args?: Subset<T, WorldCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WorldCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a World.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorldAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WorldAggregateArgs>(args: Subset<T, WorldAggregateArgs>): Prisma.PrismaPromise<GetWorldAggregateType<T>>
+
+    /**
+     * Group by World.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorldGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WorldGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WorldGroupByArgs['orderBy'] }
+        : { orderBy?: WorldGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WorldGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWorldGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the World model
+   */
+  readonly fields: WorldFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for World.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WorldClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    characterStates<T extends World$characterStatesArgs<ExtArgs> = {}>(args?: Subset<T, World$characterStatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    gameStates<T extends World$gameStatesArgs<ExtArgs> = {}>(args?: Subset<T, World$gameStatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    locations<T extends World$locationsArgs<ExtArgs> = {}>(args?: Subset<T, World$locationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    loreFragments<T extends World$loreFragmentsArgs<ExtArgs> = {}>(args?: Subset<T, World$loreFragmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    events<T extends World$eventsArgs<ExtArgs> = {}>(args?: Subset<T, World$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the World model
+   */
+  interface WorldFieldRefs {
+    readonly id: FieldRef<"World", 'String'>
+    readonly name: FieldRef<"World", 'String'>
+    readonly description: FieldRef<"World", 'String'>
+    readonly thumbnailUrl: FieldRef<"World", 'String'>
+    readonly isActive: FieldRef<"World", 'Boolean'>
+    readonly createdAt: FieldRef<"World", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * World findUnique
+   */
+  export type WorldFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * Filter, which World to fetch.
+     */
+    where: WorldWhereUniqueInput
+  }
+
+  /**
+   * World findUniqueOrThrow
+   */
+  export type WorldFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * Filter, which World to fetch.
+     */
+    where: WorldWhereUniqueInput
+  }
+
+  /**
+   * World findFirst
+   */
+  export type WorldFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * Filter, which World to fetch.
+     */
+    where?: WorldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Worlds to fetch.
+     */
+    orderBy?: WorldOrderByWithRelationInput | WorldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Worlds.
+     */
+    cursor?: WorldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Worlds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Worlds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Worlds.
+     */
+    distinct?: WorldScalarFieldEnum | WorldScalarFieldEnum[]
+  }
+
+  /**
+   * World findFirstOrThrow
+   */
+  export type WorldFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * Filter, which World to fetch.
+     */
+    where?: WorldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Worlds to fetch.
+     */
+    orderBy?: WorldOrderByWithRelationInput | WorldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Worlds.
+     */
+    cursor?: WorldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Worlds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Worlds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Worlds.
+     */
+    distinct?: WorldScalarFieldEnum | WorldScalarFieldEnum[]
+  }
+
+  /**
+   * World findMany
+   */
+  export type WorldFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * Filter, which Worlds to fetch.
+     */
+    where?: WorldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Worlds to fetch.
+     */
+    orderBy?: WorldOrderByWithRelationInput | WorldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Worlds.
+     */
+    cursor?: WorldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Worlds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Worlds.
+     */
+    skip?: number
+    distinct?: WorldScalarFieldEnum | WorldScalarFieldEnum[]
+  }
+
+  /**
+   * World create
+   */
+  export type WorldCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * The data needed to create a World.
+     */
+    data: XOR<WorldCreateInput, WorldUncheckedCreateInput>
+  }
+
+  /**
+   * World createMany
+   */
+  export type WorldCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Worlds.
+     */
+    data: WorldCreateManyInput | WorldCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * World createManyAndReturn
+   */
+  export type WorldCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * The data used to create many Worlds.
+     */
+    data: WorldCreateManyInput | WorldCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * World update
+   */
+  export type WorldUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * The data needed to update a World.
+     */
+    data: XOR<WorldUpdateInput, WorldUncheckedUpdateInput>
+    /**
+     * Choose, which World to update.
+     */
+    where: WorldWhereUniqueInput
+  }
+
+  /**
+   * World updateMany
+   */
+  export type WorldUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Worlds.
+     */
+    data: XOR<WorldUpdateManyMutationInput, WorldUncheckedUpdateManyInput>
+    /**
+     * Filter which Worlds to update
+     */
+    where?: WorldWhereInput
+    /**
+     * Limit how many Worlds to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * World updateManyAndReturn
+   */
+  export type WorldUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * The data used to update Worlds.
+     */
+    data: XOR<WorldUpdateManyMutationInput, WorldUncheckedUpdateManyInput>
+    /**
+     * Filter which Worlds to update
+     */
+    where?: WorldWhereInput
+    /**
+     * Limit how many Worlds to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * World upsert
+   */
+  export type WorldUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * The filter to search for the World to update in case it exists.
+     */
+    where: WorldWhereUniqueInput
+    /**
+     * In case the World found by the `where` argument doesn't exist, create a new World with this data.
+     */
+    create: XOR<WorldCreateInput, WorldUncheckedCreateInput>
+    /**
+     * In case the World was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WorldUpdateInput, WorldUncheckedUpdateInput>
+  }
+
+  /**
+   * World delete
+   */
+  export type WorldDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    /**
+     * Filter which World to delete.
+     */
+    where: WorldWhereUniqueInput
+  }
+
+  /**
+   * World deleteMany
+   */
+  export type WorldDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Worlds to delete
+     */
+    where?: WorldWhereInput
+    /**
+     * Limit how many Worlds to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * World.characterStates
+   */
+  export type World$characterStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    where?: CharacterWorldStateWhereInput
+    orderBy?: CharacterWorldStateOrderByWithRelationInput | CharacterWorldStateOrderByWithRelationInput[]
+    cursor?: CharacterWorldStateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CharacterWorldStateScalarFieldEnum | CharacterWorldStateScalarFieldEnum[]
+  }
+
+  /**
+   * World.gameStates
+   */
+  export type World$gameStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameState
+     */
+    select?: GameStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameState
+     */
+    omit?: GameStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameStateInclude<ExtArgs> | null
+    where?: GameStateWhereInput
+    orderBy?: GameStateOrderByWithRelationInput | GameStateOrderByWithRelationInput[]
+    cursor?: GameStateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GameStateScalarFieldEnum | GameStateScalarFieldEnum[]
+  }
+
+  /**
+   * World.locations
+   */
+  export type World$locationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    cursor?: LocationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * World.loreFragments
+   */
+  export type World$loreFragmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    where?: LoreFragmentWhereInput
+    orderBy?: LoreFragmentOrderByWithRelationInput | LoreFragmentOrderByWithRelationInput[]
+    cursor?: LoreFragmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LoreFragmentScalarFieldEnum | LoreFragmentScalarFieldEnum[]
+  }
+
+  /**
+   * World.events
+   */
+  export type World$eventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    where?: EventWhereInput
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    cursor?: EventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * World without action
+   */
+  export type WorldDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CharacterWorldState
+   */
+
+  export type AggregateCharacterWorldState = {
+    _count: CharacterWorldStateCountAggregateOutputType | null
+    _min: CharacterWorldStateMinAggregateOutputType | null
+    _max: CharacterWorldStateMaxAggregateOutputType | null
+  }
+
+  export type CharacterWorldStateMinAggregateOutputType = {
+    id: string | null
+    characterId: string | null
+    worldId: string | null
+    currentLocation: string | null
+    lastPlayedAt: Date | null
+  }
+
+  export type CharacterWorldStateMaxAggregateOutputType = {
+    id: string | null
+    characterId: string | null
+    worldId: string | null
+    currentLocation: string | null
+    lastPlayedAt: Date | null
+  }
+
+  export type CharacterWorldStateCountAggregateOutputType = {
+    id: number
+    characterId: number
+    worldId: number
+    currentLocation: number
+    lastPlayedAt: number
+    _all: number
+  }
+
+
+  export type CharacterWorldStateMinAggregateInputType = {
+    id?: true
+    characterId?: true
+    worldId?: true
+    currentLocation?: true
+    lastPlayedAt?: true
+  }
+
+  export type CharacterWorldStateMaxAggregateInputType = {
+    id?: true
+    characterId?: true
+    worldId?: true
+    currentLocation?: true
+    lastPlayedAt?: true
+  }
+
+  export type CharacterWorldStateCountAggregateInputType = {
+    id?: true
+    characterId?: true
+    worldId?: true
+    currentLocation?: true
+    lastPlayedAt?: true
+    _all?: true
+  }
+
+  export type CharacterWorldStateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CharacterWorldState to aggregate.
+     */
+    where?: CharacterWorldStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CharacterWorldStates to fetch.
+     */
+    orderBy?: CharacterWorldStateOrderByWithRelationInput | CharacterWorldStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CharacterWorldStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CharacterWorldStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CharacterWorldStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CharacterWorldStates
+    **/
+    _count?: true | CharacterWorldStateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CharacterWorldStateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CharacterWorldStateMaxAggregateInputType
+  }
+
+  export type GetCharacterWorldStateAggregateType<T extends CharacterWorldStateAggregateArgs> = {
+        [P in keyof T & keyof AggregateCharacterWorldState]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCharacterWorldState[P]>
+      : GetScalarType<T[P], AggregateCharacterWorldState[P]>
+  }
+
+
+
+
+  export type CharacterWorldStateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CharacterWorldStateWhereInput
+    orderBy?: CharacterWorldStateOrderByWithAggregationInput | CharacterWorldStateOrderByWithAggregationInput[]
+    by: CharacterWorldStateScalarFieldEnum[] | CharacterWorldStateScalarFieldEnum
+    having?: CharacterWorldStateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CharacterWorldStateCountAggregateInputType | true
+    _min?: CharacterWorldStateMinAggregateInputType
+    _max?: CharacterWorldStateMaxAggregateInputType
+  }
+
+  export type CharacterWorldStateGroupByOutputType = {
+    id: string
+    characterId: string
+    worldId: string
+    currentLocation: string | null
+    lastPlayedAt: Date | null
+    _count: CharacterWorldStateCountAggregateOutputType | null
+    _min: CharacterWorldStateMinAggregateOutputType | null
+    _max: CharacterWorldStateMaxAggregateOutputType | null
+  }
+
+  type GetCharacterWorldStateGroupByPayload<T extends CharacterWorldStateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CharacterWorldStateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CharacterWorldStateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CharacterWorldStateGroupByOutputType[P]>
+            : GetScalarType<T[P], CharacterWorldStateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CharacterWorldStateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    characterId?: boolean
+    worldId?: boolean
+    currentLocation?: boolean
+    lastPlayedAt?: boolean
+    character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["characterWorldState"]>
+
+  export type CharacterWorldStateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    characterId?: boolean
+    worldId?: boolean
+    currentLocation?: boolean
+    lastPlayedAt?: boolean
+    character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["characterWorldState"]>
+
+  export type CharacterWorldStateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    characterId?: boolean
+    worldId?: boolean
+    currentLocation?: boolean
+    lastPlayedAt?: boolean
+    character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["characterWorldState"]>
+
+  export type CharacterWorldStateSelectScalar = {
+    id?: boolean
+    characterId?: boolean
+    worldId?: boolean
+    currentLocation?: boolean
+    lastPlayedAt?: boolean
+  }
+
+  export type CharacterWorldStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "characterId" | "worldId" | "currentLocation" | "lastPlayedAt", ExtArgs["result"]["characterWorldState"]>
+  export type CharacterWorldStateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+  export type CharacterWorldStateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+  export type CharacterWorldStateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+
+  export type $CharacterWorldStatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CharacterWorldState"
+    objects: {
+      character: Prisma.$CharacterPayload<ExtArgs>
+      world: Prisma.$WorldPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      characterId: string
+      worldId: string
+      currentLocation: string | null
+      lastPlayedAt: Date | null
+    }, ExtArgs["result"]["characterWorldState"]>
+    composites: {}
+  }
+
+  type CharacterWorldStateGetPayload<S extends boolean | null | undefined | CharacterWorldStateDefaultArgs> = $Result.GetResult<Prisma.$CharacterWorldStatePayload, S>
+
+  type CharacterWorldStateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CharacterWorldStateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CharacterWorldStateCountAggregateInputType | true
+    }
+
+  export interface CharacterWorldStateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CharacterWorldState'], meta: { name: 'CharacterWorldState' } }
+    /**
+     * Find zero or one CharacterWorldState that matches the filter.
+     * @param {CharacterWorldStateFindUniqueArgs} args - Arguments to find a CharacterWorldState
+     * @example
+     * // Get one CharacterWorldState
+     * const characterWorldState = await prisma.characterWorldState.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CharacterWorldStateFindUniqueArgs>(args: SelectSubset<T, CharacterWorldStateFindUniqueArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CharacterWorldState that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CharacterWorldStateFindUniqueOrThrowArgs} args - Arguments to find a CharacterWorldState
+     * @example
+     * // Get one CharacterWorldState
+     * const characterWorldState = await prisma.characterWorldState.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CharacterWorldStateFindUniqueOrThrowArgs>(args: SelectSubset<T, CharacterWorldStateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CharacterWorldState that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CharacterWorldStateFindFirstArgs} args - Arguments to find a CharacterWorldState
+     * @example
+     * // Get one CharacterWorldState
+     * const characterWorldState = await prisma.characterWorldState.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CharacterWorldStateFindFirstArgs>(args?: SelectSubset<T, CharacterWorldStateFindFirstArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CharacterWorldState that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CharacterWorldStateFindFirstOrThrowArgs} args - Arguments to find a CharacterWorldState
+     * @example
+     * // Get one CharacterWorldState
+     * const characterWorldState = await prisma.characterWorldState.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CharacterWorldStateFindFirstOrThrowArgs>(args?: SelectSubset<T, CharacterWorldStateFindFirstOrThrowArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CharacterWorldStates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CharacterWorldStateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CharacterWorldStates
+     * const characterWorldStates = await prisma.characterWorldState.findMany()
+     * 
+     * // Get first 10 CharacterWorldStates
+     * const characterWorldStates = await prisma.characterWorldState.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const characterWorldStateWithIdOnly = await prisma.characterWorldState.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CharacterWorldStateFindManyArgs>(args?: SelectSubset<T, CharacterWorldStateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CharacterWorldState.
+     * @param {CharacterWorldStateCreateArgs} args - Arguments to create a CharacterWorldState.
+     * @example
+     * // Create one CharacterWorldState
+     * const CharacterWorldState = await prisma.characterWorldState.create({
+     *   data: {
+     *     // ... data to create a CharacterWorldState
+     *   }
+     * })
+     * 
+     */
+    create<T extends CharacterWorldStateCreateArgs>(args: SelectSubset<T, CharacterWorldStateCreateArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CharacterWorldStates.
+     * @param {CharacterWorldStateCreateManyArgs} args - Arguments to create many CharacterWorldStates.
+     * @example
+     * // Create many CharacterWorldStates
+     * const characterWorldState = await prisma.characterWorldState.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CharacterWorldStateCreateManyArgs>(args?: SelectSubset<T, CharacterWorldStateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CharacterWorldStates and returns the data saved in the database.
+     * @param {CharacterWorldStateCreateManyAndReturnArgs} args - Arguments to create many CharacterWorldStates.
+     * @example
+     * // Create many CharacterWorldStates
+     * const characterWorldState = await prisma.characterWorldState.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CharacterWorldStates and only return the `id`
+     * const characterWorldStateWithIdOnly = await prisma.characterWorldState.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CharacterWorldStateCreateManyAndReturnArgs>(args?: SelectSubset<T, CharacterWorldStateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CharacterWorldState.
+     * @param {CharacterWorldStateDeleteArgs} args - Arguments to delete one CharacterWorldState.
+     * @example
+     * // Delete one CharacterWorldState
+     * const CharacterWorldState = await prisma.characterWorldState.delete({
+     *   where: {
+     *     // ... filter to delete one CharacterWorldState
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CharacterWorldStateDeleteArgs>(args: SelectSubset<T, CharacterWorldStateDeleteArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CharacterWorldState.
+     * @param {CharacterWorldStateUpdateArgs} args - Arguments to update one CharacterWorldState.
+     * @example
+     * // Update one CharacterWorldState
+     * const characterWorldState = await prisma.characterWorldState.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CharacterWorldStateUpdateArgs>(args: SelectSubset<T, CharacterWorldStateUpdateArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CharacterWorldStates.
+     * @param {CharacterWorldStateDeleteManyArgs} args - Arguments to filter CharacterWorldStates to delete.
+     * @example
+     * // Delete a few CharacterWorldStates
+     * const { count } = await prisma.characterWorldState.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CharacterWorldStateDeleteManyArgs>(args?: SelectSubset<T, CharacterWorldStateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CharacterWorldStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CharacterWorldStateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CharacterWorldStates
+     * const characterWorldState = await prisma.characterWorldState.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CharacterWorldStateUpdateManyArgs>(args: SelectSubset<T, CharacterWorldStateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CharacterWorldStates and returns the data updated in the database.
+     * @param {CharacterWorldStateUpdateManyAndReturnArgs} args - Arguments to update many CharacterWorldStates.
+     * @example
+     * // Update many CharacterWorldStates
+     * const characterWorldState = await prisma.characterWorldState.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CharacterWorldStates and only return the `id`
+     * const characterWorldStateWithIdOnly = await prisma.characterWorldState.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CharacterWorldStateUpdateManyAndReturnArgs>(args: SelectSubset<T, CharacterWorldStateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CharacterWorldState.
+     * @param {CharacterWorldStateUpsertArgs} args - Arguments to update or create a CharacterWorldState.
+     * @example
+     * // Update or create a CharacterWorldState
+     * const characterWorldState = await prisma.characterWorldState.upsert({
+     *   create: {
+     *     // ... data to create a CharacterWorldState
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CharacterWorldState we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CharacterWorldStateUpsertArgs>(args: SelectSubset<T, CharacterWorldStateUpsertArgs<ExtArgs>>): Prisma__CharacterWorldStateClient<$Result.GetResult<Prisma.$CharacterWorldStatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CharacterWorldStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CharacterWorldStateCountArgs} args - Arguments to filter CharacterWorldStates to count.
+     * @example
+     * // Count the number of CharacterWorldStates
+     * const count = await prisma.characterWorldState.count({
+     *   where: {
+     *     // ... the filter for the CharacterWorldStates we want to count
+     *   }
+     * })
+    **/
+    count<T extends CharacterWorldStateCountArgs>(
+      args?: Subset<T, CharacterWorldStateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CharacterWorldStateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CharacterWorldState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CharacterWorldStateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CharacterWorldStateAggregateArgs>(args: Subset<T, CharacterWorldStateAggregateArgs>): Prisma.PrismaPromise<GetCharacterWorldStateAggregateType<T>>
+
+    /**
+     * Group by CharacterWorldState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CharacterWorldStateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CharacterWorldStateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CharacterWorldStateGroupByArgs['orderBy'] }
+        : { orderBy?: CharacterWorldStateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CharacterWorldStateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCharacterWorldStateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CharacterWorldState model
+   */
+  readonly fields: CharacterWorldStateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CharacterWorldState.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CharacterWorldStateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    character<T extends CharacterDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CharacterDefaultArgs<ExtArgs>>): Prisma__CharacterClient<$Result.GetResult<Prisma.$CharacterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    world<T extends WorldDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorldDefaultArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CharacterWorldState model
+   */
+  interface CharacterWorldStateFieldRefs {
+    readonly id: FieldRef<"CharacterWorldState", 'String'>
+    readonly characterId: FieldRef<"CharacterWorldState", 'String'>
+    readonly worldId: FieldRef<"CharacterWorldState", 'String'>
+    readonly currentLocation: FieldRef<"CharacterWorldState", 'String'>
+    readonly lastPlayedAt: FieldRef<"CharacterWorldState", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CharacterWorldState findUnique
+   */
+  export type CharacterWorldStateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * Filter, which CharacterWorldState to fetch.
+     */
+    where: CharacterWorldStateWhereUniqueInput
+  }
+
+  /**
+   * CharacterWorldState findUniqueOrThrow
+   */
+  export type CharacterWorldStateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * Filter, which CharacterWorldState to fetch.
+     */
+    where: CharacterWorldStateWhereUniqueInput
+  }
+
+  /**
+   * CharacterWorldState findFirst
+   */
+  export type CharacterWorldStateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * Filter, which CharacterWorldState to fetch.
+     */
+    where?: CharacterWorldStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CharacterWorldStates to fetch.
+     */
+    orderBy?: CharacterWorldStateOrderByWithRelationInput | CharacterWorldStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CharacterWorldStates.
+     */
+    cursor?: CharacterWorldStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CharacterWorldStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CharacterWorldStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CharacterWorldStates.
+     */
+    distinct?: CharacterWorldStateScalarFieldEnum | CharacterWorldStateScalarFieldEnum[]
+  }
+
+  /**
+   * CharacterWorldState findFirstOrThrow
+   */
+  export type CharacterWorldStateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * Filter, which CharacterWorldState to fetch.
+     */
+    where?: CharacterWorldStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CharacterWorldStates to fetch.
+     */
+    orderBy?: CharacterWorldStateOrderByWithRelationInput | CharacterWorldStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CharacterWorldStates.
+     */
+    cursor?: CharacterWorldStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CharacterWorldStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CharacterWorldStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CharacterWorldStates.
+     */
+    distinct?: CharacterWorldStateScalarFieldEnum | CharacterWorldStateScalarFieldEnum[]
+  }
+
+  /**
+   * CharacterWorldState findMany
+   */
+  export type CharacterWorldStateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * Filter, which CharacterWorldStates to fetch.
+     */
+    where?: CharacterWorldStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CharacterWorldStates to fetch.
+     */
+    orderBy?: CharacterWorldStateOrderByWithRelationInput | CharacterWorldStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CharacterWorldStates.
+     */
+    cursor?: CharacterWorldStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CharacterWorldStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CharacterWorldStates.
+     */
+    skip?: number
+    distinct?: CharacterWorldStateScalarFieldEnum | CharacterWorldStateScalarFieldEnum[]
+  }
+
+  /**
+   * CharacterWorldState create
+   */
+  export type CharacterWorldStateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CharacterWorldState.
+     */
+    data: XOR<CharacterWorldStateCreateInput, CharacterWorldStateUncheckedCreateInput>
+  }
+
+  /**
+   * CharacterWorldState createMany
+   */
+  export type CharacterWorldStateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CharacterWorldStates.
+     */
+    data: CharacterWorldStateCreateManyInput | CharacterWorldStateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CharacterWorldState createManyAndReturn
+   */
+  export type CharacterWorldStateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * The data used to create many CharacterWorldStates.
+     */
+    data: CharacterWorldStateCreateManyInput | CharacterWorldStateCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CharacterWorldState update
+   */
+  export type CharacterWorldStateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CharacterWorldState.
+     */
+    data: XOR<CharacterWorldStateUpdateInput, CharacterWorldStateUncheckedUpdateInput>
+    /**
+     * Choose, which CharacterWorldState to update.
+     */
+    where: CharacterWorldStateWhereUniqueInput
+  }
+
+  /**
+   * CharacterWorldState updateMany
+   */
+  export type CharacterWorldStateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CharacterWorldStates.
+     */
+    data: XOR<CharacterWorldStateUpdateManyMutationInput, CharacterWorldStateUncheckedUpdateManyInput>
+    /**
+     * Filter which CharacterWorldStates to update
+     */
+    where?: CharacterWorldStateWhereInput
+    /**
+     * Limit how many CharacterWorldStates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CharacterWorldState updateManyAndReturn
+   */
+  export type CharacterWorldStateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * The data used to update CharacterWorldStates.
+     */
+    data: XOR<CharacterWorldStateUpdateManyMutationInput, CharacterWorldStateUncheckedUpdateManyInput>
+    /**
+     * Filter which CharacterWorldStates to update
+     */
+    where?: CharacterWorldStateWhereInput
+    /**
+     * Limit how many CharacterWorldStates to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CharacterWorldState upsert
+   */
+  export type CharacterWorldStateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CharacterWorldState to update in case it exists.
+     */
+    where: CharacterWorldStateWhereUniqueInput
+    /**
+     * In case the CharacterWorldState found by the `where` argument doesn't exist, create a new CharacterWorldState with this data.
+     */
+    create: XOR<CharacterWorldStateCreateInput, CharacterWorldStateUncheckedCreateInput>
+    /**
+     * In case the CharacterWorldState was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CharacterWorldStateUpdateInput, CharacterWorldStateUncheckedUpdateInput>
+  }
+
+  /**
+   * CharacterWorldState delete
+   */
+  export type CharacterWorldStateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+    /**
+     * Filter which CharacterWorldState to delete.
+     */
+    where: CharacterWorldStateWhereUniqueInput
+  }
+
+  /**
+   * CharacterWorldState deleteMany
+   */
+  export type CharacterWorldStateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CharacterWorldStates to delete
+     */
+    where?: CharacterWorldStateWhereInput
+    /**
+     * Limit how many CharacterWorldStates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CharacterWorldState without action
+   */
+  export type CharacterWorldStateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CharacterWorldState
+     */
+    select?: CharacterWorldStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CharacterWorldState
+     */
+    omit?: CharacterWorldStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CharacterWorldStateInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Location
+   */
+
+  export type AggregateLocation = {
+    _count: LocationCountAggregateOutputType | null
+    _min: LocationMinAggregateOutputType | null
+    _max: LocationMaxAggregateOutputType | null
+  }
+
+  export type LocationMinAggregateOutputType = {
+    id: string | null
+    worldId: string | null
+    name: string | null
+    description: string | null
+    isStartingLocation: boolean | null
+    thumbnailUrl: string | null
+  }
+
+  export type LocationMaxAggregateOutputType = {
+    id: string | null
+    worldId: string | null
+    name: string | null
+    description: string | null
+    isStartingLocation: boolean | null
+    thumbnailUrl: string | null
+  }
+
+  export type LocationCountAggregateOutputType = {
+    id: number
+    worldId: number
+    name: number
+    description: number
+    isStartingLocation: number
+    connectedLocationIds: number
+    thumbnailUrl: number
+    _all: number
+  }
+
+
+  export type LocationMinAggregateInputType = {
+    id?: true
+    worldId?: true
+    name?: true
+    description?: true
+    isStartingLocation?: true
+    thumbnailUrl?: true
+  }
+
+  export type LocationMaxAggregateInputType = {
+    id?: true
+    worldId?: true
+    name?: true
+    description?: true
+    isStartingLocation?: true
+    thumbnailUrl?: true
+  }
+
+  export type LocationCountAggregateInputType = {
+    id?: true
+    worldId?: true
+    name?: true
+    description?: true
+    isStartingLocation?: true
+    connectedLocationIds?: true
+    thumbnailUrl?: true
+    _all?: true
+  }
+
+  export type LocationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Location to aggregate.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Locations
+    **/
+    _count?: true | LocationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LocationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LocationMaxAggregateInputType
+  }
+
+  export type GetLocationAggregateType<T extends LocationAggregateArgs> = {
+        [P in keyof T & keyof AggregateLocation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLocation[P]>
+      : GetScalarType<T[P], AggregateLocation[P]>
+  }
+
+
+
+
+  export type LocationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LocationWhereInput
+    orderBy?: LocationOrderByWithAggregationInput | LocationOrderByWithAggregationInput[]
+    by: LocationScalarFieldEnum[] | LocationScalarFieldEnum
+    having?: LocationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LocationCountAggregateInputType | true
+    _min?: LocationMinAggregateInputType
+    _max?: LocationMaxAggregateInputType
+  }
+
+  export type LocationGroupByOutputType = {
+    id: string
+    worldId: string
+    name: string
+    description: string | null
+    isStartingLocation: boolean
+    connectedLocationIds: string[]
+    thumbnailUrl: string | null
+    _count: LocationCountAggregateOutputType | null
+    _min: LocationMinAggregateOutputType | null
+    _max: LocationMaxAggregateOutputType | null
+  }
+
+  type GetLocationGroupByPayload<T extends LocationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LocationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LocationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LocationGroupByOutputType[P]>
+            : GetScalarType<T[P], LocationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LocationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    name?: boolean
+    description?: boolean
+    isStartingLocation?: boolean
+    connectedLocationIds?: boolean
+    thumbnailUrl?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    events?: boolean | Location$eventsArgs<ExtArgs>
+    gameStates?: boolean | Location$gameStatesArgs<ExtArgs>
+    _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["location"]>
+
+  export type LocationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    name?: boolean
+    description?: boolean
+    isStartingLocation?: boolean
+    connectedLocationIds?: boolean
+    thumbnailUrl?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["location"]>
+
+  export type LocationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    name?: boolean
+    description?: boolean
+    isStartingLocation?: boolean
+    connectedLocationIds?: boolean
+    thumbnailUrl?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["location"]>
+
+  export type LocationSelectScalar = {
+    id?: boolean
+    worldId?: boolean
+    name?: boolean
+    description?: boolean
+    isStartingLocation?: boolean
+    connectedLocationIds?: boolean
+    thumbnailUrl?: boolean
+  }
+
+  export type LocationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "worldId" | "name" | "description" | "isStartingLocation" | "connectedLocationIds" | "thumbnailUrl", ExtArgs["result"]["location"]>
+  export type LocationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    events?: boolean | Location$eventsArgs<ExtArgs>
+    gameStates?: boolean | Location$gameStatesArgs<ExtArgs>
+    _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type LocationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+  export type LocationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+
+  export type $LocationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Location"
+    objects: {
+      world: Prisma.$WorldPayload<ExtArgs>
+      events: Prisma.$EventPayload<ExtArgs>[]
+      gameStates: Prisma.$GameStatePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      worldId: string
+      name: string
+      description: string | null
+      isStartingLocation: boolean
+      connectedLocationIds: string[]
+      thumbnailUrl: string | null
+    }, ExtArgs["result"]["location"]>
+    composites: {}
+  }
+
+  type LocationGetPayload<S extends boolean | null | undefined | LocationDefaultArgs> = $Result.GetResult<Prisma.$LocationPayload, S>
+
+  type LocationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LocationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LocationCountAggregateInputType | true
+    }
+
+  export interface LocationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Location'], meta: { name: 'Location' } }
+    /**
+     * Find zero or one Location that matches the filter.
+     * @param {LocationFindUniqueArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LocationFindUniqueArgs>(args: SelectSubset<T, LocationFindUniqueArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Location that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LocationFindUniqueOrThrowArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LocationFindUniqueOrThrowArgs>(args: SelectSubset<T, LocationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Location that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationFindFirstArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LocationFindFirstArgs>(args?: SelectSubset<T, LocationFindFirstArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Location that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationFindFirstOrThrowArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LocationFindFirstOrThrowArgs>(args?: SelectSubset<T, LocationFindFirstOrThrowArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Locations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Locations
+     * const locations = await prisma.location.findMany()
+     * 
+     * // Get first 10 Locations
+     * const locations = await prisma.location.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const locationWithIdOnly = await prisma.location.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LocationFindManyArgs>(args?: SelectSubset<T, LocationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Location.
+     * @param {LocationCreateArgs} args - Arguments to create a Location.
+     * @example
+     * // Create one Location
+     * const Location = await prisma.location.create({
+     *   data: {
+     *     // ... data to create a Location
+     *   }
+     * })
+     * 
+     */
+    create<T extends LocationCreateArgs>(args: SelectSubset<T, LocationCreateArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Locations.
+     * @param {LocationCreateManyArgs} args - Arguments to create many Locations.
+     * @example
+     * // Create many Locations
+     * const location = await prisma.location.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LocationCreateManyArgs>(args?: SelectSubset<T, LocationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Locations and returns the data saved in the database.
+     * @param {LocationCreateManyAndReturnArgs} args - Arguments to create many Locations.
+     * @example
+     * // Create many Locations
+     * const location = await prisma.location.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Locations and only return the `id`
+     * const locationWithIdOnly = await prisma.location.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LocationCreateManyAndReturnArgs>(args?: SelectSubset<T, LocationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Location.
+     * @param {LocationDeleteArgs} args - Arguments to delete one Location.
+     * @example
+     * // Delete one Location
+     * const Location = await prisma.location.delete({
+     *   where: {
+     *     // ... filter to delete one Location
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LocationDeleteArgs>(args: SelectSubset<T, LocationDeleteArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Location.
+     * @param {LocationUpdateArgs} args - Arguments to update one Location.
+     * @example
+     * // Update one Location
+     * const location = await prisma.location.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LocationUpdateArgs>(args: SelectSubset<T, LocationUpdateArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Locations.
+     * @param {LocationDeleteManyArgs} args - Arguments to filter Locations to delete.
+     * @example
+     * // Delete a few Locations
+     * const { count } = await prisma.location.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LocationDeleteManyArgs>(args?: SelectSubset<T, LocationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Locations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Locations
+     * const location = await prisma.location.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LocationUpdateManyArgs>(args: SelectSubset<T, LocationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Locations and returns the data updated in the database.
+     * @param {LocationUpdateManyAndReturnArgs} args - Arguments to update many Locations.
+     * @example
+     * // Update many Locations
+     * const location = await prisma.location.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Locations and only return the `id`
+     * const locationWithIdOnly = await prisma.location.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LocationUpdateManyAndReturnArgs>(args: SelectSubset<T, LocationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Location.
+     * @param {LocationUpsertArgs} args - Arguments to update or create a Location.
+     * @example
+     * // Update or create a Location
+     * const location = await prisma.location.upsert({
+     *   create: {
+     *     // ... data to create a Location
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Location we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LocationUpsertArgs>(args: SelectSubset<T, LocationUpsertArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Locations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationCountArgs} args - Arguments to filter Locations to count.
+     * @example
+     * // Count the number of Locations
+     * const count = await prisma.location.count({
+     *   where: {
+     *     // ... the filter for the Locations we want to count
+     *   }
+     * })
+    **/
+    count<T extends LocationCountArgs>(
+      args?: Subset<T, LocationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LocationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Location.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LocationAggregateArgs>(args: Subset<T, LocationAggregateArgs>): Prisma.PrismaPromise<GetLocationAggregateType<T>>
+
+    /**
+     * Group by Location.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LocationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LocationGroupByArgs['orderBy'] }
+        : { orderBy?: LocationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LocationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLocationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Location model
+   */
+  readonly fields: LocationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Location.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LocationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    world<T extends WorldDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorldDefaultArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    events<T extends Location$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Location$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    gameStates<T extends Location$gameStatesArgs<ExtArgs> = {}>(args?: Subset<T, Location$gameStatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Location model
+   */
+  interface LocationFieldRefs {
+    readonly id: FieldRef<"Location", 'String'>
+    readonly worldId: FieldRef<"Location", 'String'>
+    readonly name: FieldRef<"Location", 'String'>
+    readonly description: FieldRef<"Location", 'String'>
+    readonly isStartingLocation: FieldRef<"Location", 'Boolean'>
+    readonly connectedLocationIds: FieldRef<"Location", 'String[]'>
+    readonly thumbnailUrl: FieldRef<"Location", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Location findUnique
+   */
+  export type LocationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location findUniqueOrThrow
+   */
+  export type LocationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location findFirst
+   */
+  export type LocationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Locations.
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Locations.
+     */
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * Location findFirstOrThrow
+   */
+  export type LocationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Locations.
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Locations.
+     */
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * Location findMany
+   */
+  export type LocationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Locations to fetch.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Locations.
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * Location create
+   */
+  export type LocationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Location.
+     */
+    data: XOR<LocationCreateInput, LocationUncheckedCreateInput>
+  }
+
+  /**
+   * Location createMany
+   */
+  export type LocationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Locations.
+     */
+    data: LocationCreateManyInput | LocationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Location createManyAndReturn
+   */
+  export type LocationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * The data used to create many Locations.
+     */
+    data: LocationCreateManyInput | LocationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Location update
+   */
+  export type LocationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Location.
+     */
+    data: XOR<LocationUpdateInput, LocationUncheckedUpdateInput>
+    /**
+     * Choose, which Location to update.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location updateMany
+   */
+  export type LocationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Locations.
+     */
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyInput>
+    /**
+     * Filter which Locations to update
+     */
+    where?: LocationWhereInput
+    /**
+     * Limit how many Locations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Location updateManyAndReturn
+   */
+  export type LocationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * The data used to update Locations.
+     */
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyInput>
+    /**
+     * Filter which Locations to update
+     */
+    where?: LocationWhereInput
+    /**
+     * Limit how many Locations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Location upsert
+   */
+  export type LocationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Location to update in case it exists.
+     */
+    where: LocationWhereUniqueInput
+    /**
+     * In case the Location found by the `where` argument doesn't exist, create a new Location with this data.
+     */
+    create: XOR<LocationCreateInput, LocationUncheckedCreateInput>
+    /**
+     * In case the Location was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LocationUpdateInput, LocationUncheckedUpdateInput>
+  }
+
+  /**
+   * Location delete
+   */
+  export type LocationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter which Location to delete.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location deleteMany
+   */
+  export type LocationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Locations to delete
+     */
+    where?: LocationWhereInput
+    /**
+     * Limit how many Locations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Location.events
+   */
+  export type Location$eventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    where?: EventWhereInput
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    cursor?: EventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * Location.gameStates
+   */
+  export type Location$gameStatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameState
+     */
+    select?: GameStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameState
+     */
+    omit?: GameStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameStateInclude<ExtArgs> | null
+    where?: GameStateWhereInput
+    orderBy?: GameStateOrderByWithRelationInput | GameStateOrderByWithRelationInput[]
+    cursor?: GameStateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GameStateScalarFieldEnum | GameStateScalarFieldEnum[]
+  }
+
+  /**
+   * Location without action
+   */
+  export type LocationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LoreFragment
+   */
+
+  export type AggregateLoreFragment = {
+    _count: LoreFragmentCountAggregateOutputType | null
+    _min: LoreFragmentMinAggregateOutputType | null
+    _max: LoreFragmentMaxAggregateOutputType | null
+  }
+
+  export type LoreFragmentMinAggregateOutputType = {
+    id: string | null
+    worldId: string | null
+    title: string | null
+    content: string | null
+    type: string | null
+    contextId: string | null
+    isRevealed: boolean | null
+  }
+
+  export type LoreFragmentMaxAggregateOutputType = {
+    id: string | null
+    worldId: string | null
+    title: string | null
+    content: string | null
+    type: string | null
+    contextId: string | null
+    isRevealed: boolean | null
+  }
+
+  export type LoreFragmentCountAggregateOutputType = {
+    id: number
+    worldId: number
+    title: number
+    content: number
+    type: number
+    contextId: number
+    isRevealed: number
+    keywords: number
+    _all: number
+  }
+
+
+  export type LoreFragmentMinAggregateInputType = {
+    id?: true
+    worldId?: true
+    title?: true
+    content?: true
+    type?: true
+    contextId?: true
+    isRevealed?: true
+  }
+
+  export type LoreFragmentMaxAggregateInputType = {
+    id?: true
+    worldId?: true
+    title?: true
+    content?: true
+    type?: true
+    contextId?: true
+    isRevealed?: true
+  }
+
+  export type LoreFragmentCountAggregateInputType = {
+    id?: true
+    worldId?: true
+    title?: true
+    content?: true
+    type?: true
+    contextId?: true
+    isRevealed?: true
+    keywords?: true
+    _all?: true
+  }
+
+  export type LoreFragmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LoreFragment to aggregate.
+     */
+    where?: LoreFragmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoreFragments to fetch.
+     */
+    orderBy?: LoreFragmentOrderByWithRelationInput | LoreFragmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LoreFragmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoreFragments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoreFragments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LoreFragments
+    **/
+    _count?: true | LoreFragmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LoreFragmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LoreFragmentMaxAggregateInputType
+  }
+
+  export type GetLoreFragmentAggregateType<T extends LoreFragmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateLoreFragment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLoreFragment[P]>
+      : GetScalarType<T[P], AggregateLoreFragment[P]>
+  }
+
+
+
+
+  export type LoreFragmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LoreFragmentWhereInput
+    orderBy?: LoreFragmentOrderByWithAggregationInput | LoreFragmentOrderByWithAggregationInput[]
+    by: LoreFragmentScalarFieldEnum[] | LoreFragmentScalarFieldEnum
+    having?: LoreFragmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LoreFragmentCountAggregateInputType | true
+    _min?: LoreFragmentMinAggregateInputType
+    _max?: LoreFragmentMaxAggregateInputType
+  }
+
+  export type LoreFragmentGroupByOutputType = {
+    id: string
+    worldId: string
+    title: string
+    content: string
+    type: string
+    contextId: string | null
+    isRevealed: boolean
+    keywords: string[]
+    _count: LoreFragmentCountAggregateOutputType | null
+    _min: LoreFragmentMinAggregateOutputType | null
+    _max: LoreFragmentMaxAggregateOutputType | null
+  }
+
+  type GetLoreFragmentGroupByPayload<T extends LoreFragmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LoreFragmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LoreFragmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LoreFragmentGroupByOutputType[P]>
+            : GetScalarType<T[P], LoreFragmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LoreFragmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    title?: boolean
+    content?: boolean
+    type?: boolean
+    contextId?: boolean
+    isRevealed?: boolean
+    keywords?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["loreFragment"]>
+
+  export type LoreFragmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    title?: boolean
+    content?: boolean
+    type?: boolean
+    contextId?: boolean
+    isRevealed?: boolean
+    keywords?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["loreFragment"]>
+
+  export type LoreFragmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    title?: boolean
+    content?: boolean
+    type?: boolean
+    contextId?: boolean
+    isRevealed?: boolean
+    keywords?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["loreFragment"]>
+
+  export type LoreFragmentSelectScalar = {
+    id?: boolean
+    worldId?: boolean
+    title?: boolean
+    content?: boolean
+    type?: boolean
+    contextId?: boolean
+    isRevealed?: boolean
+    keywords?: boolean
+  }
+
+  export type LoreFragmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "worldId" | "title" | "content" | "type" | "contextId" | "isRevealed" | "keywords", ExtArgs["result"]["loreFragment"]>
+  export type LoreFragmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+  export type LoreFragmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+  export type LoreFragmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+  }
+
+  export type $LoreFragmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LoreFragment"
+    objects: {
+      world: Prisma.$WorldPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      worldId: string
+      title: string
+      content: string
+      type: string
+      contextId: string | null
+      isRevealed: boolean
+      keywords: string[]
+    }, ExtArgs["result"]["loreFragment"]>
+    composites: {}
+  }
+
+  type LoreFragmentGetPayload<S extends boolean | null | undefined | LoreFragmentDefaultArgs> = $Result.GetResult<Prisma.$LoreFragmentPayload, S>
+
+  type LoreFragmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LoreFragmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LoreFragmentCountAggregateInputType | true
+    }
+
+  export interface LoreFragmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LoreFragment'], meta: { name: 'LoreFragment' } }
+    /**
+     * Find zero or one LoreFragment that matches the filter.
+     * @param {LoreFragmentFindUniqueArgs} args - Arguments to find a LoreFragment
+     * @example
+     * // Get one LoreFragment
+     * const loreFragment = await prisma.loreFragment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LoreFragmentFindUniqueArgs>(args: SelectSubset<T, LoreFragmentFindUniqueArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LoreFragment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LoreFragmentFindUniqueOrThrowArgs} args - Arguments to find a LoreFragment
+     * @example
+     * // Get one LoreFragment
+     * const loreFragment = await prisma.loreFragment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LoreFragmentFindUniqueOrThrowArgs>(args: SelectSubset<T, LoreFragmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LoreFragment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoreFragmentFindFirstArgs} args - Arguments to find a LoreFragment
+     * @example
+     * // Get one LoreFragment
+     * const loreFragment = await prisma.loreFragment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LoreFragmentFindFirstArgs>(args?: SelectSubset<T, LoreFragmentFindFirstArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LoreFragment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoreFragmentFindFirstOrThrowArgs} args - Arguments to find a LoreFragment
+     * @example
+     * // Get one LoreFragment
+     * const loreFragment = await prisma.loreFragment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LoreFragmentFindFirstOrThrowArgs>(args?: SelectSubset<T, LoreFragmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LoreFragments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoreFragmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LoreFragments
+     * const loreFragments = await prisma.loreFragment.findMany()
+     * 
+     * // Get first 10 LoreFragments
+     * const loreFragments = await prisma.loreFragment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const loreFragmentWithIdOnly = await prisma.loreFragment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LoreFragmentFindManyArgs>(args?: SelectSubset<T, LoreFragmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LoreFragment.
+     * @param {LoreFragmentCreateArgs} args - Arguments to create a LoreFragment.
+     * @example
+     * // Create one LoreFragment
+     * const LoreFragment = await prisma.loreFragment.create({
+     *   data: {
+     *     // ... data to create a LoreFragment
+     *   }
+     * })
+     * 
+     */
+    create<T extends LoreFragmentCreateArgs>(args: SelectSubset<T, LoreFragmentCreateArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LoreFragments.
+     * @param {LoreFragmentCreateManyArgs} args - Arguments to create many LoreFragments.
+     * @example
+     * // Create many LoreFragments
+     * const loreFragment = await prisma.loreFragment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LoreFragmentCreateManyArgs>(args?: SelectSubset<T, LoreFragmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LoreFragments and returns the data saved in the database.
+     * @param {LoreFragmentCreateManyAndReturnArgs} args - Arguments to create many LoreFragments.
+     * @example
+     * // Create many LoreFragments
+     * const loreFragment = await prisma.loreFragment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LoreFragments and only return the `id`
+     * const loreFragmentWithIdOnly = await prisma.loreFragment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LoreFragmentCreateManyAndReturnArgs>(args?: SelectSubset<T, LoreFragmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LoreFragment.
+     * @param {LoreFragmentDeleteArgs} args - Arguments to delete one LoreFragment.
+     * @example
+     * // Delete one LoreFragment
+     * const LoreFragment = await prisma.loreFragment.delete({
+     *   where: {
+     *     // ... filter to delete one LoreFragment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LoreFragmentDeleteArgs>(args: SelectSubset<T, LoreFragmentDeleteArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LoreFragment.
+     * @param {LoreFragmentUpdateArgs} args - Arguments to update one LoreFragment.
+     * @example
+     * // Update one LoreFragment
+     * const loreFragment = await prisma.loreFragment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LoreFragmentUpdateArgs>(args: SelectSubset<T, LoreFragmentUpdateArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LoreFragments.
+     * @param {LoreFragmentDeleteManyArgs} args - Arguments to filter LoreFragments to delete.
+     * @example
+     * // Delete a few LoreFragments
+     * const { count } = await prisma.loreFragment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LoreFragmentDeleteManyArgs>(args?: SelectSubset<T, LoreFragmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LoreFragments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoreFragmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LoreFragments
+     * const loreFragment = await prisma.loreFragment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LoreFragmentUpdateManyArgs>(args: SelectSubset<T, LoreFragmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LoreFragments and returns the data updated in the database.
+     * @param {LoreFragmentUpdateManyAndReturnArgs} args - Arguments to update many LoreFragments.
+     * @example
+     * // Update many LoreFragments
+     * const loreFragment = await prisma.loreFragment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LoreFragments and only return the `id`
+     * const loreFragmentWithIdOnly = await prisma.loreFragment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LoreFragmentUpdateManyAndReturnArgs>(args: SelectSubset<T, LoreFragmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LoreFragment.
+     * @param {LoreFragmentUpsertArgs} args - Arguments to update or create a LoreFragment.
+     * @example
+     * // Update or create a LoreFragment
+     * const loreFragment = await prisma.loreFragment.upsert({
+     *   create: {
+     *     // ... data to create a LoreFragment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LoreFragment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LoreFragmentUpsertArgs>(args: SelectSubset<T, LoreFragmentUpsertArgs<ExtArgs>>): Prisma__LoreFragmentClient<$Result.GetResult<Prisma.$LoreFragmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LoreFragments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoreFragmentCountArgs} args - Arguments to filter LoreFragments to count.
+     * @example
+     * // Count the number of LoreFragments
+     * const count = await prisma.loreFragment.count({
+     *   where: {
+     *     // ... the filter for the LoreFragments we want to count
+     *   }
+     * })
+    **/
+    count<T extends LoreFragmentCountArgs>(
+      args?: Subset<T, LoreFragmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LoreFragmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LoreFragment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoreFragmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LoreFragmentAggregateArgs>(args: Subset<T, LoreFragmentAggregateArgs>): Prisma.PrismaPromise<GetLoreFragmentAggregateType<T>>
+
+    /**
+     * Group by LoreFragment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoreFragmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LoreFragmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LoreFragmentGroupByArgs['orderBy'] }
+        : { orderBy?: LoreFragmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LoreFragmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLoreFragmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LoreFragment model
+   */
+  readonly fields: LoreFragmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LoreFragment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LoreFragmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    world<T extends WorldDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorldDefaultArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LoreFragment model
+   */
+  interface LoreFragmentFieldRefs {
+    readonly id: FieldRef<"LoreFragment", 'String'>
+    readonly worldId: FieldRef<"LoreFragment", 'String'>
+    readonly title: FieldRef<"LoreFragment", 'String'>
+    readonly content: FieldRef<"LoreFragment", 'String'>
+    readonly type: FieldRef<"LoreFragment", 'String'>
+    readonly contextId: FieldRef<"LoreFragment", 'String'>
+    readonly isRevealed: FieldRef<"LoreFragment", 'Boolean'>
+    readonly keywords: FieldRef<"LoreFragment", 'String[]'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LoreFragment findUnique
+   */
+  export type LoreFragmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LoreFragment to fetch.
+     */
+    where: LoreFragmentWhereUniqueInput
+  }
+
+  /**
+   * LoreFragment findUniqueOrThrow
+   */
+  export type LoreFragmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LoreFragment to fetch.
+     */
+    where: LoreFragmentWhereUniqueInput
+  }
+
+  /**
+   * LoreFragment findFirst
+   */
+  export type LoreFragmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LoreFragment to fetch.
+     */
+    where?: LoreFragmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoreFragments to fetch.
+     */
+    orderBy?: LoreFragmentOrderByWithRelationInput | LoreFragmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LoreFragments.
+     */
+    cursor?: LoreFragmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoreFragments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoreFragments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LoreFragments.
+     */
+    distinct?: LoreFragmentScalarFieldEnum | LoreFragmentScalarFieldEnum[]
+  }
+
+  /**
+   * LoreFragment findFirstOrThrow
+   */
+  export type LoreFragmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LoreFragment to fetch.
+     */
+    where?: LoreFragmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoreFragments to fetch.
+     */
+    orderBy?: LoreFragmentOrderByWithRelationInput | LoreFragmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LoreFragments.
+     */
+    cursor?: LoreFragmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoreFragments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoreFragments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LoreFragments.
+     */
+    distinct?: LoreFragmentScalarFieldEnum | LoreFragmentScalarFieldEnum[]
+  }
+
+  /**
+   * LoreFragment findMany
+   */
+  export type LoreFragmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LoreFragments to fetch.
+     */
+    where?: LoreFragmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoreFragments to fetch.
+     */
+    orderBy?: LoreFragmentOrderByWithRelationInput | LoreFragmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LoreFragments.
+     */
+    cursor?: LoreFragmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoreFragments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoreFragments.
+     */
+    skip?: number
+    distinct?: LoreFragmentScalarFieldEnum | LoreFragmentScalarFieldEnum[]
+  }
+
+  /**
+   * LoreFragment create
+   */
+  export type LoreFragmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LoreFragment.
+     */
+    data: XOR<LoreFragmentCreateInput, LoreFragmentUncheckedCreateInput>
+  }
+
+  /**
+   * LoreFragment createMany
+   */
+  export type LoreFragmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LoreFragments.
+     */
+    data: LoreFragmentCreateManyInput | LoreFragmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LoreFragment createManyAndReturn
+   */
+  export type LoreFragmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many LoreFragments.
+     */
+    data: LoreFragmentCreateManyInput | LoreFragmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LoreFragment update
+   */
+  export type LoreFragmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LoreFragment.
+     */
+    data: XOR<LoreFragmentUpdateInput, LoreFragmentUncheckedUpdateInput>
+    /**
+     * Choose, which LoreFragment to update.
+     */
+    where: LoreFragmentWhereUniqueInput
+  }
+
+  /**
+   * LoreFragment updateMany
+   */
+  export type LoreFragmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LoreFragments.
+     */
+    data: XOR<LoreFragmentUpdateManyMutationInput, LoreFragmentUncheckedUpdateManyInput>
+    /**
+     * Filter which LoreFragments to update
+     */
+    where?: LoreFragmentWhereInput
+    /**
+     * Limit how many LoreFragments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LoreFragment updateManyAndReturn
+   */
+  export type LoreFragmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * The data used to update LoreFragments.
+     */
+    data: XOR<LoreFragmentUpdateManyMutationInput, LoreFragmentUncheckedUpdateManyInput>
+    /**
+     * Filter which LoreFragments to update
+     */
+    where?: LoreFragmentWhereInput
+    /**
+     * Limit how many LoreFragments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LoreFragment upsert
+   */
+  export type LoreFragmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LoreFragment to update in case it exists.
+     */
+    where: LoreFragmentWhereUniqueInput
+    /**
+     * In case the LoreFragment found by the `where` argument doesn't exist, create a new LoreFragment with this data.
+     */
+    create: XOR<LoreFragmentCreateInput, LoreFragmentUncheckedCreateInput>
+    /**
+     * In case the LoreFragment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LoreFragmentUpdateInput, LoreFragmentUncheckedUpdateInput>
+  }
+
+  /**
+   * LoreFragment delete
+   */
+  export type LoreFragmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+    /**
+     * Filter which LoreFragment to delete.
+     */
+    where: LoreFragmentWhereUniqueInput
+  }
+
+  /**
+   * LoreFragment deleteMany
+   */
+  export type LoreFragmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LoreFragments to delete
+     */
+    where?: LoreFragmentWhereInput
+    /**
+     * Limit how many LoreFragments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LoreFragment without action
+   */
+  export type LoreFragmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoreFragment
+     */
+    select?: LoreFragmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoreFragment
+     */
+    omit?: LoreFragmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoreFragmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Event
+   */
+
+  export type AggregateEvent = {
+    _count: EventCountAggregateOutputType | null
+    _min: EventMinAggregateOutputType | null
+    _max: EventMaxAggregateOutputType | null
+  }
+
+  export type EventMinAggregateOutputType = {
+    id: string | null
+    worldId: string | null
+    locationId: string | null
+    title: string | null
+    description: string | null
+    eventType: string | null
+    isRepeatable: boolean | null
+  }
+
+  export type EventMaxAggregateOutputType = {
+    id: string | null
+    worldId: string | null
+    locationId: string | null
+    title: string | null
+    description: string | null
+    eventType: string | null
+    isRepeatable: boolean | null
+  }
+
+  export type EventCountAggregateOutputType = {
+    id: number
+    worldId: number
+    locationId: number
+    title: number
+    description: number
+    eventType: number
+    triggerConditions: number
+    outcomes: number
+    isRepeatable: number
+    _all: number
+  }
+
+
+  export type EventMinAggregateInputType = {
+    id?: true
+    worldId?: true
+    locationId?: true
+    title?: true
+    description?: true
+    eventType?: true
+    isRepeatable?: true
+  }
+
+  export type EventMaxAggregateInputType = {
+    id?: true
+    worldId?: true
+    locationId?: true
+    title?: true
+    description?: true
+    eventType?: true
+    isRepeatable?: true
+  }
+
+  export type EventCountAggregateInputType = {
+    id?: true
+    worldId?: true
+    locationId?: true
+    title?: true
+    description?: true
+    eventType?: true
+    triggerConditions?: true
+    outcomes?: true
+    isRepeatable?: true
+    _all?: true
+  }
+
+  export type EventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Event to aggregate.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Events
+    **/
+    _count?: true | EventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EventMaxAggregateInputType
+  }
+
+  export type GetEventAggregateType<T extends EventAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvent[P]>
+      : GetScalarType<T[P], AggregateEvent[P]>
+  }
+
+
+
+
+  export type EventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventWhereInput
+    orderBy?: EventOrderByWithAggregationInput | EventOrderByWithAggregationInput[]
+    by: EventScalarFieldEnum[] | EventScalarFieldEnum
+    having?: EventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EventCountAggregateInputType | true
+    _min?: EventMinAggregateInputType
+    _max?: EventMaxAggregateInputType
+  }
+
+  export type EventGroupByOutputType = {
+    id: string
+    worldId: string
+    locationId: string | null
+    title: string
+    description: string
+    eventType: string
+    triggerConditions: JsonValue
+    outcomes: JsonValue
+    isRepeatable: boolean
+    _count: EventCountAggregateOutputType | null
+    _min: EventMinAggregateOutputType | null
+    _max: EventMaxAggregateOutputType | null
+  }
+
+  type GetEventGroupByPayload<T extends EventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EventGroupByOutputType[P]>
+            : GetScalarType<T[P], EventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    locationId?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    triggerConditions?: boolean
+    outcomes?: boolean
+    isRepeatable?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    location?: boolean | Event$locationArgs<ExtArgs>
+  }, ExtArgs["result"]["event"]>
+
+  export type EventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    locationId?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    triggerConditions?: boolean
+    outcomes?: boolean
+    isRepeatable?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    location?: boolean | Event$locationArgs<ExtArgs>
+  }, ExtArgs["result"]["event"]>
+
+  export type EventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    worldId?: boolean
+    locationId?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    triggerConditions?: boolean
+    outcomes?: boolean
+    isRepeatable?: boolean
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    location?: boolean | Event$locationArgs<ExtArgs>
+  }, ExtArgs["result"]["event"]>
+
+  export type EventSelectScalar = {
+    id?: boolean
+    worldId?: boolean
+    locationId?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    triggerConditions?: boolean
+    outcomes?: boolean
+    isRepeatable?: boolean
+  }
+
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "worldId" | "locationId" | "title" | "description" | "eventType" | "triggerConditions" | "outcomes" | "isRepeatable", ExtArgs["result"]["event"]>
+  export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    location?: boolean | Event$locationArgs<ExtArgs>
+  }
+  export type EventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    location?: boolean | Event$locationArgs<ExtArgs>
+  }
+  export type EventIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    world?: boolean | WorldDefaultArgs<ExtArgs>
+    location?: boolean | Event$locationArgs<ExtArgs>
+  }
+
+  export type $EventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Event"
+    objects: {
+      world: Prisma.$WorldPayload<ExtArgs>
+      location: Prisma.$LocationPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      worldId: string
+      locationId: string | null
+      title: string
+      description: string
+      eventType: string
+      triggerConditions: Prisma.JsonValue
+      outcomes: Prisma.JsonValue
+      isRepeatable: boolean
+    }, ExtArgs["result"]["event"]>
+    composites: {}
+  }
+
+  type EventGetPayload<S extends boolean | null | undefined | EventDefaultArgs> = $Result.GetResult<Prisma.$EventPayload, S>
+
+  type EventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EventCountAggregateInputType | true
+    }
+
+  export interface EventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Event'], meta: { name: 'Event' } }
+    /**
+     * Find zero or one Event that matches the filter.
+     * @param {EventFindUniqueArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EventFindUniqueArgs>(args: SelectSubset<T, EventFindUniqueArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Event that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EventFindUniqueOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EventFindUniqueOrThrowArgs>(args: SelectSubset<T, EventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Event that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindFirstArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EventFindFirstArgs>(args?: SelectSubset<T, EventFindFirstArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Event that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindFirstOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EventFindFirstOrThrowArgs>(args?: SelectSubset<T, EventFindFirstOrThrowArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Events that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Events
+     * const events = await prisma.event.findMany()
+     * 
+     * // Get first 10 Events
+     * const events = await prisma.event.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const eventWithIdOnly = await prisma.event.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EventFindManyArgs>(args?: SelectSubset<T, EventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Event.
+     * @param {EventCreateArgs} args - Arguments to create a Event.
+     * @example
+     * // Create one Event
+     * const Event = await prisma.event.create({
+     *   data: {
+     *     // ... data to create a Event
+     *   }
+     * })
+     * 
+     */
+    create<T extends EventCreateArgs>(args: SelectSubset<T, EventCreateArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Events.
+     * @param {EventCreateManyArgs} args - Arguments to create many Events.
+     * @example
+     * // Create many Events
+     * const event = await prisma.event.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EventCreateManyArgs>(args?: SelectSubset<T, EventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Events and returns the data saved in the database.
+     * @param {EventCreateManyAndReturnArgs} args - Arguments to create many Events.
+     * @example
+     * // Create many Events
+     * const event = await prisma.event.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Events and only return the `id`
+     * const eventWithIdOnly = await prisma.event.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EventCreateManyAndReturnArgs>(args?: SelectSubset<T, EventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Event.
+     * @param {EventDeleteArgs} args - Arguments to delete one Event.
+     * @example
+     * // Delete one Event
+     * const Event = await prisma.event.delete({
+     *   where: {
+     *     // ... filter to delete one Event
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EventDeleteArgs>(args: SelectSubset<T, EventDeleteArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Event.
+     * @param {EventUpdateArgs} args - Arguments to update one Event.
+     * @example
+     * // Update one Event
+     * const event = await prisma.event.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EventUpdateArgs>(args: SelectSubset<T, EventUpdateArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Events.
+     * @param {EventDeleteManyArgs} args - Arguments to filter Events to delete.
+     * @example
+     * // Delete a few Events
+     * const { count } = await prisma.event.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EventDeleteManyArgs>(args?: SelectSubset<T, EventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Events.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Events
+     * const event = await prisma.event.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EventUpdateManyArgs>(args: SelectSubset<T, EventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Events and returns the data updated in the database.
+     * @param {EventUpdateManyAndReturnArgs} args - Arguments to update many Events.
+     * @example
+     * // Update many Events
+     * const event = await prisma.event.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Events and only return the `id`
+     * const eventWithIdOnly = await prisma.event.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EventUpdateManyAndReturnArgs>(args: SelectSubset<T, EventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Event.
+     * @param {EventUpsertArgs} args - Arguments to update or create a Event.
+     * @example
+     * // Update or create a Event
+     * const event = await prisma.event.upsert({
+     *   create: {
+     *     // ... data to create a Event
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Event we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EventUpsertArgs>(args: SelectSubset<T, EventUpsertArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Events.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventCountArgs} args - Arguments to filter Events to count.
+     * @example
+     * // Count the number of Events
+     * const count = await prisma.event.count({
+     *   where: {
+     *     // ... the filter for the Events we want to count
+     *   }
+     * })
+    **/
+    count<T extends EventCountArgs>(
+      args?: Subset<T, EventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Event.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EventAggregateArgs>(args: Subset<T, EventAggregateArgs>): Prisma.PrismaPromise<GetEventAggregateType<T>>
+
+    /**
+     * Group by Event.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EventGroupByArgs['orderBy'] }
+        : { orderBy?: EventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Event model
+   */
+  readonly fields: EventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Event.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    world<T extends WorldDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorldDefaultArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    location<T extends Event$locationArgs<ExtArgs> = {}>(args?: Subset<T, Event$locationArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Event model
+   */
+  interface EventFieldRefs {
+    readonly id: FieldRef<"Event", 'String'>
+    readonly worldId: FieldRef<"Event", 'String'>
+    readonly locationId: FieldRef<"Event", 'String'>
+    readonly title: FieldRef<"Event", 'String'>
+    readonly description: FieldRef<"Event", 'String'>
+    readonly eventType: FieldRef<"Event", 'String'>
+    readonly triggerConditions: FieldRef<"Event", 'Json'>
+    readonly outcomes: FieldRef<"Event", 'Json'>
+    readonly isRepeatable: FieldRef<"Event", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Event findUnique
+   */
+  export type EventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event findUniqueOrThrow
+   */
+  export type EventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event findFirst
+   */
+  export type EventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Events.
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Events.
+     */
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * Event findFirstOrThrow
+   */
+  export type EventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Events.
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Events.
+     */
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * Event findMany
+   */
+  export type EventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * Filter, which Events to fetch.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Events.
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * Event create
+   */
+  export type EventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Event.
+     */
+    data: XOR<EventCreateInput, EventUncheckedCreateInput>
+  }
+
+  /**
+   * Event createMany
+   */
+  export type EventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Events.
+     */
+    data: EventCreateManyInput | EventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Event createManyAndReturn
+   */
+  export type EventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * The data used to create many Events.
+     */
+    data: EventCreateManyInput | EventCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Event update
+   */
+  export type EventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Event.
+     */
+    data: XOR<EventUpdateInput, EventUncheckedUpdateInput>
+    /**
+     * Choose, which Event to update.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event updateMany
+   */
+  export type EventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Events.
+     */
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyInput>
+    /**
+     * Filter which Events to update
+     */
+    where?: EventWhereInput
+    /**
+     * Limit how many Events to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Event updateManyAndReturn
+   */
+  export type EventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * The data used to update Events.
+     */
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyInput>
+    /**
+     * Filter which Events to update
+     */
+    where?: EventWhereInput
+    /**
+     * Limit how many Events to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Event upsert
+   */
+  export type EventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Event to update in case it exists.
+     */
+    where: EventWhereUniqueInput
+    /**
+     * In case the Event found by the `where` argument doesn't exist, create a new Event with this data.
+     */
+    create: XOR<EventCreateInput, EventUncheckedCreateInput>
+    /**
+     * In case the Event was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EventUpdateInput, EventUncheckedUpdateInput>
+  }
+
+  /**
+   * Event delete
+   */
+  export type EventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    /**
+     * Filter which Event to delete.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event deleteMany
+   */
+  export type EventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Events to delete
+     */
+    where?: EventWhereInput
+    /**
+     * Limit how many Events to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Event.location
+   */
+  export type Event$locationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
+  }
+
+  /**
+   * Event without action
+   */
+  export type EventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
   }
 
 
@@ -5397,6 +11395,8 @@ export namespace Prisma {
     id: string | null
     sessionId: string | null
     characterId: string | null
+    worldId: string | null
+    locationId: string | null
     savePointName: string | null
     currentLocation: string | null
     saveTimestamp: Date | null
@@ -5409,6 +11409,8 @@ export namespace Prisma {
     id: string | null
     sessionId: string | null
     characterId: string | null
+    worldId: string | null
+    locationId: string | null
     savePointName: string | null
     currentLocation: string | null
     saveTimestamp: Date | null
@@ -5421,6 +11423,8 @@ export namespace Prisma {
     id: number
     sessionId: number
     characterId: number
+    worldId: number
+    locationId: number
     savePointName: number
     currentLocation: number
     saveTimestamp: number
@@ -5438,6 +11442,8 @@ export namespace Prisma {
     id?: true
     sessionId?: true
     characterId?: true
+    worldId?: true
+    locationId?: true
     savePointName?: true
     currentLocation?: true
     saveTimestamp?: true
@@ -5450,6 +11456,8 @@ export namespace Prisma {
     id?: true
     sessionId?: true
     characterId?: true
+    worldId?: true
+    locationId?: true
     savePointName?: true
     currentLocation?: true
     saveTimestamp?: true
@@ -5462,6 +11470,8 @@ export namespace Prisma {
     id?: true
     sessionId?: true
     characterId?: true
+    worldId?: true
+    locationId?: true
     savePointName?: true
     currentLocation?: true
     saveTimestamp?: true
@@ -5550,6 +11560,8 @@ export namespace Prisma {
     id: string
     sessionId: string
     characterId: string
+    worldId: string | null
+    locationId: string | null
     savePointName: string | null
     currentLocation: string
     saveTimestamp: Date
@@ -5582,6 +11594,8 @@ export namespace Prisma {
     id?: boolean
     sessionId?: boolean
     characterId?: boolean
+    worldId?: boolean
+    locationId?: boolean
     savePointName?: boolean
     currentLocation?: boolean
     saveTimestamp?: boolean
@@ -5593,6 +11607,8 @@ export namespace Prisma {
     isCompleted?: boolean
     session?: boolean | GameSessionDefaultArgs<ExtArgs>
     character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | GameState$worldArgs<ExtArgs>
+    location?: boolean | GameState$locationArgs<ExtArgs>
     npcStates?: boolean | GameState$npcStatesArgs<ExtArgs>
     decisions?: boolean | GameState$decisionsArgs<ExtArgs>
     aiContextHistory?: boolean | GameState$aiContextHistoryArgs<ExtArgs>
@@ -5604,6 +11620,8 @@ export namespace Prisma {
     id?: boolean
     sessionId?: boolean
     characterId?: boolean
+    worldId?: boolean
+    locationId?: boolean
     savePointName?: boolean
     currentLocation?: boolean
     saveTimestamp?: boolean
@@ -5615,12 +11633,16 @@ export namespace Prisma {
     isCompleted?: boolean
     session?: boolean | GameSessionDefaultArgs<ExtArgs>
     character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | GameState$worldArgs<ExtArgs>
+    location?: boolean | GameState$locationArgs<ExtArgs>
   }, ExtArgs["result"]["gameState"]>
 
   export type GameStateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sessionId?: boolean
     characterId?: boolean
+    worldId?: boolean
+    locationId?: boolean
     savePointName?: boolean
     currentLocation?: boolean
     saveTimestamp?: boolean
@@ -5632,12 +11654,16 @@ export namespace Prisma {
     isCompleted?: boolean
     session?: boolean | GameSessionDefaultArgs<ExtArgs>
     character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | GameState$worldArgs<ExtArgs>
+    location?: boolean | GameState$locationArgs<ExtArgs>
   }, ExtArgs["result"]["gameState"]>
 
   export type GameStateSelectScalar = {
     id?: boolean
     sessionId?: boolean
     characterId?: boolean
+    worldId?: boolean
+    locationId?: boolean
     savePointName?: boolean
     currentLocation?: boolean
     saveTimestamp?: boolean
@@ -5649,10 +11675,12 @@ export namespace Prisma {
     isCompleted?: boolean
   }
 
-  export type GameStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sessionId" | "characterId" | "savePointName" | "currentLocation" | "saveTimestamp" | "narrativeContext" | "aiContext" | "characterState" | "worldState" | "isAutosave" | "isCompleted", ExtArgs["result"]["gameState"]>
+  export type GameStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sessionId" | "characterId" | "worldId" | "locationId" | "savePointName" | "currentLocation" | "saveTimestamp" | "narrativeContext" | "aiContext" | "characterState" | "worldState" | "isAutosave" | "isCompleted", ExtArgs["result"]["gameState"]>
   export type GameStateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | GameSessionDefaultArgs<ExtArgs>
     character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | GameState$worldArgs<ExtArgs>
+    location?: boolean | GameState$locationArgs<ExtArgs>
     npcStates?: boolean | GameState$npcStatesArgs<ExtArgs>
     decisions?: boolean | GameState$decisionsArgs<ExtArgs>
     aiContextHistory?: boolean | GameState$aiContextHistoryArgs<ExtArgs>
@@ -5662,10 +11690,14 @@ export namespace Prisma {
   export type GameStateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | GameSessionDefaultArgs<ExtArgs>
     character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | GameState$worldArgs<ExtArgs>
+    location?: boolean | GameState$locationArgs<ExtArgs>
   }
   export type GameStateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | GameSessionDefaultArgs<ExtArgs>
     character?: boolean | CharacterDefaultArgs<ExtArgs>
+    world?: boolean | GameState$worldArgs<ExtArgs>
+    location?: boolean | GameState$locationArgs<ExtArgs>
   }
 
   export type $GameStatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5673,6 +11705,8 @@ export namespace Prisma {
     objects: {
       session: Prisma.$GameSessionPayload<ExtArgs>
       character: Prisma.$CharacterPayload<ExtArgs>
+      world: Prisma.$WorldPayload<ExtArgs> | null
+      location: Prisma.$LocationPayload<ExtArgs> | null
       npcStates: Prisma.$NPCStatePayload<ExtArgs>[]
       decisions: Prisma.$DecisionPayload<ExtArgs>[]
       aiContextHistory: Prisma.$AIContextHistoryPayload<ExtArgs>[]
@@ -5682,6 +11716,8 @@ export namespace Prisma {
       id: string
       sessionId: string
       characterId: string
+      worldId: string | null
+      locationId: string | null
       savePointName: string | null
       currentLocation: string
       saveTimestamp: Date
@@ -6087,6 +12123,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     session<T extends GameSessionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GameSessionDefaultArgs<ExtArgs>>): Prisma__GameSessionClient<$Result.GetResult<Prisma.$GameSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     character<T extends CharacterDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CharacterDefaultArgs<ExtArgs>>): Prisma__CharacterClient<$Result.GetResult<Prisma.$CharacterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    world<T extends GameState$worldArgs<ExtArgs> = {}>(args?: Subset<T, GameState$worldArgs<ExtArgs>>): Prisma__WorldClient<$Result.GetResult<Prisma.$WorldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    location<T extends GameState$locationArgs<ExtArgs> = {}>(args?: Subset<T, GameState$locationArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     npcStates<T extends GameState$npcStatesArgs<ExtArgs> = {}>(args?: Subset<T, GameState$npcStatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NPCStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     decisions<T extends GameState$decisionsArgs<ExtArgs> = {}>(args?: Subset<T, GameState$decisionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DecisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     aiContextHistory<T extends GameState$aiContextHistoryArgs<ExtArgs> = {}>(args?: Subset<T, GameState$aiContextHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIContextHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6123,6 +12161,8 @@ export namespace Prisma {
     readonly id: FieldRef<"GameState", 'String'>
     readonly sessionId: FieldRef<"GameState", 'String'>
     readonly characterId: FieldRef<"GameState", 'String'>
+    readonly worldId: FieldRef<"GameState", 'String'>
+    readonly locationId: FieldRef<"GameState", 'String'>
     readonly savePointName: FieldRef<"GameState", 'String'>
     readonly currentLocation: FieldRef<"GameState", 'String'>
     readonly saveTimestamp: FieldRef<"GameState", 'DateTime'>
@@ -6525,6 +12565,44 @@ export namespace Prisma {
      * Limit how many GameStates to delete.
      */
     limit?: number
+  }
+
+  /**
+   * GameState.world
+   */
+  export type GameState$worldArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the World
+     */
+    select?: WorldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the World
+     */
+    omit?: WorldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorldInclude<ExtArgs> | null
+    where?: WorldWhereInput
+  }
+
+  /**
+   * GameState.location
+   */
+  export type GameState$locationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
   }
 
   /**
@@ -8845,2223 +14923,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: NPCStateInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model LoreCategory
-   */
-
-  export type AggregateLoreCategory = {
-    _count: LoreCategoryCountAggregateOutputType | null
-    _min: LoreCategoryMinAggregateOutputType | null
-    _max: LoreCategoryMaxAggregateOutputType | null
-  }
-
-  export type LoreCategoryMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    description: string | null
-    parentCategoryId: string | null
-  }
-
-  export type LoreCategoryMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    description: string | null
-    parentCategoryId: string | null
-  }
-
-  export type LoreCategoryCountAggregateOutputType = {
-    id: number
-    name: number
-    description: number
-    parentCategoryId: number
-    _all: number
-  }
-
-
-  export type LoreCategoryMinAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    parentCategoryId?: true
-  }
-
-  export type LoreCategoryMaxAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    parentCategoryId?: true
-  }
-
-  export type LoreCategoryCountAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    parentCategoryId?: true
-    _all?: true
-  }
-
-  export type LoreCategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which LoreCategory to aggregate.
-     */
-    where?: LoreCategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of LoreCategories to fetch.
-     */
-    orderBy?: LoreCategoryOrderByWithRelationInput | LoreCategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: LoreCategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` LoreCategories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` LoreCategories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned LoreCategories
-    **/
-    _count?: true | LoreCategoryCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: LoreCategoryMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: LoreCategoryMaxAggregateInputType
-  }
-
-  export type GetLoreCategoryAggregateType<T extends LoreCategoryAggregateArgs> = {
-        [P in keyof T & keyof AggregateLoreCategory]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateLoreCategory[P]>
-      : GetScalarType<T[P], AggregateLoreCategory[P]>
-  }
-
-
-
-
-  export type LoreCategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: LoreCategoryWhereInput
-    orderBy?: LoreCategoryOrderByWithAggregationInput | LoreCategoryOrderByWithAggregationInput[]
-    by: LoreCategoryScalarFieldEnum[] | LoreCategoryScalarFieldEnum
-    having?: LoreCategoryScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: LoreCategoryCountAggregateInputType | true
-    _min?: LoreCategoryMinAggregateInputType
-    _max?: LoreCategoryMaxAggregateInputType
-  }
-
-  export type LoreCategoryGroupByOutputType = {
-    id: string
-    name: string
-    description: string | null
-    parentCategoryId: string | null
-    _count: LoreCategoryCountAggregateOutputType | null
-    _min: LoreCategoryMinAggregateOutputType | null
-    _max: LoreCategoryMaxAggregateOutputType | null
-  }
-
-  type GetLoreCategoryGroupByPayload<T extends LoreCategoryGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<LoreCategoryGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof LoreCategoryGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], LoreCategoryGroupByOutputType[P]>
-            : GetScalarType<T[P], LoreCategoryGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type LoreCategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    parentCategoryId?: boolean
-    parentCategory?: boolean | LoreCategory$parentCategoryArgs<ExtArgs>
-    subcategories?: boolean | LoreCategory$subcategoriesArgs<ExtArgs>
-    worldLore?: boolean | LoreCategory$worldLoreArgs<ExtArgs>
-    _count?: boolean | LoreCategoryCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["loreCategory"]>
-
-  export type LoreCategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    parentCategoryId?: boolean
-    parentCategory?: boolean | LoreCategory$parentCategoryArgs<ExtArgs>
-  }, ExtArgs["result"]["loreCategory"]>
-
-  export type LoreCategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    parentCategoryId?: boolean
-    parentCategory?: boolean | LoreCategory$parentCategoryArgs<ExtArgs>
-  }, ExtArgs["result"]["loreCategory"]>
-
-  export type LoreCategorySelectScalar = {
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    parentCategoryId?: boolean
-  }
-
-  export type LoreCategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "parentCategoryId", ExtArgs["result"]["loreCategory"]>
-  export type LoreCategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    parentCategory?: boolean | LoreCategory$parentCategoryArgs<ExtArgs>
-    subcategories?: boolean | LoreCategory$subcategoriesArgs<ExtArgs>
-    worldLore?: boolean | LoreCategory$worldLoreArgs<ExtArgs>
-    _count?: boolean | LoreCategoryCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type LoreCategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    parentCategory?: boolean | LoreCategory$parentCategoryArgs<ExtArgs>
-  }
-  export type LoreCategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    parentCategory?: boolean | LoreCategory$parentCategoryArgs<ExtArgs>
-  }
-
-  export type $LoreCategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "LoreCategory"
-    objects: {
-      parentCategory: Prisma.$LoreCategoryPayload<ExtArgs> | null
-      subcategories: Prisma.$LoreCategoryPayload<ExtArgs>[]
-      worldLore: Prisma.$WorldLorePayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      description: string | null
-      parentCategoryId: string | null
-    }, ExtArgs["result"]["loreCategory"]>
-    composites: {}
-  }
-
-  type LoreCategoryGetPayload<S extends boolean | null | undefined | LoreCategoryDefaultArgs> = $Result.GetResult<Prisma.$LoreCategoryPayload, S>
-
-  type LoreCategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<LoreCategoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: LoreCategoryCountAggregateInputType | true
-    }
-
-  export interface LoreCategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LoreCategory'], meta: { name: 'LoreCategory' } }
-    /**
-     * Find zero or one LoreCategory that matches the filter.
-     * @param {LoreCategoryFindUniqueArgs} args - Arguments to find a LoreCategory
-     * @example
-     * // Get one LoreCategory
-     * const loreCategory = await prisma.loreCategory.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends LoreCategoryFindUniqueArgs>(args: SelectSubset<T, LoreCategoryFindUniqueArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one LoreCategory that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {LoreCategoryFindUniqueOrThrowArgs} args - Arguments to find a LoreCategory
-     * @example
-     * // Get one LoreCategory
-     * const loreCategory = await prisma.loreCategory.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends LoreCategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, LoreCategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first LoreCategory that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {LoreCategoryFindFirstArgs} args - Arguments to find a LoreCategory
-     * @example
-     * // Get one LoreCategory
-     * const loreCategory = await prisma.loreCategory.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends LoreCategoryFindFirstArgs>(args?: SelectSubset<T, LoreCategoryFindFirstArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first LoreCategory that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {LoreCategoryFindFirstOrThrowArgs} args - Arguments to find a LoreCategory
-     * @example
-     * // Get one LoreCategory
-     * const loreCategory = await prisma.loreCategory.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends LoreCategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, LoreCategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more LoreCategories that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {LoreCategoryFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all LoreCategories
-     * const loreCategories = await prisma.loreCategory.findMany()
-     * 
-     * // Get first 10 LoreCategories
-     * const loreCategories = await prisma.loreCategory.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const loreCategoryWithIdOnly = await prisma.loreCategory.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends LoreCategoryFindManyArgs>(args?: SelectSubset<T, LoreCategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a LoreCategory.
-     * @param {LoreCategoryCreateArgs} args - Arguments to create a LoreCategory.
-     * @example
-     * // Create one LoreCategory
-     * const LoreCategory = await prisma.loreCategory.create({
-     *   data: {
-     *     // ... data to create a LoreCategory
-     *   }
-     * })
-     * 
-     */
-    create<T extends LoreCategoryCreateArgs>(args: SelectSubset<T, LoreCategoryCreateArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many LoreCategories.
-     * @param {LoreCategoryCreateManyArgs} args - Arguments to create many LoreCategories.
-     * @example
-     * // Create many LoreCategories
-     * const loreCategory = await prisma.loreCategory.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends LoreCategoryCreateManyArgs>(args?: SelectSubset<T, LoreCategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many LoreCategories and returns the data saved in the database.
-     * @param {LoreCategoryCreateManyAndReturnArgs} args - Arguments to create many LoreCategories.
-     * @example
-     * // Create many LoreCategories
-     * const loreCategory = await prisma.loreCategory.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many LoreCategories and only return the `id`
-     * const loreCategoryWithIdOnly = await prisma.loreCategory.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends LoreCategoryCreateManyAndReturnArgs>(args?: SelectSubset<T, LoreCategoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a LoreCategory.
-     * @param {LoreCategoryDeleteArgs} args - Arguments to delete one LoreCategory.
-     * @example
-     * // Delete one LoreCategory
-     * const LoreCategory = await prisma.loreCategory.delete({
-     *   where: {
-     *     // ... filter to delete one LoreCategory
-     *   }
-     * })
-     * 
-     */
-    delete<T extends LoreCategoryDeleteArgs>(args: SelectSubset<T, LoreCategoryDeleteArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one LoreCategory.
-     * @param {LoreCategoryUpdateArgs} args - Arguments to update one LoreCategory.
-     * @example
-     * // Update one LoreCategory
-     * const loreCategory = await prisma.loreCategory.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends LoreCategoryUpdateArgs>(args: SelectSubset<T, LoreCategoryUpdateArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more LoreCategories.
-     * @param {LoreCategoryDeleteManyArgs} args - Arguments to filter LoreCategories to delete.
-     * @example
-     * // Delete a few LoreCategories
-     * const { count } = await prisma.loreCategory.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends LoreCategoryDeleteManyArgs>(args?: SelectSubset<T, LoreCategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more LoreCategories.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {LoreCategoryUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many LoreCategories
-     * const loreCategory = await prisma.loreCategory.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends LoreCategoryUpdateManyArgs>(args: SelectSubset<T, LoreCategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more LoreCategories and returns the data updated in the database.
-     * @param {LoreCategoryUpdateManyAndReturnArgs} args - Arguments to update many LoreCategories.
-     * @example
-     * // Update many LoreCategories
-     * const loreCategory = await prisma.loreCategory.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more LoreCategories and only return the `id`
-     * const loreCategoryWithIdOnly = await prisma.loreCategory.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends LoreCategoryUpdateManyAndReturnArgs>(args: SelectSubset<T, LoreCategoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one LoreCategory.
-     * @param {LoreCategoryUpsertArgs} args - Arguments to update or create a LoreCategory.
-     * @example
-     * // Update or create a LoreCategory
-     * const loreCategory = await prisma.loreCategory.upsert({
-     *   create: {
-     *     // ... data to create a LoreCategory
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the LoreCategory we want to update
-     *   }
-     * })
-     */
-    upsert<T extends LoreCategoryUpsertArgs>(args: SelectSubset<T, LoreCategoryUpsertArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of LoreCategories.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {LoreCategoryCountArgs} args - Arguments to filter LoreCategories to count.
-     * @example
-     * // Count the number of LoreCategories
-     * const count = await prisma.loreCategory.count({
-     *   where: {
-     *     // ... the filter for the LoreCategories we want to count
-     *   }
-     * })
-    **/
-    count<T extends LoreCategoryCountArgs>(
-      args?: Subset<T, LoreCategoryCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], LoreCategoryCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a LoreCategory.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {LoreCategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends LoreCategoryAggregateArgs>(args: Subset<T, LoreCategoryAggregateArgs>): Prisma.PrismaPromise<GetLoreCategoryAggregateType<T>>
-
-    /**
-     * Group by LoreCategory.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {LoreCategoryGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends LoreCategoryGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: LoreCategoryGroupByArgs['orderBy'] }
-        : { orderBy?: LoreCategoryGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, LoreCategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLoreCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the LoreCategory model
-   */
-  readonly fields: LoreCategoryFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for LoreCategory.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__LoreCategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    parentCategory<T extends LoreCategory$parentCategoryArgs<ExtArgs> = {}>(args?: Subset<T, LoreCategory$parentCategoryArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    subcategories<T extends LoreCategory$subcategoriesArgs<ExtArgs> = {}>(args?: Subset<T, LoreCategory$subcategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    worldLore<T extends LoreCategory$worldLoreArgs<ExtArgs> = {}>(args?: Subset<T, LoreCategory$worldLoreArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the LoreCategory model
-   */
-  interface LoreCategoryFieldRefs {
-    readonly id: FieldRef<"LoreCategory", 'String'>
-    readonly name: FieldRef<"LoreCategory", 'String'>
-    readonly description: FieldRef<"LoreCategory", 'String'>
-    readonly parentCategoryId: FieldRef<"LoreCategory", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * LoreCategory findUnique
-   */
-  export type LoreCategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * Filter, which LoreCategory to fetch.
-     */
-    where: LoreCategoryWhereUniqueInput
-  }
-
-  /**
-   * LoreCategory findUniqueOrThrow
-   */
-  export type LoreCategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * Filter, which LoreCategory to fetch.
-     */
-    where: LoreCategoryWhereUniqueInput
-  }
-
-  /**
-   * LoreCategory findFirst
-   */
-  export type LoreCategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * Filter, which LoreCategory to fetch.
-     */
-    where?: LoreCategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of LoreCategories to fetch.
-     */
-    orderBy?: LoreCategoryOrderByWithRelationInput | LoreCategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for LoreCategories.
-     */
-    cursor?: LoreCategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` LoreCategories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` LoreCategories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of LoreCategories.
-     */
-    distinct?: LoreCategoryScalarFieldEnum | LoreCategoryScalarFieldEnum[]
-  }
-
-  /**
-   * LoreCategory findFirstOrThrow
-   */
-  export type LoreCategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * Filter, which LoreCategory to fetch.
-     */
-    where?: LoreCategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of LoreCategories to fetch.
-     */
-    orderBy?: LoreCategoryOrderByWithRelationInput | LoreCategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for LoreCategories.
-     */
-    cursor?: LoreCategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` LoreCategories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` LoreCategories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of LoreCategories.
-     */
-    distinct?: LoreCategoryScalarFieldEnum | LoreCategoryScalarFieldEnum[]
-  }
-
-  /**
-   * LoreCategory findMany
-   */
-  export type LoreCategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * Filter, which LoreCategories to fetch.
-     */
-    where?: LoreCategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of LoreCategories to fetch.
-     */
-    orderBy?: LoreCategoryOrderByWithRelationInput | LoreCategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing LoreCategories.
-     */
-    cursor?: LoreCategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` LoreCategories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` LoreCategories.
-     */
-    skip?: number
-    distinct?: LoreCategoryScalarFieldEnum | LoreCategoryScalarFieldEnum[]
-  }
-
-  /**
-   * LoreCategory create
-   */
-  export type LoreCategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * The data needed to create a LoreCategory.
-     */
-    data: XOR<LoreCategoryCreateInput, LoreCategoryUncheckedCreateInput>
-  }
-
-  /**
-   * LoreCategory createMany
-   */
-  export type LoreCategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many LoreCategories.
-     */
-    data: LoreCategoryCreateManyInput | LoreCategoryCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * LoreCategory createManyAndReturn
-   */
-  export type LoreCategoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * The data used to create many LoreCategories.
-     */
-    data: LoreCategoryCreateManyInput | LoreCategoryCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * LoreCategory update
-   */
-  export type LoreCategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * The data needed to update a LoreCategory.
-     */
-    data: XOR<LoreCategoryUpdateInput, LoreCategoryUncheckedUpdateInput>
-    /**
-     * Choose, which LoreCategory to update.
-     */
-    where: LoreCategoryWhereUniqueInput
-  }
-
-  /**
-   * LoreCategory updateMany
-   */
-  export type LoreCategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update LoreCategories.
-     */
-    data: XOR<LoreCategoryUpdateManyMutationInput, LoreCategoryUncheckedUpdateManyInput>
-    /**
-     * Filter which LoreCategories to update
-     */
-    where?: LoreCategoryWhereInput
-    /**
-     * Limit how many LoreCategories to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * LoreCategory updateManyAndReturn
-   */
-  export type LoreCategoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * The data used to update LoreCategories.
-     */
-    data: XOR<LoreCategoryUpdateManyMutationInput, LoreCategoryUncheckedUpdateManyInput>
-    /**
-     * Filter which LoreCategories to update
-     */
-    where?: LoreCategoryWhereInput
-    /**
-     * Limit how many LoreCategories to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * LoreCategory upsert
-   */
-  export type LoreCategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * The filter to search for the LoreCategory to update in case it exists.
-     */
-    where: LoreCategoryWhereUniqueInput
-    /**
-     * In case the LoreCategory found by the `where` argument doesn't exist, create a new LoreCategory with this data.
-     */
-    create: XOR<LoreCategoryCreateInput, LoreCategoryUncheckedCreateInput>
-    /**
-     * In case the LoreCategory was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<LoreCategoryUpdateInput, LoreCategoryUncheckedUpdateInput>
-  }
-
-  /**
-   * LoreCategory delete
-   */
-  export type LoreCategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    /**
-     * Filter which LoreCategory to delete.
-     */
-    where: LoreCategoryWhereUniqueInput
-  }
-
-  /**
-   * LoreCategory deleteMany
-   */
-  export type LoreCategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which LoreCategories to delete
-     */
-    where?: LoreCategoryWhereInput
-    /**
-     * Limit how many LoreCategories to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * LoreCategory.parentCategory
-   */
-  export type LoreCategory$parentCategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    where?: LoreCategoryWhereInput
-  }
-
-  /**
-   * LoreCategory.subcategories
-   */
-  export type LoreCategory$subcategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    where?: LoreCategoryWhereInput
-    orderBy?: LoreCategoryOrderByWithRelationInput | LoreCategoryOrderByWithRelationInput[]
-    cursor?: LoreCategoryWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: LoreCategoryScalarFieldEnum | LoreCategoryScalarFieldEnum[]
-  }
-
-  /**
-   * LoreCategory.worldLore
-   */
-  export type LoreCategory$worldLoreArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    where?: WorldLoreWhereInput
-    orderBy?: WorldLoreOrderByWithRelationInput | WorldLoreOrderByWithRelationInput[]
-    cursor?: WorldLoreWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: WorldLoreScalarFieldEnum | WorldLoreScalarFieldEnum[]
-  }
-
-  /**
-   * LoreCategory without action
-   */
-  export type LoreCategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model WorldLore
-   */
-
-  export type AggregateWorldLore = {
-    _count: WorldLoreCountAggregateOutputType | null
-    _min: WorldLoreMinAggregateOutputType | null
-    _max: WorldLoreMaxAggregateOutputType | null
-  }
-
-  export type WorldLoreMinAggregateOutputType = {
-    id: string | null
-    categoryId: string | null
-    title: string | null
-    content: string | null
-    isDiscoverable: boolean | null
-  }
-
-  export type WorldLoreMaxAggregateOutputType = {
-    id: string | null
-    categoryId: string | null
-    title: string | null
-    content: string | null
-    isDiscoverable: boolean | null
-  }
-
-  export type WorldLoreCountAggregateOutputType = {
-    id: number
-    categoryId: number
-    title: number
-    content: number
-    isDiscoverable: number
-    discoveryConditions: number
-    keywords: number
-    _all: number
-  }
-
-
-  export type WorldLoreMinAggregateInputType = {
-    id?: true
-    categoryId?: true
-    title?: true
-    content?: true
-    isDiscoverable?: true
-  }
-
-  export type WorldLoreMaxAggregateInputType = {
-    id?: true
-    categoryId?: true
-    title?: true
-    content?: true
-    isDiscoverable?: true
-  }
-
-  export type WorldLoreCountAggregateInputType = {
-    id?: true
-    categoryId?: true
-    title?: true
-    content?: true
-    isDiscoverable?: true
-    discoveryConditions?: true
-    keywords?: true
-    _all?: true
-  }
-
-  export type WorldLoreAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which WorldLore to aggregate.
-     */
-    where?: WorldLoreWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorldLores to fetch.
-     */
-    orderBy?: WorldLoreOrderByWithRelationInput | WorldLoreOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: WorldLoreWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorldLores from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorldLores.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned WorldLores
-    **/
-    _count?: true | WorldLoreCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: WorldLoreMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: WorldLoreMaxAggregateInputType
-  }
-
-  export type GetWorldLoreAggregateType<T extends WorldLoreAggregateArgs> = {
-        [P in keyof T & keyof AggregateWorldLore]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateWorldLore[P]>
-      : GetScalarType<T[P], AggregateWorldLore[P]>
-  }
-
-
-
-
-  export type WorldLoreGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WorldLoreWhereInput
-    orderBy?: WorldLoreOrderByWithAggregationInput | WorldLoreOrderByWithAggregationInput[]
-    by: WorldLoreScalarFieldEnum[] | WorldLoreScalarFieldEnum
-    having?: WorldLoreScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: WorldLoreCountAggregateInputType | true
-    _min?: WorldLoreMinAggregateInputType
-    _max?: WorldLoreMaxAggregateInputType
-  }
-
-  export type WorldLoreGroupByOutputType = {
-    id: string
-    categoryId: string | null
-    title: string
-    content: string
-    isDiscoverable: boolean
-    discoveryConditions: JsonValue
-    keywords: string[]
-    _count: WorldLoreCountAggregateOutputType | null
-    _min: WorldLoreMinAggregateOutputType | null
-    _max: WorldLoreMaxAggregateOutputType | null
-  }
-
-  type GetWorldLoreGroupByPayload<T extends WorldLoreGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<WorldLoreGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof WorldLoreGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], WorldLoreGroupByOutputType[P]>
-            : GetScalarType<T[P], WorldLoreGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type WorldLoreSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    categoryId?: boolean
-    title?: boolean
-    content?: boolean
-    isDiscoverable?: boolean
-    discoveryConditions?: boolean
-    keywords?: boolean
-    category?: boolean | WorldLore$categoryArgs<ExtArgs>
-  }, ExtArgs["result"]["worldLore"]>
-
-  export type WorldLoreSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    categoryId?: boolean
-    title?: boolean
-    content?: boolean
-    isDiscoverable?: boolean
-    discoveryConditions?: boolean
-    keywords?: boolean
-    category?: boolean | WorldLore$categoryArgs<ExtArgs>
-  }, ExtArgs["result"]["worldLore"]>
-
-  export type WorldLoreSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    categoryId?: boolean
-    title?: boolean
-    content?: boolean
-    isDiscoverable?: boolean
-    discoveryConditions?: boolean
-    keywords?: boolean
-    category?: boolean | WorldLore$categoryArgs<ExtArgs>
-  }, ExtArgs["result"]["worldLore"]>
-
-  export type WorldLoreSelectScalar = {
-    id?: boolean
-    categoryId?: boolean
-    title?: boolean
-    content?: boolean
-    isDiscoverable?: boolean
-    discoveryConditions?: boolean
-    keywords?: boolean
-  }
-
-  export type WorldLoreOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "categoryId" | "title" | "content" | "isDiscoverable" | "discoveryConditions" | "keywords", ExtArgs["result"]["worldLore"]>
-  export type WorldLoreInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    category?: boolean | WorldLore$categoryArgs<ExtArgs>
-  }
-  export type WorldLoreIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    category?: boolean | WorldLore$categoryArgs<ExtArgs>
-  }
-  export type WorldLoreIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    category?: boolean | WorldLore$categoryArgs<ExtArgs>
-  }
-
-  export type $WorldLorePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "WorldLore"
-    objects: {
-      category: Prisma.$LoreCategoryPayload<ExtArgs> | null
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      categoryId: string | null
-      title: string
-      content: string
-      isDiscoverable: boolean
-      discoveryConditions: Prisma.JsonValue
-      keywords: string[]
-    }, ExtArgs["result"]["worldLore"]>
-    composites: {}
-  }
-
-  type WorldLoreGetPayload<S extends boolean | null | undefined | WorldLoreDefaultArgs> = $Result.GetResult<Prisma.$WorldLorePayload, S>
-
-  type WorldLoreCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<WorldLoreFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: WorldLoreCountAggregateInputType | true
-    }
-
-  export interface WorldLoreDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WorldLore'], meta: { name: 'WorldLore' } }
-    /**
-     * Find zero or one WorldLore that matches the filter.
-     * @param {WorldLoreFindUniqueArgs} args - Arguments to find a WorldLore
-     * @example
-     * // Get one WorldLore
-     * const worldLore = await prisma.worldLore.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends WorldLoreFindUniqueArgs>(args: SelectSubset<T, WorldLoreFindUniqueArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one WorldLore that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {WorldLoreFindUniqueOrThrowArgs} args - Arguments to find a WorldLore
-     * @example
-     * // Get one WorldLore
-     * const worldLore = await prisma.worldLore.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends WorldLoreFindUniqueOrThrowArgs>(args: SelectSubset<T, WorldLoreFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first WorldLore that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorldLoreFindFirstArgs} args - Arguments to find a WorldLore
-     * @example
-     * // Get one WorldLore
-     * const worldLore = await prisma.worldLore.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends WorldLoreFindFirstArgs>(args?: SelectSubset<T, WorldLoreFindFirstArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first WorldLore that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorldLoreFindFirstOrThrowArgs} args - Arguments to find a WorldLore
-     * @example
-     * // Get one WorldLore
-     * const worldLore = await prisma.worldLore.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends WorldLoreFindFirstOrThrowArgs>(args?: SelectSubset<T, WorldLoreFindFirstOrThrowArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more WorldLores that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorldLoreFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all WorldLores
-     * const worldLores = await prisma.worldLore.findMany()
-     * 
-     * // Get first 10 WorldLores
-     * const worldLores = await prisma.worldLore.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const worldLoreWithIdOnly = await prisma.worldLore.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends WorldLoreFindManyArgs>(args?: SelectSubset<T, WorldLoreFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a WorldLore.
-     * @param {WorldLoreCreateArgs} args - Arguments to create a WorldLore.
-     * @example
-     * // Create one WorldLore
-     * const WorldLore = await prisma.worldLore.create({
-     *   data: {
-     *     // ... data to create a WorldLore
-     *   }
-     * })
-     * 
-     */
-    create<T extends WorldLoreCreateArgs>(args: SelectSubset<T, WorldLoreCreateArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many WorldLores.
-     * @param {WorldLoreCreateManyArgs} args - Arguments to create many WorldLores.
-     * @example
-     * // Create many WorldLores
-     * const worldLore = await prisma.worldLore.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends WorldLoreCreateManyArgs>(args?: SelectSubset<T, WorldLoreCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many WorldLores and returns the data saved in the database.
-     * @param {WorldLoreCreateManyAndReturnArgs} args - Arguments to create many WorldLores.
-     * @example
-     * // Create many WorldLores
-     * const worldLore = await prisma.worldLore.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many WorldLores and only return the `id`
-     * const worldLoreWithIdOnly = await prisma.worldLore.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends WorldLoreCreateManyAndReturnArgs>(args?: SelectSubset<T, WorldLoreCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a WorldLore.
-     * @param {WorldLoreDeleteArgs} args - Arguments to delete one WorldLore.
-     * @example
-     * // Delete one WorldLore
-     * const WorldLore = await prisma.worldLore.delete({
-     *   where: {
-     *     // ... filter to delete one WorldLore
-     *   }
-     * })
-     * 
-     */
-    delete<T extends WorldLoreDeleteArgs>(args: SelectSubset<T, WorldLoreDeleteArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one WorldLore.
-     * @param {WorldLoreUpdateArgs} args - Arguments to update one WorldLore.
-     * @example
-     * // Update one WorldLore
-     * const worldLore = await prisma.worldLore.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends WorldLoreUpdateArgs>(args: SelectSubset<T, WorldLoreUpdateArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more WorldLores.
-     * @param {WorldLoreDeleteManyArgs} args - Arguments to filter WorldLores to delete.
-     * @example
-     * // Delete a few WorldLores
-     * const { count } = await prisma.worldLore.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends WorldLoreDeleteManyArgs>(args?: SelectSubset<T, WorldLoreDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more WorldLores.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorldLoreUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many WorldLores
-     * const worldLore = await prisma.worldLore.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends WorldLoreUpdateManyArgs>(args: SelectSubset<T, WorldLoreUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more WorldLores and returns the data updated in the database.
-     * @param {WorldLoreUpdateManyAndReturnArgs} args - Arguments to update many WorldLores.
-     * @example
-     * // Update many WorldLores
-     * const worldLore = await prisma.worldLore.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more WorldLores and only return the `id`
-     * const worldLoreWithIdOnly = await prisma.worldLore.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends WorldLoreUpdateManyAndReturnArgs>(args: SelectSubset<T, WorldLoreUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one WorldLore.
-     * @param {WorldLoreUpsertArgs} args - Arguments to update or create a WorldLore.
-     * @example
-     * // Update or create a WorldLore
-     * const worldLore = await prisma.worldLore.upsert({
-     *   create: {
-     *     // ... data to create a WorldLore
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the WorldLore we want to update
-     *   }
-     * })
-     */
-    upsert<T extends WorldLoreUpsertArgs>(args: SelectSubset<T, WorldLoreUpsertArgs<ExtArgs>>): Prisma__WorldLoreClient<$Result.GetResult<Prisma.$WorldLorePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of WorldLores.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorldLoreCountArgs} args - Arguments to filter WorldLores to count.
-     * @example
-     * // Count the number of WorldLores
-     * const count = await prisma.worldLore.count({
-     *   where: {
-     *     // ... the filter for the WorldLores we want to count
-     *   }
-     * })
-    **/
-    count<T extends WorldLoreCountArgs>(
-      args?: Subset<T, WorldLoreCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], WorldLoreCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a WorldLore.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorldLoreAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends WorldLoreAggregateArgs>(args: Subset<T, WorldLoreAggregateArgs>): Prisma.PrismaPromise<GetWorldLoreAggregateType<T>>
-
-    /**
-     * Group by WorldLore.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorldLoreGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends WorldLoreGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: WorldLoreGroupByArgs['orderBy'] }
-        : { orderBy?: WorldLoreGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, WorldLoreGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWorldLoreGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the WorldLore model
-   */
-  readonly fields: WorldLoreFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for WorldLore.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__WorldLoreClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    category<T extends WorldLore$categoryArgs<ExtArgs> = {}>(args?: Subset<T, WorldLore$categoryArgs<ExtArgs>>): Prisma__LoreCategoryClient<$Result.GetResult<Prisma.$LoreCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the WorldLore model
-   */
-  interface WorldLoreFieldRefs {
-    readonly id: FieldRef<"WorldLore", 'String'>
-    readonly categoryId: FieldRef<"WorldLore", 'String'>
-    readonly title: FieldRef<"WorldLore", 'String'>
-    readonly content: FieldRef<"WorldLore", 'String'>
-    readonly isDiscoverable: FieldRef<"WorldLore", 'Boolean'>
-    readonly discoveryConditions: FieldRef<"WorldLore", 'Json'>
-    readonly keywords: FieldRef<"WorldLore", 'String[]'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * WorldLore findUnique
-   */
-  export type WorldLoreFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * Filter, which WorldLore to fetch.
-     */
-    where: WorldLoreWhereUniqueInput
-  }
-
-  /**
-   * WorldLore findUniqueOrThrow
-   */
-  export type WorldLoreFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * Filter, which WorldLore to fetch.
-     */
-    where: WorldLoreWhereUniqueInput
-  }
-
-  /**
-   * WorldLore findFirst
-   */
-  export type WorldLoreFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * Filter, which WorldLore to fetch.
-     */
-    where?: WorldLoreWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorldLores to fetch.
-     */
-    orderBy?: WorldLoreOrderByWithRelationInput | WorldLoreOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for WorldLores.
-     */
-    cursor?: WorldLoreWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorldLores from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorldLores.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of WorldLores.
-     */
-    distinct?: WorldLoreScalarFieldEnum | WorldLoreScalarFieldEnum[]
-  }
-
-  /**
-   * WorldLore findFirstOrThrow
-   */
-  export type WorldLoreFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * Filter, which WorldLore to fetch.
-     */
-    where?: WorldLoreWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorldLores to fetch.
-     */
-    orderBy?: WorldLoreOrderByWithRelationInput | WorldLoreOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for WorldLores.
-     */
-    cursor?: WorldLoreWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorldLores from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorldLores.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of WorldLores.
-     */
-    distinct?: WorldLoreScalarFieldEnum | WorldLoreScalarFieldEnum[]
-  }
-
-  /**
-   * WorldLore findMany
-   */
-  export type WorldLoreFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * Filter, which WorldLores to fetch.
-     */
-    where?: WorldLoreWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorldLores to fetch.
-     */
-    orderBy?: WorldLoreOrderByWithRelationInput | WorldLoreOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing WorldLores.
-     */
-    cursor?: WorldLoreWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorldLores from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorldLores.
-     */
-    skip?: number
-    distinct?: WorldLoreScalarFieldEnum | WorldLoreScalarFieldEnum[]
-  }
-
-  /**
-   * WorldLore create
-   */
-  export type WorldLoreCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * The data needed to create a WorldLore.
-     */
-    data: XOR<WorldLoreCreateInput, WorldLoreUncheckedCreateInput>
-  }
-
-  /**
-   * WorldLore createMany
-   */
-  export type WorldLoreCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many WorldLores.
-     */
-    data: WorldLoreCreateManyInput | WorldLoreCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * WorldLore createManyAndReturn
-   */
-  export type WorldLoreCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * The data used to create many WorldLores.
-     */
-    data: WorldLoreCreateManyInput | WorldLoreCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * WorldLore update
-   */
-  export type WorldLoreUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * The data needed to update a WorldLore.
-     */
-    data: XOR<WorldLoreUpdateInput, WorldLoreUncheckedUpdateInput>
-    /**
-     * Choose, which WorldLore to update.
-     */
-    where: WorldLoreWhereUniqueInput
-  }
-
-  /**
-   * WorldLore updateMany
-   */
-  export type WorldLoreUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update WorldLores.
-     */
-    data: XOR<WorldLoreUpdateManyMutationInput, WorldLoreUncheckedUpdateManyInput>
-    /**
-     * Filter which WorldLores to update
-     */
-    where?: WorldLoreWhereInput
-    /**
-     * Limit how many WorldLores to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * WorldLore updateManyAndReturn
-   */
-  export type WorldLoreUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * The data used to update WorldLores.
-     */
-    data: XOR<WorldLoreUpdateManyMutationInput, WorldLoreUncheckedUpdateManyInput>
-    /**
-     * Filter which WorldLores to update
-     */
-    where?: WorldLoreWhereInput
-    /**
-     * Limit how many WorldLores to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * WorldLore upsert
-   */
-  export type WorldLoreUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * The filter to search for the WorldLore to update in case it exists.
-     */
-    where: WorldLoreWhereUniqueInput
-    /**
-     * In case the WorldLore found by the `where` argument doesn't exist, create a new WorldLore with this data.
-     */
-    create: XOR<WorldLoreCreateInput, WorldLoreUncheckedCreateInput>
-    /**
-     * In case the WorldLore was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<WorldLoreUpdateInput, WorldLoreUncheckedUpdateInput>
-  }
-
-  /**
-   * WorldLore delete
-   */
-  export type WorldLoreDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
-    /**
-     * Filter which WorldLore to delete.
-     */
-    where: WorldLoreWhereUniqueInput
-  }
-
-  /**
-   * WorldLore deleteMany
-   */
-  export type WorldLoreDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which WorldLores to delete
-     */
-    where?: WorldLoreWhereInput
-    /**
-     * Limit how many WorldLores to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * WorldLore.category
-   */
-  export type WorldLore$categoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the LoreCategory
-     */
-    select?: LoreCategorySelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the LoreCategory
-     */
-    omit?: LoreCategoryOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: LoreCategoryInclude<ExtArgs> | null
-    where?: LoreCategoryWhereInput
-  }
-
-  /**
-   * WorldLore without action
-   */
-  export type WorldLoreDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorldLore
-     */
-    select?: WorldLoreSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorldLore
-     */
-    omit?: WorldLoreOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorldLoreInclude<ExtArgs> | null
   }
 
 
@@ -14461,6 +18322,71 @@ export namespace Prisma {
   export type CharacterScalarFieldEnum = (typeof CharacterScalarFieldEnum)[keyof typeof CharacterScalarFieldEnum]
 
 
+  export const WorldScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    thumbnailUrl: 'thumbnailUrl',
+    isActive: 'isActive',
+    createdAt: 'createdAt'
+  };
+
+  export type WorldScalarFieldEnum = (typeof WorldScalarFieldEnum)[keyof typeof WorldScalarFieldEnum]
+
+
+  export const CharacterWorldStateScalarFieldEnum: {
+    id: 'id',
+    characterId: 'characterId',
+    worldId: 'worldId',
+    currentLocation: 'currentLocation',
+    lastPlayedAt: 'lastPlayedAt'
+  };
+
+  export type CharacterWorldStateScalarFieldEnum = (typeof CharacterWorldStateScalarFieldEnum)[keyof typeof CharacterWorldStateScalarFieldEnum]
+
+
+  export const LocationScalarFieldEnum: {
+    id: 'id',
+    worldId: 'worldId',
+    name: 'name',
+    description: 'description',
+    isStartingLocation: 'isStartingLocation',
+    connectedLocationIds: 'connectedLocationIds',
+    thumbnailUrl: 'thumbnailUrl'
+  };
+
+  export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum]
+
+
+  export const LoreFragmentScalarFieldEnum: {
+    id: 'id',
+    worldId: 'worldId',
+    title: 'title',
+    content: 'content',
+    type: 'type',
+    contextId: 'contextId',
+    isRevealed: 'isRevealed',
+    keywords: 'keywords'
+  };
+
+  export type LoreFragmentScalarFieldEnum = (typeof LoreFragmentScalarFieldEnum)[keyof typeof LoreFragmentScalarFieldEnum]
+
+
+  export const EventScalarFieldEnum: {
+    id: 'id',
+    worldId: 'worldId',
+    locationId: 'locationId',
+    title: 'title',
+    description: 'description',
+    eventType: 'eventType',
+    triggerConditions: 'triggerConditions',
+    outcomes: 'outcomes',
+    isRepeatable: 'isRepeatable'
+  };
+
+  export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
+
+
   export const GameSessionScalarFieldEnum: {
     id: 'id',
     characterId: 'characterId',
@@ -14477,6 +18403,8 @@ export namespace Prisma {
     id: 'id',
     sessionId: 'sessionId',
     characterId: 'characterId',
+    worldId: 'worldId',
+    locationId: 'locationId',
     savePointName: 'savePointName',
     currentLocation: 'currentLocation',
     saveTimestamp: 'saveTimestamp',
@@ -14515,29 +18443,6 @@ export namespace Prisma {
   };
 
   export type NPCStateScalarFieldEnum = (typeof NPCStateScalarFieldEnum)[keyof typeof NPCStateScalarFieldEnum]
-
-
-  export const LoreCategoryScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    description: 'description',
-    parentCategoryId: 'parentCategoryId'
-  };
-
-  export type LoreCategoryScalarFieldEnum = (typeof LoreCategoryScalarFieldEnum)[keyof typeof LoreCategoryScalarFieldEnum]
-
-
-  export const WorldLoreScalarFieldEnum: {
-    id: 'id',
-    categoryId: 'categoryId',
-    title: 'title',
-    content: 'content',
-    isDiscoverable: 'isDiscoverable',
-    discoveryConditions: 'discoveryConditions',
-    keywords: 'keywords'
-  };
-
-  export type WorldLoreScalarFieldEnum = (typeof WorldLoreScalarFieldEnum)[keyof typeof WorldLoreScalarFieldEnum]
 
 
   export const DecisionScalarFieldEnum: {
@@ -14783,6 +18688,7 @@ export namespace Prisma {
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     gameSessions?: GameSessionListRelationFilter
     gameStates?: GameStateListRelationFilter
+    characterWorldStates?: CharacterWorldStateListRelationFilter
   }
 
   export type CharacterOrderByWithRelationInput = {
@@ -14798,6 +18704,7 @@ export namespace Prisma {
     user?: UserOrderByWithRelationInput
     gameSessions?: GameSessionOrderByRelationAggregateInput
     gameStates?: GameStateOrderByRelationAggregateInput
+    characterWorldStates?: CharacterWorldStateOrderByRelationAggregateInput
   }
 
   export type CharacterWhereUniqueInput = Prisma.AtLeast<{
@@ -14817,6 +18724,7 @@ export namespace Prisma {
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     gameSessions?: GameSessionListRelationFilter
     gameStates?: GameStateListRelationFilter
+    characterWorldStates?: CharacterWorldStateListRelationFilter
   }, "id" | "userId_name">
 
   export type CharacterOrderByWithAggregationInput = {
@@ -14847,6 +18755,357 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Character"> | Date | string
     lastPlayedAt?: DateTimeNullableWithAggregatesFilter<"Character"> | Date | string | null
     isActive?: BoolWithAggregatesFilter<"Character"> | boolean
+  }
+
+  export type WorldWhereInput = {
+    AND?: WorldWhereInput | WorldWhereInput[]
+    OR?: WorldWhereInput[]
+    NOT?: WorldWhereInput | WorldWhereInput[]
+    id?: StringFilter<"World"> | string
+    name?: StringFilter<"World"> | string
+    description?: StringNullableFilter<"World"> | string | null
+    thumbnailUrl?: StringNullableFilter<"World"> | string | null
+    isActive?: BoolFilter<"World"> | boolean
+    createdAt?: DateTimeFilter<"World"> | Date | string
+    characterStates?: CharacterWorldStateListRelationFilter
+    gameStates?: GameStateListRelationFilter
+    locations?: LocationListRelationFilter
+    loreFragments?: LoreFragmentListRelationFilter
+    events?: EventListRelationFilter
+  }
+
+  export type WorldOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    characterStates?: CharacterWorldStateOrderByRelationAggregateInput
+    gameStates?: GameStateOrderByRelationAggregateInput
+    locations?: LocationOrderByRelationAggregateInput
+    loreFragments?: LoreFragmentOrderByRelationAggregateInput
+    events?: EventOrderByRelationAggregateInput
+  }
+
+  export type WorldWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WorldWhereInput | WorldWhereInput[]
+    OR?: WorldWhereInput[]
+    NOT?: WorldWhereInput | WorldWhereInput[]
+    name?: StringFilter<"World"> | string
+    description?: StringNullableFilter<"World"> | string | null
+    thumbnailUrl?: StringNullableFilter<"World"> | string | null
+    isActive?: BoolFilter<"World"> | boolean
+    createdAt?: DateTimeFilter<"World"> | Date | string
+    characterStates?: CharacterWorldStateListRelationFilter
+    gameStates?: GameStateListRelationFilter
+    locations?: LocationListRelationFilter
+    loreFragments?: LoreFragmentListRelationFilter
+    events?: EventListRelationFilter
+  }, "id">
+
+  export type WorldOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    _count?: WorldCountOrderByAggregateInput
+    _max?: WorldMaxOrderByAggregateInput
+    _min?: WorldMinOrderByAggregateInput
+  }
+
+  export type WorldScalarWhereWithAggregatesInput = {
+    AND?: WorldScalarWhereWithAggregatesInput | WorldScalarWhereWithAggregatesInput[]
+    OR?: WorldScalarWhereWithAggregatesInput[]
+    NOT?: WorldScalarWhereWithAggregatesInput | WorldScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"World"> | string
+    name?: StringWithAggregatesFilter<"World"> | string
+    description?: StringNullableWithAggregatesFilter<"World"> | string | null
+    thumbnailUrl?: StringNullableWithAggregatesFilter<"World"> | string | null
+    isActive?: BoolWithAggregatesFilter<"World"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"World"> | Date | string
+  }
+
+  export type CharacterWorldStateWhereInput = {
+    AND?: CharacterWorldStateWhereInput | CharacterWorldStateWhereInput[]
+    OR?: CharacterWorldStateWhereInput[]
+    NOT?: CharacterWorldStateWhereInput | CharacterWorldStateWhereInput[]
+    id?: StringFilter<"CharacterWorldState"> | string
+    characterId?: StringFilter<"CharacterWorldState"> | string
+    worldId?: StringFilter<"CharacterWorldState"> | string
+    currentLocation?: StringNullableFilter<"CharacterWorldState"> | string | null
+    lastPlayedAt?: DateTimeNullableFilter<"CharacterWorldState"> | Date | string | null
+    character?: XOR<CharacterScalarRelationFilter, CharacterWhereInput>
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+  }
+
+  export type CharacterWorldStateOrderByWithRelationInput = {
+    id?: SortOrder
+    characterId?: SortOrder
+    worldId?: SortOrder
+    currentLocation?: SortOrderInput | SortOrder
+    lastPlayedAt?: SortOrderInput | SortOrder
+    character?: CharacterOrderByWithRelationInput
+    world?: WorldOrderByWithRelationInput
+  }
+
+  export type CharacterWorldStateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    characterId_worldId?: CharacterWorldStateCharacterIdWorldIdCompoundUniqueInput
+    AND?: CharacterWorldStateWhereInput | CharacterWorldStateWhereInput[]
+    OR?: CharacterWorldStateWhereInput[]
+    NOT?: CharacterWorldStateWhereInput | CharacterWorldStateWhereInput[]
+    characterId?: StringFilter<"CharacterWorldState"> | string
+    worldId?: StringFilter<"CharacterWorldState"> | string
+    currentLocation?: StringNullableFilter<"CharacterWorldState"> | string | null
+    lastPlayedAt?: DateTimeNullableFilter<"CharacterWorldState"> | Date | string | null
+    character?: XOR<CharacterScalarRelationFilter, CharacterWhereInput>
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+  }, "id" | "characterId_worldId">
+
+  export type CharacterWorldStateOrderByWithAggregationInput = {
+    id?: SortOrder
+    characterId?: SortOrder
+    worldId?: SortOrder
+    currentLocation?: SortOrderInput | SortOrder
+    lastPlayedAt?: SortOrderInput | SortOrder
+    _count?: CharacterWorldStateCountOrderByAggregateInput
+    _max?: CharacterWorldStateMaxOrderByAggregateInput
+    _min?: CharacterWorldStateMinOrderByAggregateInput
+  }
+
+  export type CharacterWorldStateScalarWhereWithAggregatesInput = {
+    AND?: CharacterWorldStateScalarWhereWithAggregatesInput | CharacterWorldStateScalarWhereWithAggregatesInput[]
+    OR?: CharacterWorldStateScalarWhereWithAggregatesInput[]
+    NOT?: CharacterWorldStateScalarWhereWithAggregatesInput | CharacterWorldStateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CharacterWorldState"> | string
+    characterId?: StringWithAggregatesFilter<"CharacterWorldState"> | string
+    worldId?: StringWithAggregatesFilter<"CharacterWorldState"> | string
+    currentLocation?: StringNullableWithAggregatesFilter<"CharacterWorldState"> | string | null
+    lastPlayedAt?: DateTimeNullableWithAggregatesFilter<"CharacterWorldState"> | Date | string | null
+  }
+
+  export type LocationWhereInput = {
+    AND?: LocationWhereInput | LocationWhereInput[]
+    OR?: LocationWhereInput[]
+    NOT?: LocationWhereInput | LocationWhereInput[]
+    id?: StringFilter<"Location"> | string
+    worldId?: StringFilter<"Location"> | string
+    name?: StringFilter<"Location"> | string
+    description?: StringNullableFilter<"Location"> | string | null
+    isStartingLocation?: BoolFilter<"Location"> | boolean
+    connectedLocationIds?: StringNullableListFilter<"Location">
+    thumbnailUrl?: StringNullableFilter<"Location"> | string | null
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+    events?: EventListRelationFilter
+    gameStates?: GameStateListRelationFilter
+  }
+
+  export type LocationOrderByWithRelationInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isStartingLocation?: SortOrder
+    connectedLocationIds?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    world?: WorldOrderByWithRelationInput
+    events?: EventOrderByRelationAggregateInput
+    gameStates?: GameStateOrderByRelationAggregateInput
+  }
+
+  export type LocationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    worldId_name?: LocationWorldIdNameCompoundUniqueInput
+    AND?: LocationWhereInput | LocationWhereInput[]
+    OR?: LocationWhereInput[]
+    NOT?: LocationWhereInput | LocationWhereInput[]
+    worldId?: StringFilter<"Location"> | string
+    name?: StringFilter<"Location"> | string
+    description?: StringNullableFilter<"Location"> | string | null
+    isStartingLocation?: BoolFilter<"Location"> | boolean
+    connectedLocationIds?: StringNullableListFilter<"Location">
+    thumbnailUrl?: StringNullableFilter<"Location"> | string | null
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+    events?: EventListRelationFilter
+    gameStates?: GameStateListRelationFilter
+  }, "id" | "worldId_name">
+
+  export type LocationOrderByWithAggregationInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isStartingLocation?: SortOrder
+    connectedLocationIds?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    _count?: LocationCountOrderByAggregateInput
+    _max?: LocationMaxOrderByAggregateInput
+    _min?: LocationMinOrderByAggregateInput
+  }
+
+  export type LocationScalarWhereWithAggregatesInput = {
+    AND?: LocationScalarWhereWithAggregatesInput | LocationScalarWhereWithAggregatesInput[]
+    OR?: LocationScalarWhereWithAggregatesInput[]
+    NOT?: LocationScalarWhereWithAggregatesInput | LocationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Location"> | string
+    worldId?: StringWithAggregatesFilter<"Location"> | string
+    name?: StringWithAggregatesFilter<"Location"> | string
+    description?: StringNullableWithAggregatesFilter<"Location"> | string | null
+    isStartingLocation?: BoolWithAggregatesFilter<"Location"> | boolean
+    connectedLocationIds?: StringNullableListFilter<"Location">
+    thumbnailUrl?: StringNullableWithAggregatesFilter<"Location"> | string | null
+  }
+
+  export type LoreFragmentWhereInput = {
+    AND?: LoreFragmentWhereInput | LoreFragmentWhereInput[]
+    OR?: LoreFragmentWhereInput[]
+    NOT?: LoreFragmentWhereInput | LoreFragmentWhereInput[]
+    id?: StringFilter<"LoreFragment"> | string
+    worldId?: StringFilter<"LoreFragment"> | string
+    title?: StringFilter<"LoreFragment"> | string
+    content?: StringFilter<"LoreFragment"> | string
+    type?: StringFilter<"LoreFragment"> | string
+    contextId?: StringNullableFilter<"LoreFragment"> | string | null
+    isRevealed?: BoolFilter<"LoreFragment"> | boolean
+    keywords?: StringNullableListFilter<"LoreFragment">
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+  }
+
+  export type LoreFragmentOrderByWithRelationInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    contextId?: SortOrderInput | SortOrder
+    isRevealed?: SortOrder
+    keywords?: SortOrder
+    world?: WorldOrderByWithRelationInput
+  }
+
+  export type LoreFragmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LoreFragmentWhereInput | LoreFragmentWhereInput[]
+    OR?: LoreFragmentWhereInput[]
+    NOT?: LoreFragmentWhereInput | LoreFragmentWhereInput[]
+    worldId?: StringFilter<"LoreFragment"> | string
+    title?: StringFilter<"LoreFragment"> | string
+    content?: StringFilter<"LoreFragment"> | string
+    type?: StringFilter<"LoreFragment"> | string
+    contextId?: StringNullableFilter<"LoreFragment"> | string | null
+    isRevealed?: BoolFilter<"LoreFragment"> | boolean
+    keywords?: StringNullableListFilter<"LoreFragment">
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+  }, "id">
+
+  export type LoreFragmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    contextId?: SortOrderInput | SortOrder
+    isRevealed?: SortOrder
+    keywords?: SortOrder
+    _count?: LoreFragmentCountOrderByAggregateInput
+    _max?: LoreFragmentMaxOrderByAggregateInput
+    _min?: LoreFragmentMinOrderByAggregateInput
+  }
+
+  export type LoreFragmentScalarWhereWithAggregatesInput = {
+    AND?: LoreFragmentScalarWhereWithAggregatesInput | LoreFragmentScalarWhereWithAggregatesInput[]
+    OR?: LoreFragmentScalarWhereWithAggregatesInput[]
+    NOT?: LoreFragmentScalarWhereWithAggregatesInput | LoreFragmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LoreFragment"> | string
+    worldId?: StringWithAggregatesFilter<"LoreFragment"> | string
+    title?: StringWithAggregatesFilter<"LoreFragment"> | string
+    content?: StringWithAggregatesFilter<"LoreFragment"> | string
+    type?: StringWithAggregatesFilter<"LoreFragment"> | string
+    contextId?: StringNullableWithAggregatesFilter<"LoreFragment"> | string | null
+    isRevealed?: BoolWithAggregatesFilter<"LoreFragment"> | boolean
+    keywords?: StringNullableListFilter<"LoreFragment">
+  }
+
+  export type EventWhereInput = {
+    AND?: EventWhereInput | EventWhereInput[]
+    OR?: EventWhereInput[]
+    NOT?: EventWhereInput | EventWhereInput[]
+    id?: StringFilter<"Event"> | string
+    worldId?: StringFilter<"Event"> | string
+    locationId?: StringNullableFilter<"Event"> | string | null
+    title?: StringFilter<"Event"> | string
+    description?: StringFilter<"Event"> | string
+    eventType?: StringFilter<"Event"> | string
+    triggerConditions?: JsonFilter<"Event">
+    outcomes?: JsonFilter<"Event">
+    isRepeatable?: BoolFilter<"Event"> | boolean
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+    location?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
+  }
+
+  export type EventOrderByWithRelationInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrderInput | SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    triggerConditions?: SortOrder
+    outcomes?: SortOrder
+    isRepeatable?: SortOrder
+    world?: WorldOrderByWithRelationInput
+    location?: LocationOrderByWithRelationInput
+  }
+
+  export type EventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EventWhereInput | EventWhereInput[]
+    OR?: EventWhereInput[]
+    NOT?: EventWhereInput | EventWhereInput[]
+    worldId?: StringFilter<"Event"> | string
+    locationId?: StringNullableFilter<"Event"> | string | null
+    title?: StringFilter<"Event"> | string
+    description?: StringFilter<"Event"> | string
+    eventType?: StringFilter<"Event"> | string
+    triggerConditions?: JsonFilter<"Event">
+    outcomes?: JsonFilter<"Event">
+    isRepeatable?: BoolFilter<"Event"> | boolean
+    world?: XOR<WorldScalarRelationFilter, WorldWhereInput>
+    location?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
+  }, "id">
+
+  export type EventOrderByWithAggregationInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrderInput | SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    triggerConditions?: SortOrder
+    outcomes?: SortOrder
+    isRepeatable?: SortOrder
+    _count?: EventCountOrderByAggregateInput
+    _max?: EventMaxOrderByAggregateInput
+    _min?: EventMinOrderByAggregateInput
+  }
+
+  export type EventScalarWhereWithAggregatesInput = {
+    AND?: EventScalarWhereWithAggregatesInput | EventScalarWhereWithAggregatesInput[]
+    OR?: EventScalarWhereWithAggregatesInput[]
+    NOT?: EventScalarWhereWithAggregatesInput | EventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Event"> | string
+    worldId?: StringWithAggregatesFilter<"Event"> | string
+    locationId?: StringNullableWithAggregatesFilter<"Event"> | string | null
+    title?: StringWithAggregatesFilter<"Event"> | string
+    description?: StringWithAggregatesFilter<"Event"> | string
+    eventType?: StringWithAggregatesFilter<"Event"> | string
+    triggerConditions?: JsonWithAggregatesFilter<"Event">
+    outcomes?: JsonWithAggregatesFilter<"Event">
+    isRepeatable?: BoolWithAggregatesFilter<"Event"> | boolean
   }
 
   export type GameSessionWhereInput = {
@@ -14921,6 +19180,8 @@ export namespace Prisma {
     id?: StringFilter<"GameState"> | string
     sessionId?: StringFilter<"GameState"> | string
     characterId?: StringFilter<"GameState"> | string
+    worldId?: StringNullableFilter<"GameState"> | string | null
+    locationId?: StringNullableFilter<"GameState"> | string | null
     savePointName?: StringNullableFilter<"GameState"> | string | null
     currentLocation?: StringFilter<"GameState"> | string
     saveTimestamp?: DateTimeFilter<"GameState"> | Date | string
@@ -14932,6 +19193,8 @@ export namespace Prisma {
     isCompleted?: BoolFilter<"GameState"> | boolean
     session?: XOR<GameSessionScalarRelationFilter, GameSessionWhereInput>
     character?: XOR<CharacterScalarRelationFilter, CharacterWhereInput>
+    world?: XOR<WorldNullableScalarRelationFilter, WorldWhereInput> | null
+    location?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
     npcStates?: NPCStateListRelationFilter
     decisions?: DecisionListRelationFilter
     aiContextHistory?: AIContextHistoryListRelationFilter
@@ -14942,6 +19205,8 @@ export namespace Prisma {
     id?: SortOrder
     sessionId?: SortOrder
     characterId?: SortOrder
+    worldId?: SortOrderInput | SortOrder
+    locationId?: SortOrderInput | SortOrder
     savePointName?: SortOrderInput | SortOrder
     currentLocation?: SortOrder
     saveTimestamp?: SortOrder
@@ -14953,6 +19218,8 @@ export namespace Prisma {
     isCompleted?: SortOrder
     session?: GameSessionOrderByWithRelationInput
     character?: CharacterOrderByWithRelationInput
+    world?: WorldOrderByWithRelationInput
+    location?: LocationOrderByWithRelationInput
     npcStates?: NPCStateOrderByRelationAggregateInput
     decisions?: DecisionOrderByRelationAggregateInput
     aiContextHistory?: AIContextHistoryOrderByRelationAggregateInput
@@ -14966,6 +19233,8 @@ export namespace Prisma {
     NOT?: GameStateWhereInput | GameStateWhereInput[]
     sessionId?: StringFilter<"GameState"> | string
     characterId?: StringFilter<"GameState"> | string
+    worldId?: StringNullableFilter<"GameState"> | string | null
+    locationId?: StringNullableFilter<"GameState"> | string | null
     savePointName?: StringNullableFilter<"GameState"> | string | null
     currentLocation?: StringFilter<"GameState"> | string
     saveTimestamp?: DateTimeFilter<"GameState"> | Date | string
@@ -14977,6 +19246,8 @@ export namespace Prisma {
     isCompleted?: BoolFilter<"GameState"> | boolean
     session?: XOR<GameSessionScalarRelationFilter, GameSessionWhereInput>
     character?: XOR<CharacterScalarRelationFilter, CharacterWhereInput>
+    world?: XOR<WorldNullableScalarRelationFilter, WorldWhereInput> | null
+    location?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
     npcStates?: NPCStateListRelationFilter
     decisions?: DecisionListRelationFilter
     aiContextHistory?: AIContextHistoryListRelationFilter
@@ -14987,6 +19258,8 @@ export namespace Prisma {
     id?: SortOrder
     sessionId?: SortOrder
     characterId?: SortOrder
+    worldId?: SortOrderInput | SortOrder
+    locationId?: SortOrderInput | SortOrder
     savePointName?: SortOrderInput | SortOrder
     currentLocation?: SortOrder
     saveTimestamp?: SortOrder
@@ -15008,6 +19281,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"GameState"> | string
     sessionId?: StringWithAggregatesFilter<"GameState"> | string
     characterId?: StringWithAggregatesFilter<"GameState"> | string
+    worldId?: StringNullableWithAggregatesFilter<"GameState"> | string | null
+    locationId?: StringNullableWithAggregatesFilter<"GameState"> | string | null
     savePointName?: StringNullableWithAggregatesFilter<"GameState"> | string | null
     currentLocation?: StringWithAggregatesFilter<"GameState"> | string
     saveTimestamp?: DateTimeWithAggregatesFilter<"GameState"> | Date | string
@@ -15153,127 +19428,6 @@ export namespace Prisma {
     relationshipWithPlayer?: IntWithAggregatesFilter<"NPCState"> | number
     dialogueHistory?: JsonWithAggregatesFilter<"NPCState">
     instanceProperties?: JsonWithAggregatesFilter<"NPCState">
-  }
-
-  export type LoreCategoryWhereInput = {
-    AND?: LoreCategoryWhereInput | LoreCategoryWhereInput[]
-    OR?: LoreCategoryWhereInput[]
-    NOT?: LoreCategoryWhereInput | LoreCategoryWhereInput[]
-    id?: StringFilter<"LoreCategory"> | string
-    name?: StringFilter<"LoreCategory"> | string
-    description?: StringNullableFilter<"LoreCategory"> | string | null
-    parentCategoryId?: StringNullableFilter<"LoreCategory"> | string | null
-    parentCategory?: XOR<LoreCategoryNullableScalarRelationFilter, LoreCategoryWhereInput> | null
-    subcategories?: LoreCategoryListRelationFilter
-    worldLore?: WorldLoreListRelationFilter
-  }
-
-  export type LoreCategoryOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrderInput | SortOrder
-    parentCategoryId?: SortOrderInput | SortOrder
-    parentCategory?: LoreCategoryOrderByWithRelationInput
-    subcategories?: LoreCategoryOrderByRelationAggregateInput
-    worldLore?: WorldLoreOrderByRelationAggregateInput
-  }
-
-  export type LoreCategoryWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    name?: string
-    AND?: LoreCategoryWhereInput | LoreCategoryWhereInput[]
-    OR?: LoreCategoryWhereInput[]
-    NOT?: LoreCategoryWhereInput | LoreCategoryWhereInput[]
-    description?: StringNullableFilter<"LoreCategory"> | string | null
-    parentCategoryId?: StringNullableFilter<"LoreCategory"> | string | null
-    parentCategory?: XOR<LoreCategoryNullableScalarRelationFilter, LoreCategoryWhereInput> | null
-    subcategories?: LoreCategoryListRelationFilter
-    worldLore?: WorldLoreListRelationFilter
-  }, "id" | "name">
-
-  export type LoreCategoryOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrderInput | SortOrder
-    parentCategoryId?: SortOrderInput | SortOrder
-    _count?: LoreCategoryCountOrderByAggregateInput
-    _max?: LoreCategoryMaxOrderByAggregateInput
-    _min?: LoreCategoryMinOrderByAggregateInput
-  }
-
-  export type LoreCategoryScalarWhereWithAggregatesInput = {
-    AND?: LoreCategoryScalarWhereWithAggregatesInput | LoreCategoryScalarWhereWithAggregatesInput[]
-    OR?: LoreCategoryScalarWhereWithAggregatesInput[]
-    NOT?: LoreCategoryScalarWhereWithAggregatesInput | LoreCategoryScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"LoreCategory"> | string
-    name?: StringWithAggregatesFilter<"LoreCategory"> | string
-    description?: StringNullableWithAggregatesFilter<"LoreCategory"> | string | null
-    parentCategoryId?: StringNullableWithAggregatesFilter<"LoreCategory"> | string | null
-  }
-
-  export type WorldLoreWhereInput = {
-    AND?: WorldLoreWhereInput | WorldLoreWhereInput[]
-    OR?: WorldLoreWhereInput[]
-    NOT?: WorldLoreWhereInput | WorldLoreWhereInput[]
-    id?: StringFilter<"WorldLore"> | string
-    categoryId?: StringNullableFilter<"WorldLore"> | string | null
-    title?: StringFilter<"WorldLore"> | string
-    content?: StringFilter<"WorldLore"> | string
-    isDiscoverable?: BoolFilter<"WorldLore"> | boolean
-    discoveryConditions?: JsonFilter<"WorldLore">
-    keywords?: StringNullableListFilter<"WorldLore">
-    category?: XOR<LoreCategoryNullableScalarRelationFilter, LoreCategoryWhereInput> | null
-  }
-
-  export type WorldLoreOrderByWithRelationInput = {
-    id?: SortOrder
-    categoryId?: SortOrderInput | SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    isDiscoverable?: SortOrder
-    discoveryConditions?: SortOrder
-    keywords?: SortOrder
-    category?: LoreCategoryOrderByWithRelationInput
-  }
-
-  export type WorldLoreWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: WorldLoreWhereInput | WorldLoreWhereInput[]
-    OR?: WorldLoreWhereInput[]
-    NOT?: WorldLoreWhereInput | WorldLoreWhereInput[]
-    categoryId?: StringNullableFilter<"WorldLore"> | string | null
-    title?: StringFilter<"WorldLore"> | string
-    content?: StringFilter<"WorldLore"> | string
-    isDiscoverable?: BoolFilter<"WorldLore"> | boolean
-    discoveryConditions?: JsonFilter<"WorldLore">
-    keywords?: StringNullableListFilter<"WorldLore">
-    category?: XOR<LoreCategoryNullableScalarRelationFilter, LoreCategoryWhereInput> | null
-  }, "id">
-
-  export type WorldLoreOrderByWithAggregationInput = {
-    id?: SortOrder
-    categoryId?: SortOrderInput | SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    isDiscoverable?: SortOrder
-    discoveryConditions?: SortOrder
-    keywords?: SortOrder
-    _count?: WorldLoreCountOrderByAggregateInput
-    _max?: WorldLoreMaxOrderByAggregateInput
-    _min?: WorldLoreMinOrderByAggregateInput
-  }
-
-  export type WorldLoreScalarWhereWithAggregatesInput = {
-    AND?: WorldLoreScalarWhereWithAggregatesInput | WorldLoreScalarWhereWithAggregatesInput[]
-    OR?: WorldLoreScalarWhereWithAggregatesInput[]
-    NOT?: WorldLoreScalarWhereWithAggregatesInput | WorldLoreScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"WorldLore"> | string
-    categoryId?: StringNullableWithAggregatesFilter<"WorldLore"> | string | null
-    title?: StringWithAggregatesFilter<"WorldLore"> | string
-    content?: StringWithAggregatesFilter<"WorldLore"> | string
-    isDiscoverable?: BoolWithAggregatesFilter<"WorldLore"> | boolean
-    discoveryConditions?: JsonWithAggregatesFilter<"WorldLore">
-    keywords?: StringNullableListFilter<"WorldLore">
   }
 
   export type DecisionWhereInput = {
@@ -15569,6 +19723,7 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutCharactersInput
     gameSessions?: GameSessionCreateNestedManyWithoutCharacterInput
     gameStates?: GameStateCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterUncheckedCreateInput = {
@@ -15583,6 +19738,7 @@ export namespace Prisma {
     isActive?: boolean
     gameSessions?: GameSessionUncheckedCreateNestedManyWithoutCharacterInput
     gameStates?: GameStateUncheckedCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterUpdateInput = {
@@ -15597,6 +19753,7 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutCharactersNestedInput
     gameSessions?: GameSessionUpdateManyWithoutCharacterNestedInput
     gameStates?: GameStateUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUpdateManyWithoutCharacterNestedInput
   }
 
   export type CharacterUncheckedUpdateInput = {
@@ -15611,6 +19768,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     gameSessions?: GameSessionUncheckedUpdateManyWithoutCharacterNestedInput
     gameStates?: GameStateUncheckedUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUncheckedUpdateManyWithoutCharacterNestedInput
   }
 
   export type CharacterCreateManyInput = {
@@ -15646,6 +19804,378 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type WorldCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateCreateNestedManyWithoutWorldInput
+    locations?: LocationCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentCreateNestedManyWithoutWorldInput
+    events?: EventCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldUncheckedCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutWorldInput
+    locations?: LocationUncheckedCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentUncheckedCreateNestedManyWithoutWorldInput
+    events?: EventUncheckedCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUpdateManyWithoutWorldNestedInput
+    locations?: LocationUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUpdateManyWithoutWorldNestedInput
+    events?: EventUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUncheckedUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUncheckedUpdateManyWithoutWorldNestedInput
+    locations?: LocationUncheckedUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUncheckedUpdateManyWithoutWorldNestedInput
+    events?: EventUncheckedUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldCreateManyInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type WorldUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorldUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CharacterWorldStateCreateInput = {
+    id?: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+    character: CharacterCreateNestedOneWithoutCharacterWorldStatesInput
+    world: WorldCreateNestedOneWithoutCharacterStatesInput
+  }
+
+  export type CharacterWorldStateUncheckedCreateInput = {
+    id?: string
+    characterId: string
+    worldId: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+  }
+
+  export type CharacterWorldStateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    character?: CharacterUpdateOneRequiredWithoutCharacterWorldStatesNestedInput
+    world?: WorldUpdateOneRequiredWithoutCharacterStatesNestedInput
+  }
+
+  export type CharacterWorldStateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CharacterWorldStateCreateManyInput = {
+    id?: string
+    characterId: string
+    worldId: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+  }
+
+  export type CharacterWorldStateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CharacterWorldStateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type LocationCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    world: WorldCreateNestedOneWithoutLocationsInput
+    events?: EventCreateNestedManyWithoutLocationInput
+    gameStates?: GameStateCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationUncheckedCreateInput = {
+    id?: string
+    worldId: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    events?: EventUncheckedCreateNestedManyWithoutLocationInput
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    world?: WorldUpdateOneRequiredWithoutLocationsNestedInput
+    events?: EventUpdateManyWithoutLocationNestedInput
+    gameStates?: GameStateUpdateManyWithoutLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: EventUncheckedUpdateManyWithoutLocationNestedInput
+    gameStates?: GameStateUncheckedUpdateManyWithoutLocationNestedInput
+  }
+
+  export type LocationCreateManyInput = {
+    id?: string
+    worldId: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+  }
+
+  export type LocationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type LocationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type LoreFragmentCreateInput = {
+    id?: string
+    title: string
+    content: string
+    type: string
+    contextId?: string | null
+    isRevealed?: boolean
+    keywords?: LoreFragmentCreatekeywordsInput | string[]
+    world: WorldCreateNestedOneWithoutLoreFragmentsInput
+  }
+
+  export type LoreFragmentUncheckedCreateInput = {
+    id?: string
+    worldId: string
+    title: string
+    content: string
+    type: string
+    contextId?: string | null
+    isRevealed?: boolean
+    keywords?: LoreFragmentCreatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contextId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRevealed?: BoolFieldUpdateOperationsInput | boolean
+    keywords?: LoreFragmentUpdatekeywordsInput | string[]
+    world?: WorldUpdateOneRequiredWithoutLoreFragmentsNestedInput
+  }
+
+  export type LoreFragmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contextId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRevealed?: BoolFieldUpdateOperationsInput | boolean
+    keywords?: LoreFragmentUpdatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentCreateManyInput = {
+    id?: string
+    worldId: string
+    title: string
+    content: string
+    type: string
+    contextId?: string | null
+    isRevealed?: boolean
+    keywords?: LoreFragmentCreatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contextId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRevealed?: BoolFieldUpdateOperationsInput | boolean
+    keywords?: LoreFragmentUpdatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contextId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRevealed?: BoolFieldUpdateOperationsInput | boolean
+    keywords?: LoreFragmentUpdatekeywordsInput | string[]
+  }
+
+  export type EventCreateInput = {
+    id?: string
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+    world: WorldCreateNestedOneWithoutEventsInput
+    location?: LocationCreateNestedOneWithoutEventsInput
+  }
+
+  export type EventUncheckedCreateInput = {
+    id?: string
+    worldId: string
+    locationId?: string | null
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+  }
+
+  export type EventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+    world?: WorldUpdateOneRequiredWithoutEventsNestedInput
+    location?: LocationUpdateOneWithoutEventsNestedInput
+  }
+
+  export type EventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type EventCreateManyInput = {
+    id?: string
+    worldId: string
+    locationId?: string | null
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+  }
+
+  export type EventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type EventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type GameSessionCreateInput = {
@@ -15727,6 +20257,8 @@ export namespace Prisma {
     isCompleted?: boolean
     session: GameSessionCreateNestedOneWithoutGameStatesInput
     character: CharacterCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
@@ -15737,6 +20269,8 @@ export namespace Prisma {
     id?: string
     sessionId: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -15765,6 +20299,8 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
@@ -15775,6 +20311,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15794,6 +20332,8 @@ export namespace Prisma {
     id?: string
     sessionId: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -15822,6 +20362,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15973,131 +20515,6 @@ export namespace Prisma {
     relationshipWithPlayer?: IntFieldUpdateOperationsInput | number
     dialogueHistory?: JsonNullValueInput | InputJsonValue
     instanceProperties?: JsonNullValueInput | InputJsonValue
-  }
-
-  export type LoreCategoryCreateInput = {
-    id?: string
-    name: string
-    description?: string | null
-    parentCategory?: LoreCategoryCreateNestedOneWithoutSubcategoriesInput
-    subcategories?: LoreCategoryCreateNestedManyWithoutParentCategoryInput
-    worldLore?: WorldLoreCreateNestedManyWithoutCategoryInput
-  }
-
-  export type LoreCategoryUncheckedCreateInput = {
-    id?: string
-    name: string
-    description?: string | null
-    parentCategoryId?: string | null
-    subcategories?: LoreCategoryUncheckedCreateNestedManyWithoutParentCategoryInput
-    worldLore?: WorldLoreUncheckedCreateNestedManyWithoutCategoryInput
-  }
-
-  export type LoreCategoryUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    parentCategory?: LoreCategoryUpdateOneWithoutSubcategoriesNestedInput
-    subcategories?: LoreCategoryUpdateManyWithoutParentCategoryNestedInput
-    worldLore?: WorldLoreUpdateManyWithoutCategoryNestedInput
-  }
-
-  export type LoreCategoryUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    parentCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
-    subcategories?: LoreCategoryUncheckedUpdateManyWithoutParentCategoryNestedInput
-    worldLore?: WorldLoreUncheckedUpdateManyWithoutCategoryNestedInput
-  }
-
-  export type LoreCategoryCreateManyInput = {
-    id?: string
-    name: string
-    description?: string | null
-    parentCategoryId?: string | null
-  }
-
-  export type LoreCategoryUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type LoreCategoryUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    parentCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type WorldLoreCreateInput = {
-    id?: string
-    title: string
-    content: string
-    isDiscoverable?: boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreCreatekeywordsInput | string[]
-    category?: LoreCategoryCreateNestedOneWithoutWorldLoreInput
-  }
-
-  export type WorldLoreUncheckedCreateInput = {
-    id?: string
-    categoryId?: string | null
-    title: string
-    content: string
-    isDiscoverable?: boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreCreatekeywordsInput | string[]
-  }
-
-  export type WorldLoreUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isDiscoverable?: BoolFieldUpdateOperationsInput | boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreUpdatekeywordsInput | string[]
-    category?: LoreCategoryUpdateOneWithoutWorldLoreNestedInput
-  }
-
-  export type WorldLoreUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isDiscoverable?: BoolFieldUpdateOperationsInput | boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreUpdatekeywordsInput | string[]
-  }
-
-  export type WorldLoreCreateManyInput = {
-    id?: string
-    categoryId?: string | null
-    title: string
-    content: string
-    isDiscoverable?: boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreCreatekeywordsInput | string[]
-  }
-
-  export type WorldLoreUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isDiscoverable?: BoolFieldUpdateOperationsInput | boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreUpdatekeywordsInput | string[]
-  }
-
-  export type WorldLoreUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isDiscoverable?: BoolFieldUpdateOperationsInput | boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreUpdatekeywordsInput | string[]
   }
 
   export type DecisionCreateInput = {
@@ -16545,11 +20962,21 @@ export namespace Prisma {
     none?: GameStateWhereInput
   }
 
+  export type CharacterWorldStateListRelationFilter = {
+    every?: CharacterWorldStateWhereInput
+    some?: CharacterWorldStateWhereInput
+    none?: CharacterWorldStateWhereInput
+  }
+
   export type GameSessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type GameStateOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CharacterWorldStateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16610,6 +21037,211 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type LocationListRelationFilter = {
+    every?: LocationWhereInput
+    some?: LocationWhereInput
+    none?: LocationWhereInput
+  }
+
+  export type LoreFragmentListRelationFilter = {
+    every?: LoreFragmentWhereInput
+    some?: LoreFragmentWhereInput
+    none?: LoreFragmentWhereInput
+  }
+
+  export type EventListRelationFilter = {
+    every?: EventWhereInput
+    some?: EventWhereInput
+    none?: EventWhereInput
+  }
+
+  export type LocationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LoreFragmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EventOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WorldCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    thumbnailUrl?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WorldMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    thumbnailUrl?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WorldMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    thumbnailUrl?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CharacterScalarRelationFilter = {
+    is?: CharacterWhereInput
+    isNot?: CharacterWhereInput
+  }
+
+  export type WorldScalarRelationFilter = {
+    is?: WorldWhereInput
+    isNot?: WorldWhereInput
+  }
+
+  export type CharacterWorldStateCharacterIdWorldIdCompoundUniqueInput = {
+    characterId: string
+    worldId: string
+  }
+
+  export type CharacterWorldStateCountOrderByAggregateInput = {
+    id?: SortOrder
+    characterId?: SortOrder
+    worldId?: SortOrder
+    currentLocation?: SortOrder
+    lastPlayedAt?: SortOrder
+  }
+
+  export type CharacterWorldStateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    characterId?: SortOrder
+    worldId?: SortOrder
+    currentLocation?: SortOrder
+    lastPlayedAt?: SortOrder
+  }
+
+  export type CharacterWorldStateMinOrderByAggregateInput = {
+    id?: SortOrder
+    characterId?: SortOrder
+    worldId?: SortOrder
+    currentLocation?: SortOrder
+    lastPlayedAt?: SortOrder
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type LocationWorldIdNameCompoundUniqueInput = {
+    worldId: string
+    name: string
+  }
+
+  export type LocationCountOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isStartingLocation?: SortOrder
+    connectedLocationIds?: SortOrder
+    thumbnailUrl?: SortOrder
+  }
+
+  export type LocationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isStartingLocation?: SortOrder
+    thumbnailUrl?: SortOrder
+  }
+
+  export type LocationMinOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isStartingLocation?: SortOrder
+    thumbnailUrl?: SortOrder
+  }
+
+  export type LoreFragmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    contextId?: SortOrder
+    isRevealed?: SortOrder
+    keywords?: SortOrder
+  }
+
+  export type LoreFragmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    contextId?: SortOrder
+    isRevealed?: SortOrder
+  }
+
+  export type LoreFragmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    type?: SortOrder
+    contextId?: SortOrder
+    isRevealed?: SortOrder
+  }
+
+  export type LocationNullableScalarRelationFilter = {
+    is?: LocationWhereInput | null
+    isNot?: LocationWhereInput | null
+  }
+
+  export type EventCountOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    triggerConditions?: SortOrder
+    outcomes?: SortOrder
+    isRepeatable?: SortOrder
+  }
+
+  export type EventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    isRepeatable?: SortOrder
+  }
+
+  export type EventMinOrderByAggregateInput = {
+    id?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    isRepeatable?: SortOrder
+  }
+
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -16619,11 +21251,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type CharacterScalarRelationFilter = {
-    is?: CharacterWhereInput
-    isNot?: CharacterWhereInput
   }
 
   export type GameSessionCountOrderByAggregateInput = {
@@ -16680,6 +21307,11 @@ export namespace Prisma {
     isNot?: GameSessionWhereInput
   }
 
+  export type WorldNullableScalarRelationFilter = {
+    is?: WorldWhereInput | null
+    isNot?: WorldWhereInput | null
+  }
+
   export type NPCStateListRelationFilter = {
     every?: NPCStateWhereInput
     some?: NPCStateWhereInput
@@ -16724,6 +21356,8 @@ export namespace Prisma {
     id?: SortOrder
     sessionId?: SortOrder
     characterId?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrder
     savePointName?: SortOrder
     currentLocation?: SortOrder
     saveTimestamp?: SortOrder
@@ -16739,6 +21373,8 @@ export namespace Prisma {
     id?: SortOrder
     sessionId?: SortOrder
     characterId?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrder
     savePointName?: SortOrder
     currentLocation?: SortOrder
     saveTimestamp?: SortOrder
@@ -16751,6 +21387,8 @@ export namespace Prisma {
     id?: SortOrder
     sessionId?: SortOrder
     characterId?: SortOrder
+    worldId?: SortOrder
+    locationId?: SortOrder
     savePointName?: SortOrder
     currentLocation?: SortOrder
     saveTimestamp?: SortOrder
@@ -16859,86 +21497,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type LoreCategoryNullableScalarRelationFilter = {
-    is?: LoreCategoryWhereInput | null
-    isNot?: LoreCategoryWhereInput | null
-  }
-
-  export type LoreCategoryListRelationFilter = {
-    every?: LoreCategoryWhereInput
-    some?: LoreCategoryWhereInput
-    none?: LoreCategoryWhereInput
-  }
-
-  export type WorldLoreListRelationFilter = {
-    every?: WorldLoreWhereInput
-    some?: WorldLoreWhereInput
-    none?: WorldLoreWhereInput
-  }
-
-  export type LoreCategoryOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type WorldLoreOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type LoreCategoryCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    parentCategoryId?: SortOrder
-  }
-
-  export type LoreCategoryMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    parentCategoryId?: SortOrder
-  }
-
-  export type LoreCategoryMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    parentCategoryId?: SortOrder
-  }
-
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-
-  export type WorldLoreCountOrderByAggregateInput = {
-    id?: SortOrder
-    categoryId?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    isDiscoverable?: SortOrder
-    discoveryConditions?: SortOrder
-    keywords?: SortOrder
-  }
-
-  export type WorldLoreMaxOrderByAggregateInput = {
-    id?: SortOrder
-    categoryId?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    isDiscoverable?: SortOrder
-  }
-
-  export type WorldLoreMinOrderByAggregateInput = {
-    id?: SortOrder
-    categoryId?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    isDiscoverable?: SortOrder
   }
 
   export type DecisionCountOrderByAggregateInput = {
@@ -17159,6 +21717,13 @@ export namespace Prisma {
     connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
   }
 
+  export type CharacterWorldStateCreateNestedManyWithoutCharacterInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutCharacterInput, CharacterWorldStateUncheckedCreateWithoutCharacterInput> | CharacterWorldStateCreateWithoutCharacterInput[] | CharacterWorldStateUncheckedCreateWithoutCharacterInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutCharacterInput | CharacterWorldStateCreateOrConnectWithoutCharacterInput[]
+    createMany?: CharacterWorldStateCreateManyCharacterInputEnvelope
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+  }
+
   export type GameSessionUncheckedCreateNestedManyWithoutCharacterInput = {
     create?: XOR<GameSessionCreateWithoutCharacterInput, GameSessionUncheckedCreateWithoutCharacterInput> | GameSessionCreateWithoutCharacterInput[] | GameSessionUncheckedCreateWithoutCharacterInput[]
     connectOrCreate?: GameSessionCreateOrConnectWithoutCharacterInput | GameSessionCreateOrConnectWithoutCharacterInput[]
@@ -17171,6 +21736,13 @@ export namespace Prisma {
     connectOrCreate?: GameStateCreateOrConnectWithoutCharacterInput | GameStateCreateOrConnectWithoutCharacterInput[]
     createMany?: GameStateCreateManyCharacterInputEnvelope
     connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+  }
+
+  export type CharacterWorldStateUncheckedCreateNestedManyWithoutCharacterInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutCharacterInput, CharacterWorldStateUncheckedCreateWithoutCharacterInput> | CharacterWorldStateCreateWithoutCharacterInput[] | CharacterWorldStateUncheckedCreateWithoutCharacterInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutCharacterInput | CharacterWorldStateCreateOrConnectWithoutCharacterInput[]
+    createMany?: CharacterWorldStateCreateManyCharacterInputEnvelope
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -17213,6 +21785,20 @@ export namespace Prisma {
     deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
   }
 
+  export type CharacterWorldStateUpdateManyWithoutCharacterNestedInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutCharacterInput, CharacterWorldStateUncheckedCreateWithoutCharacterInput> | CharacterWorldStateCreateWithoutCharacterInput[] | CharacterWorldStateUncheckedCreateWithoutCharacterInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutCharacterInput | CharacterWorldStateCreateOrConnectWithoutCharacterInput[]
+    upsert?: CharacterWorldStateUpsertWithWhereUniqueWithoutCharacterInput | CharacterWorldStateUpsertWithWhereUniqueWithoutCharacterInput[]
+    createMany?: CharacterWorldStateCreateManyCharacterInputEnvelope
+    set?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    disconnect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    delete?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    update?: CharacterWorldStateUpdateWithWhereUniqueWithoutCharacterInput | CharacterWorldStateUpdateWithWhereUniqueWithoutCharacterInput[]
+    updateMany?: CharacterWorldStateUpdateManyWithWhereWithoutCharacterInput | CharacterWorldStateUpdateManyWithWhereWithoutCharacterInput[]
+    deleteMany?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
+  }
+
   export type GameSessionUncheckedUpdateManyWithoutCharacterNestedInput = {
     create?: XOR<GameSessionCreateWithoutCharacterInput, GameSessionUncheckedCreateWithoutCharacterInput> | GameSessionCreateWithoutCharacterInput[] | GameSessionUncheckedCreateWithoutCharacterInput[]
     connectOrCreate?: GameSessionCreateOrConnectWithoutCharacterInput | GameSessionCreateOrConnectWithoutCharacterInput[]
@@ -17239,6 +21825,418 @@ export namespace Prisma {
     update?: GameStateUpdateWithWhereUniqueWithoutCharacterInput | GameStateUpdateWithWhereUniqueWithoutCharacterInput[]
     updateMany?: GameStateUpdateManyWithWhereWithoutCharacterInput | GameStateUpdateManyWithWhereWithoutCharacterInput[]
     deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
+  }
+
+  export type CharacterWorldStateUncheckedUpdateManyWithoutCharacterNestedInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutCharacterInput, CharacterWorldStateUncheckedCreateWithoutCharacterInput> | CharacterWorldStateCreateWithoutCharacterInput[] | CharacterWorldStateUncheckedCreateWithoutCharacterInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutCharacterInput | CharacterWorldStateCreateOrConnectWithoutCharacterInput[]
+    upsert?: CharacterWorldStateUpsertWithWhereUniqueWithoutCharacterInput | CharacterWorldStateUpsertWithWhereUniqueWithoutCharacterInput[]
+    createMany?: CharacterWorldStateCreateManyCharacterInputEnvelope
+    set?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    disconnect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    delete?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    update?: CharacterWorldStateUpdateWithWhereUniqueWithoutCharacterInput | CharacterWorldStateUpdateWithWhereUniqueWithoutCharacterInput[]
+    updateMany?: CharacterWorldStateUpdateManyWithWhereWithoutCharacterInput | CharacterWorldStateUpdateManyWithWhereWithoutCharacterInput[]
+    deleteMany?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
+  }
+
+  export type CharacterWorldStateCreateNestedManyWithoutWorldInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutWorldInput, CharacterWorldStateUncheckedCreateWithoutWorldInput> | CharacterWorldStateCreateWithoutWorldInput[] | CharacterWorldStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutWorldInput | CharacterWorldStateCreateOrConnectWithoutWorldInput[]
+    createMany?: CharacterWorldStateCreateManyWorldInputEnvelope
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+  }
+
+  export type GameStateCreateNestedManyWithoutWorldInput = {
+    create?: XOR<GameStateCreateWithoutWorldInput, GameStateUncheckedCreateWithoutWorldInput> | GameStateCreateWithoutWorldInput[] | GameStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutWorldInput | GameStateCreateOrConnectWithoutWorldInput[]
+    createMany?: GameStateCreateManyWorldInputEnvelope
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+  }
+
+  export type LocationCreateNestedManyWithoutWorldInput = {
+    create?: XOR<LocationCreateWithoutWorldInput, LocationUncheckedCreateWithoutWorldInput> | LocationCreateWithoutWorldInput[] | LocationUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutWorldInput | LocationCreateOrConnectWithoutWorldInput[]
+    createMany?: LocationCreateManyWorldInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+  }
+
+  export type LoreFragmentCreateNestedManyWithoutWorldInput = {
+    create?: XOR<LoreFragmentCreateWithoutWorldInput, LoreFragmentUncheckedCreateWithoutWorldInput> | LoreFragmentCreateWithoutWorldInput[] | LoreFragmentUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LoreFragmentCreateOrConnectWithoutWorldInput | LoreFragmentCreateOrConnectWithoutWorldInput[]
+    createMany?: LoreFragmentCreateManyWorldInputEnvelope
+    connect?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+  }
+
+  export type EventCreateNestedManyWithoutWorldInput = {
+    create?: XOR<EventCreateWithoutWorldInput, EventUncheckedCreateWithoutWorldInput> | EventCreateWithoutWorldInput[] | EventUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutWorldInput | EventCreateOrConnectWithoutWorldInput[]
+    createMany?: EventCreateManyWorldInputEnvelope
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
+  export type CharacterWorldStateUncheckedCreateNestedManyWithoutWorldInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutWorldInput, CharacterWorldStateUncheckedCreateWithoutWorldInput> | CharacterWorldStateCreateWithoutWorldInput[] | CharacterWorldStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutWorldInput | CharacterWorldStateCreateOrConnectWithoutWorldInput[]
+    createMany?: CharacterWorldStateCreateManyWorldInputEnvelope
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+  }
+
+  export type GameStateUncheckedCreateNestedManyWithoutWorldInput = {
+    create?: XOR<GameStateCreateWithoutWorldInput, GameStateUncheckedCreateWithoutWorldInput> | GameStateCreateWithoutWorldInput[] | GameStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutWorldInput | GameStateCreateOrConnectWithoutWorldInput[]
+    createMany?: GameStateCreateManyWorldInputEnvelope
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+  }
+
+  export type LocationUncheckedCreateNestedManyWithoutWorldInput = {
+    create?: XOR<LocationCreateWithoutWorldInput, LocationUncheckedCreateWithoutWorldInput> | LocationCreateWithoutWorldInput[] | LocationUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutWorldInput | LocationCreateOrConnectWithoutWorldInput[]
+    createMany?: LocationCreateManyWorldInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+  }
+
+  export type LoreFragmentUncheckedCreateNestedManyWithoutWorldInput = {
+    create?: XOR<LoreFragmentCreateWithoutWorldInput, LoreFragmentUncheckedCreateWithoutWorldInput> | LoreFragmentCreateWithoutWorldInput[] | LoreFragmentUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LoreFragmentCreateOrConnectWithoutWorldInput | LoreFragmentCreateOrConnectWithoutWorldInput[]
+    createMany?: LoreFragmentCreateManyWorldInputEnvelope
+    connect?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+  }
+
+  export type EventUncheckedCreateNestedManyWithoutWorldInput = {
+    create?: XOR<EventCreateWithoutWorldInput, EventUncheckedCreateWithoutWorldInput> | EventCreateWithoutWorldInput[] | EventUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutWorldInput | EventCreateOrConnectWithoutWorldInput[]
+    createMany?: EventCreateManyWorldInputEnvelope
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
+  export type CharacterWorldStateUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutWorldInput, CharacterWorldStateUncheckedCreateWithoutWorldInput> | CharacterWorldStateCreateWithoutWorldInput[] | CharacterWorldStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutWorldInput | CharacterWorldStateCreateOrConnectWithoutWorldInput[]
+    upsert?: CharacterWorldStateUpsertWithWhereUniqueWithoutWorldInput | CharacterWorldStateUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: CharacterWorldStateCreateManyWorldInputEnvelope
+    set?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    disconnect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    delete?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    update?: CharacterWorldStateUpdateWithWhereUniqueWithoutWorldInput | CharacterWorldStateUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: CharacterWorldStateUpdateManyWithWhereWithoutWorldInput | CharacterWorldStateUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
+  }
+
+  export type GameStateUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<GameStateCreateWithoutWorldInput, GameStateUncheckedCreateWithoutWorldInput> | GameStateCreateWithoutWorldInput[] | GameStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutWorldInput | GameStateCreateOrConnectWithoutWorldInput[]
+    upsert?: GameStateUpsertWithWhereUniqueWithoutWorldInput | GameStateUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: GameStateCreateManyWorldInputEnvelope
+    set?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    disconnect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    delete?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    update?: GameStateUpdateWithWhereUniqueWithoutWorldInput | GameStateUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: GameStateUpdateManyWithWhereWithoutWorldInput | GameStateUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
+  }
+
+  export type LocationUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<LocationCreateWithoutWorldInput, LocationUncheckedCreateWithoutWorldInput> | LocationCreateWithoutWorldInput[] | LocationUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutWorldInput | LocationCreateOrConnectWithoutWorldInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutWorldInput | LocationUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: LocationCreateManyWorldInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutWorldInput | LocationUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutWorldInput | LocationUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
+  }
+
+  export type LoreFragmentUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<LoreFragmentCreateWithoutWorldInput, LoreFragmentUncheckedCreateWithoutWorldInput> | LoreFragmentCreateWithoutWorldInput[] | LoreFragmentUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LoreFragmentCreateOrConnectWithoutWorldInput | LoreFragmentCreateOrConnectWithoutWorldInput[]
+    upsert?: LoreFragmentUpsertWithWhereUniqueWithoutWorldInput | LoreFragmentUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: LoreFragmentCreateManyWorldInputEnvelope
+    set?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    disconnect?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    delete?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    connect?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    update?: LoreFragmentUpdateWithWhereUniqueWithoutWorldInput | LoreFragmentUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: LoreFragmentUpdateManyWithWhereWithoutWorldInput | LoreFragmentUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: LoreFragmentScalarWhereInput | LoreFragmentScalarWhereInput[]
+  }
+
+  export type EventUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<EventCreateWithoutWorldInput, EventUncheckedCreateWithoutWorldInput> | EventCreateWithoutWorldInput[] | EventUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutWorldInput | EventCreateOrConnectWithoutWorldInput[]
+    upsert?: EventUpsertWithWhereUniqueWithoutWorldInput | EventUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: EventCreateManyWorldInputEnvelope
+    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    update?: EventUpdateWithWhereUniqueWithoutWorldInput | EventUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: EventUpdateManyWithWhereWithoutWorldInput | EventUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
+  }
+
+  export type CharacterWorldStateUncheckedUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<CharacterWorldStateCreateWithoutWorldInput, CharacterWorldStateUncheckedCreateWithoutWorldInput> | CharacterWorldStateCreateWithoutWorldInput[] | CharacterWorldStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: CharacterWorldStateCreateOrConnectWithoutWorldInput | CharacterWorldStateCreateOrConnectWithoutWorldInput[]
+    upsert?: CharacterWorldStateUpsertWithWhereUniqueWithoutWorldInput | CharacterWorldStateUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: CharacterWorldStateCreateManyWorldInputEnvelope
+    set?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    disconnect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    delete?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    connect?: CharacterWorldStateWhereUniqueInput | CharacterWorldStateWhereUniqueInput[]
+    update?: CharacterWorldStateUpdateWithWhereUniqueWithoutWorldInput | CharacterWorldStateUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: CharacterWorldStateUpdateManyWithWhereWithoutWorldInput | CharacterWorldStateUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
+  }
+
+  export type GameStateUncheckedUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<GameStateCreateWithoutWorldInput, GameStateUncheckedCreateWithoutWorldInput> | GameStateCreateWithoutWorldInput[] | GameStateUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutWorldInput | GameStateCreateOrConnectWithoutWorldInput[]
+    upsert?: GameStateUpsertWithWhereUniqueWithoutWorldInput | GameStateUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: GameStateCreateManyWorldInputEnvelope
+    set?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    disconnect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    delete?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    update?: GameStateUpdateWithWhereUniqueWithoutWorldInput | GameStateUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: GameStateUpdateManyWithWhereWithoutWorldInput | GameStateUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
+  }
+
+  export type LocationUncheckedUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<LocationCreateWithoutWorldInput, LocationUncheckedCreateWithoutWorldInput> | LocationCreateWithoutWorldInput[] | LocationUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutWorldInput | LocationCreateOrConnectWithoutWorldInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutWorldInput | LocationUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: LocationCreateManyWorldInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutWorldInput | LocationUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutWorldInput | LocationUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
+  }
+
+  export type LoreFragmentUncheckedUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<LoreFragmentCreateWithoutWorldInput, LoreFragmentUncheckedCreateWithoutWorldInput> | LoreFragmentCreateWithoutWorldInput[] | LoreFragmentUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: LoreFragmentCreateOrConnectWithoutWorldInput | LoreFragmentCreateOrConnectWithoutWorldInput[]
+    upsert?: LoreFragmentUpsertWithWhereUniqueWithoutWorldInput | LoreFragmentUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: LoreFragmentCreateManyWorldInputEnvelope
+    set?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    disconnect?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    delete?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    connect?: LoreFragmentWhereUniqueInput | LoreFragmentWhereUniqueInput[]
+    update?: LoreFragmentUpdateWithWhereUniqueWithoutWorldInput | LoreFragmentUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: LoreFragmentUpdateManyWithWhereWithoutWorldInput | LoreFragmentUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: LoreFragmentScalarWhereInput | LoreFragmentScalarWhereInput[]
+  }
+
+  export type EventUncheckedUpdateManyWithoutWorldNestedInput = {
+    create?: XOR<EventCreateWithoutWorldInput, EventUncheckedCreateWithoutWorldInput> | EventCreateWithoutWorldInput[] | EventUncheckedCreateWithoutWorldInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutWorldInput | EventCreateOrConnectWithoutWorldInput[]
+    upsert?: EventUpsertWithWhereUniqueWithoutWorldInput | EventUpsertWithWhereUniqueWithoutWorldInput[]
+    createMany?: EventCreateManyWorldInputEnvelope
+    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    update?: EventUpdateWithWhereUniqueWithoutWorldInput | EventUpdateWithWhereUniqueWithoutWorldInput[]
+    updateMany?: EventUpdateManyWithWhereWithoutWorldInput | EventUpdateManyWithWhereWithoutWorldInput[]
+    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
+  }
+
+  export type CharacterCreateNestedOneWithoutCharacterWorldStatesInput = {
+    create?: XOR<CharacterCreateWithoutCharacterWorldStatesInput, CharacterUncheckedCreateWithoutCharacterWorldStatesInput>
+    connectOrCreate?: CharacterCreateOrConnectWithoutCharacterWorldStatesInput
+    connect?: CharacterWhereUniqueInput
+  }
+
+  export type WorldCreateNestedOneWithoutCharacterStatesInput = {
+    create?: XOR<WorldCreateWithoutCharacterStatesInput, WorldUncheckedCreateWithoutCharacterStatesInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutCharacterStatesInput
+    connect?: WorldWhereUniqueInput
+  }
+
+  export type CharacterUpdateOneRequiredWithoutCharacterWorldStatesNestedInput = {
+    create?: XOR<CharacterCreateWithoutCharacterWorldStatesInput, CharacterUncheckedCreateWithoutCharacterWorldStatesInput>
+    connectOrCreate?: CharacterCreateOrConnectWithoutCharacterWorldStatesInput
+    upsert?: CharacterUpsertWithoutCharacterWorldStatesInput
+    connect?: CharacterWhereUniqueInput
+    update?: XOR<XOR<CharacterUpdateToOneWithWhereWithoutCharacterWorldStatesInput, CharacterUpdateWithoutCharacterWorldStatesInput>, CharacterUncheckedUpdateWithoutCharacterWorldStatesInput>
+  }
+
+  export type WorldUpdateOneRequiredWithoutCharacterStatesNestedInput = {
+    create?: XOR<WorldCreateWithoutCharacterStatesInput, WorldUncheckedCreateWithoutCharacterStatesInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutCharacterStatesInput
+    upsert?: WorldUpsertWithoutCharacterStatesInput
+    connect?: WorldWhereUniqueInput
+    update?: XOR<XOR<WorldUpdateToOneWithWhereWithoutCharacterStatesInput, WorldUpdateWithoutCharacterStatesInput>, WorldUncheckedUpdateWithoutCharacterStatesInput>
+  }
+
+  export type LocationCreateconnectedLocationIdsInput = {
+    set: string[]
+  }
+
+  export type WorldCreateNestedOneWithoutLocationsInput = {
+    create?: XOR<WorldCreateWithoutLocationsInput, WorldUncheckedCreateWithoutLocationsInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutLocationsInput
+    connect?: WorldWhereUniqueInput
+  }
+
+  export type EventCreateNestedManyWithoutLocationInput = {
+    create?: XOR<EventCreateWithoutLocationInput, EventUncheckedCreateWithoutLocationInput> | EventCreateWithoutLocationInput[] | EventUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutLocationInput | EventCreateOrConnectWithoutLocationInput[]
+    createMany?: EventCreateManyLocationInputEnvelope
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
+  export type GameStateCreateNestedManyWithoutLocationInput = {
+    create?: XOR<GameStateCreateWithoutLocationInput, GameStateUncheckedCreateWithoutLocationInput> | GameStateCreateWithoutLocationInput[] | GameStateUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutLocationInput | GameStateCreateOrConnectWithoutLocationInput[]
+    createMany?: GameStateCreateManyLocationInputEnvelope
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+  }
+
+  export type EventUncheckedCreateNestedManyWithoutLocationInput = {
+    create?: XOR<EventCreateWithoutLocationInput, EventUncheckedCreateWithoutLocationInput> | EventCreateWithoutLocationInput[] | EventUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutLocationInput | EventCreateOrConnectWithoutLocationInput[]
+    createMany?: EventCreateManyLocationInputEnvelope
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
+  export type GameStateUncheckedCreateNestedManyWithoutLocationInput = {
+    create?: XOR<GameStateCreateWithoutLocationInput, GameStateUncheckedCreateWithoutLocationInput> | GameStateCreateWithoutLocationInput[] | GameStateUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutLocationInput | GameStateCreateOrConnectWithoutLocationInput[]
+    createMany?: GameStateCreateManyLocationInputEnvelope
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+  }
+
+  export type LocationUpdateconnectedLocationIdsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type WorldUpdateOneRequiredWithoutLocationsNestedInput = {
+    create?: XOR<WorldCreateWithoutLocationsInput, WorldUncheckedCreateWithoutLocationsInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutLocationsInput
+    upsert?: WorldUpsertWithoutLocationsInput
+    connect?: WorldWhereUniqueInput
+    update?: XOR<XOR<WorldUpdateToOneWithWhereWithoutLocationsInput, WorldUpdateWithoutLocationsInput>, WorldUncheckedUpdateWithoutLocationsInput>
+  }
+
+  export type EventUpdateManyWithoutLocationNestedInput = {
+    create?: XOR<EventCreateWithoutLocationInput, EventUncheckedCreateWithoutLocationInput> | EventCreateWithoutLocationInput[] | EventUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutLocationInput | EventCreateOrConnectWithoutLocationInput[]
+    upsert?: EventUpsertWithWhereUniqueWithoutLocationInput | EventUpsertWithWhereUniqueWithoutLocationInput[]
+    createMany?: EventCreateManyLocationInputEnvelope
+    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    update?: EventUpdateWithWhereUniqueWithoutLocationInput | EventUpdateWithWhereUniqueWithoutLocationInput[]
+    updateMany?: EventUpdateManyWithWhereWithoutLocationInput | EventUpdateManyWithWhereWithoutLocationInput[]
+    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
+  }
+
+  export type GameStateUpdateManyWithoutLocationNestedInput = {
+    create?: XOR<GameStateCreateWithoutLocationInput, GameStateUncheckedCreateWithoutLocationInput> | GameStateCreateWithoutLocationInput[] | GameStateUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutLocationInput | GameStateCreateOrConnectWithoutLocationInput[]
+    upsert?: GameStateUpsertWithWhereUniqueWithoutLocationInput | GameStateUpsertWithWhereUniqueWithoutLocationInput[]
+    createMany?: GameStateCreateManyLocationInputEnvelope
+    set?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    disconnect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    delete?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    update?: GameStateUpdateWithWhereUniqueWithoutLocationInput | GameStateUpdateWithWhereUniqueWithoutLocationInput[]
+    updateMany?: GameStateUpdateManyWithWhereWithoutLocationInput | GameStateUpdateManyWithWhereWithoutLocationInput[]
+    deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
+  }
+
+  export type EventUncheckedUpdateManyWithoutLocationNestedInput = {
+    create?: XOR<EventCreateWithoutLocationInput, EventUncheckedCreateWithoutLocationInput> | EventCreateWithoutLocationInput[] | EventUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutLocationInput | EventCreateOrConnectWithoutLocationInput[]
+    upsert?: EventUpsertWithWhereUniqueWithoutLocationInput | EventUpsertWithWhereUniqueWithoutLocationInput[]
+    createMany?: EventCreateManyLocationInputEnvelope
+    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    update?: EventUpdateWithWhereUniqueWithoutLocationInput | EventUpdateWithWhereUniqueWithoutLocationInput[]
+    updateMany?: EventUpdateManyWithWhereWithoutLocationInput | EventUpdateManyWithWhereWithoutLocationInput[]
+    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
+  }
+
+  export type GameStateUncheckedUpdateManyWithoutLocationNestedInput = {
+    create?: XOR<GameStateCreateWithoutLocationInput, GameStateUncheckedCreateWithoutLocationInput> | GameStateCreateWithoutLocationInput[] | GameStateUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: GameStateCreateOrConnectWithoutLocationInput | GameStateCreateOrConnectWithoutLocationInput[]
+    upsert?: GameStateUpsertWithWhereUniqueWithoutLocationInput | GameStateUpsertWithWhereUniqueWithoutLocationInput[]
+    createMany?: GameStateCreateManyLocationInputEnvelope
+    set?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    disconnect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    delete?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+    update?: GameStateUpdateWithWhereUniqueWithoutLocationInput | GameStateUpdateWithWhereUniqueWithoutLocationInput[]
+    updateMany?: GameStateUpdateManyWithWhereWithoutLocationInput | GameStateUpdateManyWithWhereWithoutLocationInput[]
+    deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
+  }
+
+  export type LoreFragmentCreatekeywordsInput = {
+    set: string[]
+  }
+
+  export type WorldCreateNestedOneWithoutLoreFragmentsInput = {
+    create?: XOR<WorldCreateWithoutLoreFragmentsInput, WorldUncheckedCreateWithoutLoreFragmentsInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutLoreFragmentsInput
+    connect?: WorldWhereUniqueInput
+  }
+
+  export type LoreFragmentUpdatekeywordsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type WorldUpdateOneRequiredWithoutLoreFragmentsNestedInput = {
+    create?: XOR<WorldCreateWithoutLoreFragmentsInput, WorldUncheckedCreateWithoutLoreFragmentsInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutLoreFragmentsInput
+    upsert?: WorldUpsertWithoutLoreFragmentsInput
+    connect?: WorldWhereUniqueInput
+    update?: XOR<XOR<WorldUpdateToOneWithWhereWithoutLoreFragmentsInput, WorldUpdateWithoutLoreFragmentsInput>, WorldUncheckedUpdateWithoutLoreFragmentsInput>
+  }
+
+  export type WorldCreateNestedOneWithoutEventsInput = {
+    create?: XOR<WorldCreateWithoutEventsInput, WorldUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutEventsInput
+    connect?: WorldWhereUniqueInput
+  }
+
+  export type LocationCreateNestedOneWithoutEventsInput = {
+    create?: XOR<LocationCreateWithoutEventsInput, LocationUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutEventsInput
+    connect?: LocationWhereUniqueInput
+  }
+
+  export type WorldUpdateOneRequiredWithoutEventsNestedInput = {
+    create?: XOR<WorldCreateWithoutEventsInput, WorldUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutEventsInput
+    upsert?: WorldUpsertWithoutEventsInput
+    connect?: WorldWhereUniqueInput
+    update?: XOR<XOR<WorldUpdateToOneWithWhereWithoutEventsInput, WorldUpdateWithoutEventsInput>, WorldUncheckedUpdateWithoutEventsInput>
+  }
+
+  export type LocationUpdateOneWithoutEventsNestedInput = {
+    create?: XOR<LocationCreateWithoutEventsInput, LocationUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutEventsInput
+    upsert?: LocationUpsertWithoutEventsInput
+    disconnect?: LocationWhereInput | boolean
+    delete?: LocationWhereInput | boolean
+    connect?: LocationWhereUniqueInput
+    update?: XOR<XOR<LocationUpdateToOneWithWhereWithoutEventsInput, LocationUpdateWithoutEventsInput>, LocationUncheckedUpdateWithoutEventsInput>
   }
 
   export type CharacterCreateNestedOneWithoutGameSessionsInput = {
@@ -17317,6 +22315,18 @@ export namespace Prisma {
     connect?: CharacterWhereUniqueInput
   }
 
+  export type WorldCreateNestedOneWithoutGameStatesInput = {
+    create?: XOR<WorldCreateWithoutGameStatesInput, WorldUncheckedCreateWithoutGameStatesInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutGameStatesInput
+    connect?: WorldWhereUniqueInput
+  }
+
+  export type LocationCreateNestedOneWithoutGameStatesInput = {
+    create?: XOR<LocationCreateWithoutGameStatesInput, LocationUncheckedCreateWithoutGameStatesInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutGameStatesInput
+    connect?: LocationWhereUniqueInput
+  }
+
   export type NPCStateCreateNestedManyWithoutGameStateInput = {
     create?: XOR<NPCStateCreateWithoutGameStateInput, NPCStateUncheckedCreateWithoutGameStateInput> | NPCStateCreateWithoutGameStateInput[] | NPCStateUncheckedCreateWithoutGameStateInput[]
     connectOrCreate?: NPCStateCreateOrConnectWithoutGameStateInput | NPCStateCreateOrConnectWithoutGameStateInput[]
@@ -17387,6 +22397,26 @@ export namespace Prisma {
     upsert?: CharacterUpsertWithoutGameStatesInput
     connect?: CharacterWhereUniqueInput
     update?: XOR<XOR<CharacterUpdateToOneWithWhereWithoutGameStatesInput, CharacterUpdateWithoutGameStatesInput>, CharacterUncheckedUpdateWithoutGameStatesInput>
+  }
+
+  export type WorldUpdateOneWithoutGameStatesNestedInput = {
+    create?: XOR<WorldCreateWithoutGameStatesInput, WorldUncheckedCreateWithoutGameStatesInput>
+    connectOrCreate?: WorldCreateOrConnectWithoutGameStatesInput
+    upsert?: WorldUpsertWithoutGameStatesInput
+    disconnect?: WorldWhereInput | boolean
+    delete?: WorldWhereInput | boolean
+    connect?: WorldWhereUniqueInput
+    update?: XOR<XOR<WorldUpdateToOneWithWhereWithoutGameStatesInput, WorldUpdateWithoutGameStatesInput>, WorldUncheckedUpdateWithoutGameStatesInput>
+  }
+
+  export type LocationUpdateOneWithoutGameStatesNestedInput = {
+    create?: XOR<LocationCreateWithoutGameStatesInput, LocationUncheckedCreateWithoutGameStatesInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutGameStatesInput
+    upsert?: LocationUpsertWithoutGameStatesInput
+    disconnect?: LocationWhereInput | boolean
+    delete?: LocationWhereInput | boolean
+    connect?: LocationWhereUniqueInput
+    update?: XOR<XOR<LocationUpdateToOneWithWhereWithoutGameStatesInput, LocationUpdateWithoutGameStatesInput>, LocationUncheckedUpdateWithoutGameStatesInput>
   }
 
   export type NPCStateUpdateManyWithoutGameStateNestedInput = {
@@ -17577,131 +22607,6 @@ export namespace Prisma {
     upsert?: NPCTemplateUpsertWithoutNpcStatesInput
     connect?: NPCTemplateWhereUniqueInput
     update?: XOR<XOR<NPCTemplateUpdateToOneWithWhereWithoutNpcStatesInput, NPCTemplateUpdateWithoutNpcStatesInput>, NPCTemplateUncheckedUpdateWithoutNpcStatesInput>
-  }
-
-  export type LoreCategoryCreateNestedOneWithoutSubcategoriesInput = {
-    create?: XOR<LoreCategoryCreateWithoutSubcategoriesInput, LoreCategoryUncheckedCreateWithoutSubcategoriesInput>
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutSubcategoriesInput
-    connect?: LoreCategoryWhereUniqueInput
-  }
-
-  export type LoreCategoryCreateNestedManyWithoutParentCategoryInput = {
-    create?: XOR<LoreCategoryCreateWithoutParentCategoryInput, LoreCategoryUncheckedCreateWithoutParentCategoryInput> | LoreCategoryCreateWithoutParentCategoryInput[] | LoreCategoryUncheckedCreateWithoutParentCategoryInput[]
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutParentCategoryInput | LoreCategoryCreateOrConnectWithoutParentCategoryInput[]
-    createMany?: LoreCategoryCreateManyParentCategoryInputEnvelope
-    connect?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-  }
-
-  export type WorldLoreCreateNestedManyWithoutCategoryInput = {
-    create?: XOR<WorldLoreCreateWithoutCategoryInput, WorldLoreUncheckedCreateWithoutCategoryInput> | WorldLoreCreateWithoutCategoryInput[] | WorldLoreUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: WorldLoreCreateOrConnectWithoutCategoryInput | WorldLoreCreateOrConnectWithoutCategoryInput[]
-    createMany?: WorldLoreCreateManyCategoryInputEnvelope
-    connect?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-  }
-
-  export type LoreCategoryUncheckedCreateNestedManyWithoutParentCategoryInput = {
-    create?: XOR<LoreCategoryCreateWithoutParentCategoryInput, LoreCategoryUncheckedCreateWithoutParentCategoryInput> | LoreCategoryCreateWithoutParentCategoryInput[] | LoreCategoryUncheckedCreateWithoutParentCategoryInput[]
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutParentCategoryInput | LoreCategoryCreateOrConnectWithoutParentCategoryInput[]
-    createMany?: LoreCategoryCreateManyParentCategoryInputEnvelope
-    connect?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-  }
-
-  export type WorldLoreUncheckedCreateNestedManyWithoutCategoryInput = {
-    create?: XOR<WorldLoreCreateWithoutCategoryInput, WorldLoreUncheckedCreateWithoutCategoryInput> | WorldLoreCreateWithoutCategoryInput[] | WorldLoreUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: WorldLoreCreateOrConnectWithoutCategoryInput | WorldLoreCreateOrConnectWithoutCategoryInput[]
-    createMany?: WorldLoreCreateManyCategoryInputEnvelope
-    connect?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-  }
-
-  export type LoreCategoryUpdateOneWithoutSubcategoriesNestedInput = {
-    create?: XOR<LoreCategoryCreateWithoutSubcategoriesInput, LoreCategoryUncheckedCreateWithoutSubcategoriesInput>
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutSubcategoriesInput
-    upsert?: LoreCategoryUpsertWithoutSubcategoriesInput
-    disconnect?: LoreCategoryWhereInput | boolean
-    delete?: LoreCategoryWhereInput | boolean
-    connect?: LoreCategoryWhereUniqueInput
-    update?: XOR<XOR<LoreCategoryUpdateToOneWithWhereWithoutSubcategoriesInput, LoreCategoryUpdateWithoutSubcategoriesInput>, LoreCategoryUncheckedUpdateWithoutSubcategoriesInput>
-  }
-
-  export type LoreCategoryUpdateManyWithoutParentCategoryNestedInput = {
-    create?: XOR<LoreCategoryCreateWithoutParentCategoryInput, LoreCategoryUncheckedCreateWithoutParentCategoryInput> | LoreCategoryCreateWithoutParentCategoryInput[] | LoreCategoryUncheckedCreateWithoutParentCategoryInput[]
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutParentCategoryInput | LoreCategoryCreateOrConnectWithoutParentCategoryInput[]
-    upsert?: LoreCategoryUpsertWithWhereUniqueWithoutParentCategoryInput | LoreCategoryUpsertWithWhereUniqueWithoutParentCategoryInput[]
-    createMany?: LoreCategoryCreateManyParentCategoryInputEnvelope
-    set?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    disconnect?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    delete?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    connect?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    update?: LoreCategoryUpdateWithWhereUniqueWithoutParentCategoryInput | LoreCategoryUpdateWithWhereUniqueWithoutParentCategoryInput[]
-    updateMany?: LoreCategoryUpdateManyWithWhereWithoutParentCategoryInput | LoreCategoryUpdateManyWithWhereWithoutParentCategoryInput[]
-    deleteMany?: LoreCategoryScalarWhereInput | LoreCategoryScalarWhereInput[]
-  }
-
-  export type WorldLoreUpdateManyWithoutCategoryNestedInput = {
-    create?: XOR<WorldLoreCreateWithoutCategoryInput, WorldLoreUncheckedCreateWithoutCategoryInput> | WorldLoreCreateWithoutCategoryInput[] | WorldLoreUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: WorldLoreCreateOrConnectWithoutCategoryInput | WorldLoreCreateOrConnectWithoutCategoryInput[]
-    upsert?: WorldLoreUpsertWithWhereUniqueWithoutCategoryInput | WorldLoreUpsertWithWhereUniqueWithoutCategoryInput[]
-    createMany?: WorldLoreCreateManyCategoryInputEnvelope
-    set?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    disconnect?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    delete?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    connect?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    update?: WorldLoreUpdateWithWhereUniqueWithoutCategoryInput | WorldLoreUpdateWithWhereUniqueWithoutCategoryInput[]
-    updateMany?: WorldLoreUpdateManyWithWhereWithoutCategoryInput | WorldLoreUpdateManyWithWhereWithoutCategoryInput[]
-    deleteMany?: WorldLoreScalarWhereInput | WorldLoreScalarWhereInput[]
-  }
-
-  export type LoreCategoryUncheckedUpdateManyWithoutParentCategoryNestedInput = {
-    create?: XOR<LoreCategoryCreateWithoutParentCategoryInput, LoreCategoryUncheckedCreateWithoutParentCategoryInput> | LoreCategoryCreateWithoutParentCategoryInput[] | LoreCategoryUncheckedCreateWithoutParentCategoryInput[]
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutParentCategoryInput | LoreCategoryCreateOrConnectWithoutParentCategoryInput[]
-    upsert?: LoreCategoryUpsertWithWhereUniqueWithoutParentCategoryInput | LoreCategoryUpsertWithWhereUniqueWithoutParentCategoryInput[]
-    createMany?: LoreCategoryCreateManyParentCategoryInputEnvelope
-    set?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    disconnect?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    delete?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    connect?: LoreCategoryWhereUniqueInput | LoreCategoryWhereUniqueInput[]
-    update?: LoreCategoryUpdateWithWhereUniqueWithoutParentCategoryInput | LoreCategoryUpdateWithWhereUniqueWithoutParentCategoryInput[]
-    updateMany?: LoreCategoryUpdateManyWithWhereWithoutParentCategoryInput | LoreCategoryUpdateManyWithWhereWithoutParentCategoryInput[]
-    deleteMany?: LoreCategoryScalarWhereInput | LoreCategoryScalarWhereInput[]
-  }
-
-  export type WorldLoreUncheckedUpdateManyWithoutCategoryNestedInput = {
-    create?: XOR<WorldLoreCreateWithoutCategoryInput, WorldLoreUncheckedCreateWithoutCategoryInput> | WorldLoreCreateWithoutCategoryInput[] | WorldLoreUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: WorldLoreCreateOrConnectWithoutCategoryInput | WorldLoreCreateOrConnectWithoutCategoryInput[]
-    upsert?: WorldLoreUpsertWithWhereUniqueWithoutCategoryInput | WorldLoreUpsertWithWhereUniqueWithoutCategoryInput[]
-    createMany?: WorldLoreCreateManyCategoryInputEnvelope
-    set?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    disconnect?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    delete?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    connect?: WorldLoreWhereUniqueInput | WorldLoreWhereUniqueInput[]
-    update?: WorldLoreUpdateWithWhereUniqueWithoutCategoryInput | WorldLoreUpdateWithWhereUniqueWithoutCategoryInput[]
-    updateMany?: WorldLoreUpdateManyWithWhereWithoutCategoryInput | WorldLoreUpdateManyWithWhereWithoutCategoryInput[]
-    deleteMany?: WorldLoreScalarWhereInput | WorldLoreScalarWhereInput[]
-  }
-
-  export type WorldLoreCreatekeywordsInput = {
-    set: string[]
-  }
-
-  export type LoreCategoryCreateNestedOneWithoutWorldLoreInput = {
-    create?: XOR<LoreCategoryCreateWithoutWorldLoreInput, LoreCategoryUncheckedCreateWithoutWorldLoreInput>
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutWorldLoreInput
-    connect?: LoreCategoryWhereUniqueInput
-  }
-
-  export type WorldLoreUpdatekeywordsInput = {
-    set?: string[]
-    push?: string | string[]
-  }
-
-  export type LoreCategoryUpdateOneWithoutWorldLoreNestedInput = {
-    create?: XOR<LoreCategoryCreateWithoutWorldLoreInput, LoreCategoryUncheckedCreateWithoutWorldLoreInput>
-    connectOrCreate?: LoreCategoryCreateOrConnectWithoutWorldLoreInput
-    upsert?: LoreCategoryUpsertWithoutWorldLoreInput
-    disconnect?: LoreCategoryWhereInput | boolean
-    delete?: LoreCategoryWhereInput | boolean
-    connect?: LoreCategoryWhereUniqueInput
-    update?: XOR<XOR<LoreCategoryUpdateToOneWithWhereWithoutWorldLoreInput, LoreCategoryUpdateWithoutWorldLoreInput>, LoreCategoryUncheckedUpdateWithoutWorldLoreInput>
   }
 
   export type DecisionCreaterelatedNpcIdsInput = {
@@ -18014,6 +22919,7 @@ export namespace Prisma {
     isActive?: boolean
     gameSessions?: GameSessionCreateNestedManyWithoutCharacterInput
     gameStates?: GameStateCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterUncheckedCreateWithoutUserInput = {
@@ -18027,6 +22933,7 @@ export namespace Prisma {
     isActive?: boolean
     gameSessions?: GameSessionUncheckedCreateNestedManyWithoutCharacterInput
     gameStates?: GameStateUncheckedCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterCreateOrConnectWithoutUserInput = {
@@ -18133,6 +23040,8 @@ export namespace Prisma {
     isAutosave?: boolean
     isCompleted?: boolean
     session: GameSessionCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
@@ -18142,6 +23051,8 @@ export namespace Prisma {
   export type GameStateUncheckedCreateWithoutCharacterInput = {
     id?: string
     sessionId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -18164,6 +23075,30 @@ export namespace Prisma {
 
   export type GameStateCreateManyCharacterInputEnvelope = {
     data: GameStateCreateManyCharacterInput | GameStateCreateManyCharacterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CharacterWorldStateCreateWithoutCharacterInput = {
+    id?: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+    world: WorldCreateNestedOneWithoutCharacterStatesInput
+  }
+
+  export type CharacterWorldStateUncheckedCreateWithoutCharacterInput = {
+    id?: string
+    worldId: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+  }
+
+  export type CharacterWorldStateCreateOrConnectWithoutCharacterInput = {
+    where: CharacterWorldStateWhereUniqueInput
+    create: XOR<CharacterWorldStateCreateWithoutCharacterInput, CharacterWorldStateUncheckedCreateWithoutCharacterInput>
+  }
+
+  export type CharacterWorldStateCreateManyCharacterInputEnvelope = {
+    data: CharacterWorldStateCreateManyCharacterInput | CharacterWorldStateCreateManyCharacterInput[]
     skipDuplicates?: boolean
   }
 
@@ -18247,6 +23182,8 @@ export namespace Prisma {
     id?: StringFilter<"GameState"> | string
     sessionId?: StringFilter<"GameState"> | string
     characterId?: StringFilter<"GameState"> | string
+    worldId?: StringNullableFilter<"GameState"> | string | null
+    locationId?: StringNullableFilter<"GameState"> | string | null
     savePointName?: StringNullableFilter<"GameState"> | string | null
     currentLocation?: StringFilter<"GameState"> | string
     saveTimestamp?: DateTimeFilter<"GameState"> | Date | string
@@ -18256,6 +23193,841 @@ export namespace Prisma {
     worldState?: JsonFilter<"GameState">
     isAutosave?: BoolFilter<"GameState"> | boolean
     isCompleted?: BoolFilter<"GameState"> | boolean
+  }
+
+  export type CharacterWorldStateUpsertWithWhereUniqueWithoutCharacterInput = {
+    where: CharacterWorldStateWhereUniqueInput
+    update: XOR<CharacterWorldStateUpdateWithoutCharacterInput, CharacterWorldStateUncheckedUpdateWithoutCharacterInput>
+    create: XOR<CharacterWorldStateCreateWithoutCharacterInput, CharacterWorldStateUncheckedCreateWithoutCharacterInput>
+  }
+
+  export type CharacterWorldStateUpdateWithWhereUniqueWithoutCharacterInput = {
+    where: CharacterWorldStateWhereUniqueInput
+    data: XOR<CharacterWorldStateUpdateWithoutCharacterInput, CharacterWorldStateUncheckedUpdateWithoutCharacterInput>
+  }
+
+  export type CharacterWorldStateUpdateManyWithWhereWithoutCharacterInput = {
+    where: CharacterWorldStateScalarWhereInput
+    data: XOR<CharacterWorldStateUpdateManyMutationInput, CharacterWorldStateUncheckedUpdateManyWithoutCharacterInput>
+  }
+
+  export type CharacterWorldStateScalarWhereInput = {
+    AND?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
+    OR?: CharacterWorldStateScalarWhereInput[]
+    NOT?: CharacterWorldStateScalarWhereInput | CharacterWorldStateScalarWhereInput[]
+    id?: StringFilter<"CharacterWorldState"> | string
+    characterId?: StringFilter<"CharacterWorldState"> | string
+    worldId?: StringFilter<"CharacterWorldState"> | string
+    currentLocation?: StringNullableFilter<"CharacterWorldState"> | string | null
+    lastPlayedAt?: DateTimeNullableFilter<"CharacterWorldState"> | Date | string | null
+  }
+
+  export type CharacterWorldStateCreateWithoutWorldInput = {
+    id?: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+    character: CharacterCreateNestedOneWithoutCharacterWorldStatesInput
+  }
+
+  export type CharacterWorldStateUncheckedCreateWithoutWorldInput = {
+    id?: string
+    characterId: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+  }
+
+  export type CharacterWorldStateCreateOrConnectWithoutWorldInput = {
+    where: CharacterWorldStateWhereUniqueInput
+    create: XOR<CharacterWorldStateCreateWithoutWorldInput, CharacterWorldStateUncheckedCreateWithoutWorldInput>
+  }
+
+  export type CharacterWorldStateCreateManyWorldInputEnvelope = {
+    data: CharacterWorldStateCreateManyWorldInput | CharacterWorldStateCreateManyWorldInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type GameStateCreateWithoutWorldInput = {
+    id?: string
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+    session: GameSessionCreateNestedOneWithoutGameStatesInput
+    character: CharacterCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
+    npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
+    decisions?: DecisionCreateNestedManyWithoutGameStateInput
+    aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
+  }
+
+  export type GameStateUncheckedCreateWithoutWorldInput = {
+    id?: string
+    sessionId: string
+    characterId: string
+    locationId?: string | null
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+    npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
+    decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
+    aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
+  }
+
+  export type GameStateCreateOrConnectWithoutWorldInput = {
+    where: GameStateWhereUniqueInput
+    create: XOR<GameStateCreateWithoutWorldInput, GameStateUncheckedCreateWithoutWorldInput>
+  }
+
+  export type GameStateCreateManyWorldInputEnvelope = {
+    data: GameStateCreateManyWorldInput | GameStateCreateManyWorldInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LocationCreateWithoutWorldInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    events?: EventCreateNestedManyWithoutLocationInput
+    gameStates?: GameStateCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutWorldInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    events?: EventUncheckedCreateNestedManyWithoutLocationInput
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutWorldInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutWorldInput, LocationUncheckedCreateWithoutWorldInput>
+  }
+
+  export type LocationCreateManyWorldInputEnvelope = {
+    data: LocationCreateManyWorldInput | LocationCreateManyWorldInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LoreFragmentCreateWithoutWorldInput = {
+    id?: string
+    title: string
+    content: string
+    type: string
+    contextId?: string | null
+    isRevealed?: boolean
+    keywords?: LoreFragmentCreatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentUncheckedCreateWithoutWorldInput = {
+    id?: string
+    title: string
+    content: string
+    type: string
+    contextId?: string | null
+    isRevealed?: boolean
+    keywords?: LoreFragmentCreatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentCreateOrConnectWithoutWorldInput = {
+    where: LoreFragmentWhereUniqueInput
+    create: XOR<LoreFragmentCreateWithoutWorldInput, LoreFragmentUncheckedCreateWithoutWorldInput>
+  }
+
+  export type LoreFragmentCreateManyWorldInputEnvelope = {
+    data: LoreFragmentCreateManyWorldInput | LoreFragmentCreateManyWorldInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EventCreateWithoutWorldInput = {
+    id?: string
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+    location?: LocationCreateNestedOneWithoutEventsInput
+  }
+
+  export type EventUncheckedCreateWithoutWorldInput = {
+    id?: string
+    locationId?: string | null
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+  }
+
+  export type EventCreateOrConnectWithoutWorldInput = {
+    where: EventWhereUniqueInput
+    create: XOR<EventCreateWithoutWorldInput, EventUncheckedCreateWithoutWorldInput>
+  }
+
+  export type EventCreateManyWorldInputEnvelope = {
+    data: EventCreateManyWorldInput | EventCreateManyWorldInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CharacterWorldStateUpsertWithWhereUniqueWithoutWorldInput = {
+    where: CharacterWorldStateWhereUniqueInput
+    update: XOR<CharacterWorldStateUpdateWithoutWorldInput, CharacterWorldStateUncheckedUpdateWithoutWorldInput>
+    create: XOR<CharacterWorldStateCreateWithoutWorldInput, CharacterWorldStateUncheckedCreateWithoutWorldInput>
+  }
+
+  export type CharacterWorldStateUpdateWithWhereUniqueWithoutWorldInput = {
+    where: CharacterWorldStateWhereUniqueInput
+    data: XOR<CharacterWorldStateUpdateWithoutWorldInput, CharacterWorldStateUncheckedUpdateWithoutWorldInput>
+  }
+
+  export type CharacterWorldStateUpdateManyWithWhereWithoutWorldInput = {
+    where: CharacterWorldStateScalarWhereInput
+    data: XOR<CharacterWorldStateUpdateManyMutationInput, CharacterWorldStateUncheckedUpdateManyWithoutWorldInput>
+  }
+
+  export type GameStateUpsertWithWhereUniqueWithoutWorldInput = {
+    where: GameStateWhereUniqueInput
+    update: XOR<GameStateUpdateWithoutWorldInput, GameStateUncheckedUpdateWithoutWorldInput>
+    create: XOR<GameStateCreateWithoutWorldInput, GameStateUncheckedCreateWithoutWorldInput>
+  }
+
+  export type GameStateUpdateWithWhereUniqueWithoutWorldInput = {
+    where: GameStateWhereUniqueInput
+    data: XOR<GameStateUpdateWithoutWorldInput, GameStateUncheckedUpdateWithoutWorldInput>
+  }
+
+  export type GameStateUpdateManyWithWhereWithoutWorldInput = {
+    where: GameStateScalarWhereInput
+    data: XOR<GameStateUpdateManyMutationInput, GameStateUncheckedUpdateManyWithoutWorldInput>
+  }
+
+  export type LocationUpsertWithWhereUniqueWithoutWorldInput = {
+    where: LocationWhereUniqueInput
+    update: XOR<LocationUpdateWithoutWorldInput, LocationUncheckedUpdateWithoutWorldInput>
+    create: XOR<LocationCreateWithoutWorldInput, LocationUncheckedCreateWithoutWorldInput>
+  }
+
+  export type LocationUpdateWithWhereUniqueWithoutWorldInput = {
+    where: LocationWhereUniqueInput
+    data: XOR<LocationUpdateWithoutWorldInput, LocationUncheckedUpdateWithoutWorldInput>
+  }
+
+  export type LocationUpdateManyWithWhereWithoutWorldInput = {
+    where: LocationScalarWhereInput
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyWithoutWorldInput>
+  }
+
+  export type LocationScalarWhereInput = {
+    AND?: LocationScalarWhereInput | LocationScalarWhereInput[]
+    OR?: LocationScalarWhereInput[]
+    NOT?: LocationScalarWhereInput | LocationScalarWhereInput[]
+    id?: StringFilter<"Location"> | string
+    worldId?: StringFilter<"Location"> | string
+    name?: StringFilter<"Location"> | string
+    description?: StringNullableFilter<"Location"> | string | null
+    isStartingLocation?: BoolFilter<"Location"> | boolean
+    connectedLocationIds?: StringNullableListFilter<"Location">
+    thumbnailUrl?: StringNullableFilter<"Location"> | string | null
+  }
+
+  export type LoreFragmentUpsertWithWhereUniqueWithoutWorldInput = {
+    where: LoreFragmentWhereUniqueInput
+    update: XOR<LoreFragmentUpdateWithoutWorldInput, LoreFragmentUncheckedUpdateWithoutWorldInput>
+    create: XOR<LoreFragmentCreateWithoutWorldInput, LoreFragmentUncheckedCreateWithoutWorldInput>
+  }
+
+  export type LoreFragmentUpdateWithWhereUniqueWithoutWorldInput = {
+    where: LoreFragmentWhereUniqueInput
+    data: XOR<LoreFragmentUpdateWithoutWorldInput, LoreFragmentUncheckedUpdateWithoutWorldInput>
+  }
+
+  export type LoreFragmentUpdateManyWithWhereWithoutWorldInput = {
+    where: LoreFragmentScalarWhereInput
+    data: XOR<LoreFragmentUpdateManyMutationInput, LoreFragmentUncheckedUpdateManyWithoutWorldInput>
+  }
+
+  export type LoreFragmentScalarWhereInput = {
+    AND?: LoreFragmentScalarWhereInput | LoreFragmentScalarWhereInput[]
+    OR?: LoreFragmentScalarWhereInput[]
+    NOT?: LoreFragmentScalarWhereInput | LoreFragmentScalarWhereInput[]
+    id?: StringFilter<"LoreFragment"> | string
+    worldId?: StringFilter<"LoreFragment"> | string
+    title?: StringFilter<"LoreFragment"> | string
+    content?: StringFilter<"LoreFragment"> | string
+    type?: StringFilter<"LoreFragment"> | string
+    contextId?: StringNullableFilter<"LoreFragment"> | string | null
+    isRevealed?: BoolFilter<"LoreFragment"> | boolean
+    keywords?: StringNullableListFilter<"LoreFragment">
+  }
+
+  export type EventUpsertWithWhereUniqueWithoutWorldInput = {
+    where: EventWhereUniqueInput
+    update: XOR<EventUpdateWithoutWorldInput, EventUncheckedUpdateWithoutWorldInput>
+    create: XOR<EventCreateWithoutWorldInput, EventUncheckedCreateWithoutWorldInput>
+  }
+
+  export type EventUpdateWithWhereUniqueWithoutWorldInput = {
+    where: EventWhereUniqueInput
+    data: XOR<EventUpdateWithoutWorldInput, EventUncheckedUpdateWithoutWorldInput>
+  }
+
+  export type EventUpdateManyWithWhereWithoutWorldInput = {
+    where: EventScalarWhereInput
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutWorldInput>
+  }
+
+  export type EventScalarWhereInput = {
+    AND?: EventScalarWhereInput | EventScalarWhereInput[]
+    OR?: EventScalarWhereInput[]
+    NOT?: EventScalarWhereInput | EventScalarWhereInput[]
+    id?: StringFilter<"Event"> | string
+    worldId?: StringFilter<"Event"> | string
+    locationId?: StringNullableFilter<"Event"> | string | null
+    title?: StringFilter<"Event"> | string
+    description?: StringFilter<"Event"> | string
+    eventType?: StringFilter<"Event"> | string
+    triggerConditions?: JsonFilter<"Event">
+    outcomes?: JsonFilter<"Event">
+    isRepeatable?: BoolFilter<"Event"> | boolean
+  }
+
+  export type CharacterCreateWithoutCharacterWorldStatesInput = {
+    id?: string
+    name: string
+    backstory?: string | null
+    appearanceDescription?: string | null
+    personalityTraits?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    lastPlayedAt?: Date | string | null
+    isActive?: boolean
+    user: UserCreateNestedOneWithoutCharactersInput
+    gameSessions?: GameSessionCreateNestedManyWithoutCharacterInput
+    gameStates?: GameStateCreateNestedManyWithoutCharacterInput
+  }
+
+  export type CharacterUncheckedCreateWithoutCharacterWorldStatesInput = {
+    id?: string
+    userId: string
+    name: string
+    backstory?: string | null
+    appearanceDescription?: string | null
+    personalityTraits?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    lastPlayedAt?: Date | string | null
+    isActive?: boolean
+    gameSessions?: GameSessionUncheckedCreateNestedManyWithoutCharacterInput
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutCharacterInput
+  }
+
+  export type CharacterCreateOrConnectWithoutCharacterWorldStatesInput = {
+    where: CharacterWhereUniqueInput
+    create: XOR<CharacterCreateWithoutCharacterWorldStatesInput, CharacterUncheckedCreateWithoutCharacterWorldStatesInput>
+  }
+
+  export type WorldCreateWithoutCharacterStatesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    gameStates?: GameStateCreateNestedManyWithoutWorldInput
+    locations?: LocationCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentCreateNestedManyWithoutWorldInput
+    events?: EventCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldUncheckedCreateWithoutCharacterStatesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutWorldInput
+    locations?: LocationUncheckedCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentUncheckedCreateNestedManyWithoutWorldInput
+    events?: EventUncheckedCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldCreateOrConnectWithoutCharacterStatesInput = {
+    where: WorldWhereUniqueInput
+    create: XOR<WorldCreateWithoutCharacterStatesInput, WorldUncheckedCreateWithoutCharacterStatesInput>
+  }
+
+  export type CharacterUpsertWithoutCharacterWorldStatesInput = {
+    update: XOR<CharacterUpdateWithoutCharacterWorldStatesInput, CharacterUncheckedUpdateWithoutCharacterWorldStatesInput>
+    create: XOR<CharacterCreateWithoutCharacterWorldStatesInput, CharacterUncheckedCreateWithoutCharacterWorldStatesInput>
+    where?: CharacterWhereInput
+  }
+
+  export type CharacterUpdateToOneWithWhereWithoutCharacterWorldStatesInput = {
+    where?: CharacterWhereInput
+    data: XOR<CharacterUpdateWithoutCharacterWorldStatesInput, CharacterUncheckedUpdateWithoutCharacterWorldStatesInput>
+  }
+
+  export type CharacterUpdateWithoutCharacterWorldStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    backstory?: NullableStringFieldUpdateOperationsInput | string | null
+    appearanceDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    user?: UserUpdateOneRequiredWithoutCharactersNestedInput
+    gameSessions?: GameSessionUpdateManyWithoutCharacterNestedInput
+    gameStates?: GameStateUpdateManyWithoutCharacterNestedInput
+  }
+
+  export type CharacterUncheckedUpdateWithoutCharacterWorldStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    backstory?: NullableStringFieldUpdateOperationsInput | string | null
+    appearanceDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    gameSessions?: GameSessionUncheckedUpdateManyWithoutCharacterNestedInput
+    gameStates?: GameStateUncheckedUpdateManyWithoutCharacterNestedInput
+  }
+
+  export type WorldUpsertWithoutCharacterStatesInput = {
+    update: XOR<WorldUpdateWithoutCharacterStatesInput, WorldUncheckedUpdateWithoutCharacterStatesInput>
+    create: XOR<WorldCreateWithoutCharacterStatesInput, WorldUncheckedCreateWithoutCharacterStatesInput>
+    where?: WorldWhereInput
+  }
+
+  export type WorldUpdateToOneWithWhereWithoutCharacterStatesInput = {
+    where?: WorldWhereInput
+    data: XOR<WorldUpdateWithoutCharacterStatesInput, WorldUncheckedUpdateWithoutCharacterStatesInput>
+  }
+
+  export type WorldUpdateWithoutCharacterStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gameStates?: GameStateUpdateManyWithoutWorldNestedInput
+    locations?: LocationUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUpdateManyWithoutWorldNestedInput
+    events?: EventUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldUncheckedUpdateWithoutCharacterStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    gameStates?: GameStateUncheckedUpdateManyWithoutWorldNestedInput
+    locations?: LocationUncheckedUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUncheckedUpdateManyWithoutWorldNestedInput
+    events?: EventUncheckedUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldCreateWithoutLocationsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentCreateNestedManyWithoutWorldInput
+    events?: EventCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldUncheckedCreateWithoutLocationsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentUncheckedCreateNestedManyWithoutWorldInput
+    events?: EventUncheckedCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldCreateOrConnectWithoutLocationsInput = {
+    where: WorldWhereUniqueInput
+    create: XOR<WorldCreateWithoutLocationsInput, WorldUncheckedCreateWithoutLocationsInput>
+  }
+
+  export type EventCreateWithoutLocationInput = {
+    id?: string
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+    world: WorldCreateNestedOneWithoutEventsInput
+  }
+
+  export type EventUncheckedCreateWithoutLocationInput = {
+    id?: string
+    worldId: string
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+  }
+
+  export type EventCreateOrConnectWithoutLocationInput = {
+    where: EventWhereUniqueInput
+    create: XOR<EventCreateWithoutLocationInput, EventUncheckedCreateWithoutLocationInput>
+  }
+
+  export type EventCreateManyLocationInputEnvelope = {
+    data: EventCreateManyLocationInput | EventCreateManyLocationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type GameStateCreateWithoutLocationInput = {
+    id?: string
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+    session: GameSessionCreateNestedOneWithoutGameStatesInput
+    character: CharacterCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
+    decisions?: DecisionCreateNestedManyWithoutGameStateInput
+    aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
+  }
+
+  export type GameStateUncheckedCreateWithoutLocationInput = {
+    id?: string
+    sessionId: string
+    characterId: string
+    worldId?: string | null
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+    npcStates?: NPCStateUncheckedCreateNestedManyWithoutGameStateInput
+    decisions?: DecisionUncheckedCreateNestedManyWithoutGameStateInput
+    aiContextHistory?: AIContextHistoryUncheckedCreateNestedManyWithoutGameStateInput
+    narrativeHistory?: NarrativeHistoryUncheckedCreateNestedManyWithoutGameStateInput
+  }
+
+  export type GameStateCreateOrConnectWithoutLocationInput = {
+    where: GameStateWhereUniqueInput
+    create: XOR<GameStateCreateWithoutLocationInput, GameStateUncheckedCreateWithoutLocationInput>
+  }
+
+  export type GameStateCreateManyLocationInputEnvelope = {
+    data: GameStateCreateManyLocationInput | GameStateCreateManyLocationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WorldUpsertWithoutLocationsInput = {
+    update: XOR<WorldUpdateWithoutLocationsInput, WorldUncheckedUpdateWithoutLocationsInput>
+    create: XOR<WorldCreateWithoutLocationsInput, WorldUncheckedCreateWithoutLocationsInput>
+    where?: WorldWhereInput
+  }
+
+  export type WorldUpdateToOneWithWhereWithoutLocationsInput = {
+    where?: WorldWhereInput
+    data: XOR<WorldUpdateWithoutLocationsInput, WorldUncheckedUpdateWithoutLocationsInput>
+  }
+
+  export type WorldUpdateWithoutLocationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUpdateManyWithoutWorldNestedInput
+    events?: EventUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldUncheckedUpdateWithoutLocationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUncheckedUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUncheckedUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUncheckedUpdateManyWithoutWorldNestedInput
+    events?: EventUncheckedUpdateManyWithoutWorldNestedInput
+  }
+
+  export type EventUpsertWithWhereUniqueWithoutLocationInput = {
+    where: EventWhereUniqueInput
+    update: XOR<EventUpdateWithoutLocationInput, EventUncheckedUpdateWithoutLocationInput>
+    create: XOR<EventCreateWithoutLocationInput, EventUncheckedCreateWithoutLocationInput>
+  }
+
+  export type EventUpdateWithWhereUniqueWithoutLocationInput = {
+    where: EventWhereUniqueInput
+    data: XOR<EventUpdateWithoutLocationInput, EventUncheckedUpdateWithoutLocationInput>
+  }
+
+  export type EventUpdateManyWithWhereWithoutLocationInput = {
+    where: EventScalarWhereInput
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutLocationInput>
+  }
+
+  export type GameStateUpsertWithWhereUniqueWithoutLocationInput = {
+    where: GameStateWhereUniqueInput
+    update: XOR<GameStateUpdateWithoutLocationInput, GameStateUncheckedUpdateWithoutLocationInput>
+    create: XOR<GameStateCreateWithoutLocationInput, GameStateUncheckedCreateWithoutLocationInput>
+  }
+
+  export type GameStateUpdateWithWhereUniqueWithoutLocationInput = {
+    where: GameStateWhereUniqueInput
+    data: XOR<GameStateUpdateWithoutLocationInput, GameStateUncheckedUpdateWithoutLocationInput>
+  }
+
+  export type GameStateUpdateManyWithWhereWithoutLocationInput = {
+    where: GameStateScalarWhereInput
+    data: XOR<GameStateUpdateManyMutationInput, GameStateUncheckedUpdateManyWithoutLocationInput>
+  }
+
+  export type WorldCreateWithoutLoreFragmentsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateCreateNestedManyWithoutWorldInput
+    locations?: LocationCreateNestedManyWithoutWorldInput
+    events?: EventCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldUncheckedCreateWithoutLoreFragmentsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutWorldInput
+    locations?: LocationUncheckedCreateNestedManyWithoutWorldInput
+    events?: EventUncheckedCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldCreateOrConnectWithoutLoreFragmentsInput = {
+    where: WorldWhereUniqueInput
+    create: XOR<WorldCreateWithoutLoreFragmentsInput, WorldUncheckedCreateWithoutLoreFragmentsInput>
+  }
+
+  export type WorldUpsertWithoutLoreFragmentsInput = {
+    update: XOR<WorldUpdateWithoutLoreFragmentsInput, WorldUncheckedUpdateWithoutLoreFragmentsInput>
+    create: XOR<WorldCreateWithoutLoreFragmentsInput, WorldUncheckedCreateWithoutLoreFragmentsInput>
+    where?: WorldWhereInput
+  }
+
+  export type WorldUpdateToOneWithWhereWithoutLoreFragmentsInput = {
+    where?: WorldWhereInput
+    data: XOR<WorldUpdateWithoutLoreFragmentsInput, WorldUncheckedUpdateWithoutLoreFragmentsInput>
+  }
+
+  export type WorldUpdateWithoutLoreFragmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUpdateManyWithoutWorldNestedInput
+    locations?: LocationUpdateManyWithoutWorldNestedInput
+    events?: EventUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldUncheckedUpdateWithoutLoreFragmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUncheckedUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUncheckedUpdateManyWithoutWorldNestedInput
+    locations?: LocationUncheckedUpdateManyWithoutWorldNestedInput
+    events?: EventUncheckedUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldCreateWithoutEventsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateCreateNestedManyWithoutWorldInput
+    locations?: LocationCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldUncheckedCreateWithoutEventsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutWorldInput
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutWorldInput
+    locations?: LocationUncheckedCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentUncheckedCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldCreateOrConnectWithoutEventsInput = {
+    where: WorldWhereUniqueInput
+    create: XOR<WorldCreateWithoutEventsInput, WorldUncheckedCreateWithoutEventsInput>
+  }
+
+  export type LocationCreateWithoutEventsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    world: WorldCreateNestedOneWithoutLocationsInput
+    gameStates?: GameStateCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutEventsInput = {
+    id?: string
+    worldId: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    gameStates?: GameStateUncheckedCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutEventsInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutEventsInput, LocationUncheckedCreateWithoutEventsInput>
+  }
+
+  export type WorldUpsertWithoutEventsInput = {
+    update: XOR<WorldUpdateWithoutEventsInput, WorldUncheckedUpdateWithoutEventsInput>
+    create: XOR<WorldCreateWithoutEventsInput, WorldUncheckedCreateWithoutEventsInput>
+    where?: WorldWhereInput
+  }
+
+  export type WorldUpdateToOneWithWhereWithoutEventsInput = {
+    where?: WorldWhereInput
+    data: XOR<WorldUpdateWithoutEventsInput, WorldUncheckedUpdateWithoutEventsInput>
+  }
+
+  export type WorldUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUpdateManyWithoutWorldNestedInput
+    locations?: LocationUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldUncheckedUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUncheckedUpdateManyWithoutWorldNestedInput
+    gameStates?: GameStateUncheckedUpdateManyWithoutWorldNestedInput
+    locations?: LocationUncheckedUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUncheckedUpdateManyWithoutWorldNestedInput
+  }
+
+  export type LocationUpsertWithoutEventsInput = {
+    update: XOR<LocationUpdateWithoutEventsInput, LocationUncheckedUpdateWithoutEventsInput>
+    create: XOR<LocationCreateWithoutEventsInput, LocationUncheckedCreateWithoutEventsInput>
+    where?: LocationWhereInput
+  }
+
+  export type LocationUpdateToOneWithWhereWithoutEventsInput = {
+    where?: LocationWhereInput
+    data: XOR<LocationUpdateWithoutEventsInput, LocationUncheckedUpdateWithoutEventsInput>
+  }
+
+  export type LocationUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    world?: WorldUpdateOneRequiredWithoutLocationsNestedInput
+    gameStates?: GameStateUpdateManyWithoutLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gameStates?: GameStateUncheckedUpdateManyWithoutLocationNestedInput
   }
 
   export type CharacterCreateWithoutGameSessionsInput = {
@@ -18269,6 +24041,7 @@ export namespace Prisma {
     isActive?: boolean
     user: UserCreateNestedOneWithoutCharactersInput
     gameStates?: GameStateCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterUncheckedCreateWithoutGameSessionsInput = {
@@ -18282,6 +24055,7 @@ export namespace Prisma {
     lastPlayedAt?: Date | string | null
     isActive?: boolean
     gameStates?: GameStateUncheckedCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterCreateOrConnectWithoutGameSessionsInput = {
@@ -18301,6 +24075,8 @@ export namespace Prisma {
     isAutosave?: boolean
     isCompleted?: boolean
     character: CharacterCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
@@ -18310,6 +24086,8 @@ export namespace Prisma {
   export type GameStateUncheckedCreateWithoutSessionInput = {
     id?: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -18357,6 +24135,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     user?: UserUpdateOneRequiredWithoutCharactersNestedInput
     gameStates?: GameStateUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUpdateManyWithoutCharacterNestedInput
   }
 
   export type CharacterUncheckedUpdateWithoutGameSessionsInput = {
@@ -18370,6 +24149,7 @@ export namespace Prisma {
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     gameStates?: GameStateUncheckedUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUncheckedUpdateManyWithoutCharacterNestedInput
   }
 
   export type GameStateUpsertWithWhereUniqueWithoutSessionInput = {
@@ -18422,6 +24202,7 @@ export namespace Prisma {
     isActive?: boolean
     user: UserCreateNestedOneWithoutCharactersInput
     gameSessions?: GameSessionCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterUncheckedCreateWithoutGameStatesInput = {
@@ -18435,11 +24216,70 @@ export namespace Prisma {
     lastPlayedAt?: Date | string | null
     isActive?: boolean
     gameSessions?: GameSessionUncheckedCreateNestedManyWithoutCharacterInput
+    characterWorldStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutCharacterInput
   }
 
   export type CharacterCreateOrConnectWithoutGameStatesInput = {
     where: CharacterWhereUniqueInput
     create: XOR<CharacterCreateWithoutGameStatesInput, CharacterUncheckedCreateWithoutGameStatesInput>
+  }
+
+  export type WorldCreateWithoutGameStatesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateCreateNestedManyWithoutWorldInput
+    locations?: LocationCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentCreateNestedManyWithoutWorldInput
+    events?: EventCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldUncheckedCreateWithoutGameStatesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    thumbnailUrl?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    characterStates?: CharacterWorldStateUncheckedCreateNestedManyWithoutWorldInput
+    locations?: LocationUncheckedCreateNestedManyWithoutWorldInput
+    loreFragments?: LoreFragmentUncheckedCreateNestedManyWithoutWorldInput
+    events?: EventUncheckedCreateNestedManyWithoutWorldInput
+  }
+
+  export type WorldCreateOrConnectWithoutGameStatesInput = {
+    where: WorldWhereUniqueInput
+    create: XOR<WorldCreateWithoutGameStatesInput, WorldUncheckedCreateWithoutGameStatesInput>
+  }
+
+  export type LocationCreateWithoutGameStatesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    world: WorldCreateNestedOneWithoutLocationsInput
+    events?: EventCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutGameStatesInput = {
+    id?: string
+    worldId: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+    events?: EventUncheckedCreateNestedManyWithoutLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutGameStatesInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutGameStatesInput, LocationUncheckedCreateWithoutGameStatesInput>
   }
 
   export type NPCStateCreateWithoutGameStateInput = {
@@ -18611,6 +24451,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     user?: UserUpdateOneRequiredWithoutCharactersNestedInput
     gameSessions?: GameSessionUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUpdateManyWithoutCharacterNestedInput
   }
 
   export type CharacterUncheckedUpdateWithoutGameStatesInput = {
@@ -18624,6 +24465,77 @@ export namespace Prisma {
     lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     gameSessions?: GameSessionUncheckedUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUncheckedUpdateManyWithoutCharacterNestedInput
+  }
+
+  export type WorldUpsertWithoutGameStatesInput = {
+    update: XOR<WorldUpdateWithoutGameStatesInput, WorldUncheckedUpdateWithoutGameStatesInput>
+    create: XOR<WorldCreateWithoutGameStatesInput, WorldUncheckedCreateWithoutGameStatesInput>
+    where?: WorldWhereInput
+  }
+
+  export type WorldUpdateToOneWithWhereWithoutGameStatesInput = {
+    where?: WorldWhereInput
+    data: XOR<WorldUpdateWithoutGameStatesInput, WorldUncheckedUpdateWithoutGameStatesInput>
+  }
+
+  export type WorldUpdateWithoutGameStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUpdateManyWithoutWorldNestedInput
+    locations?: LocationUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUpdateManyWithoutWorldNestedInput
+    events?: EventUpdateManyWithoutWorldNestedInput
+  }
+
+  export type WorldUncheckedUpdateWithoutGameStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    characterStates?: CharacterWorldStateUncheckedUpdateManyWithoutWorldNestedInput
+    locations?: LocationUncheckedUpdateManyWithoutWorldNestedInput
+    loreFragments?: LoreFragmentUncheckedUpdateManyWithoutWorldNestedInput
+    events?: EventUncheckedUpdateManyWithoutWorldNestedInput
+  }
+
+  export type LocationUpsertWithoutGameStatesInput = {
+    update: XOR<LocationUpdateWithoutGameStatesInput, LocationUncheckedUpdateWithoutGameStatesInput>
+    create: XOR<LocationCreateWithoutGameStatesInput, LocationUncheckedCreateWithoutGameStatesInput>
+    where?: LocationWhereInput
+  }
+
+  export type LocationUpdateToOneWithWhereWithoutGameStatesInput = {
+    where?: LocationWhereInput
+    data: XOR<LocationUpdateWithoutGameStatesInput, LocationUncheckedUpdateWithoutGameStatesInput>
+  }
+
+  export type LocationUpdateWithoutGameStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    world?: WorldUpdateOneRequiredWithoutLocationsNestedInput
+    events?: EventUpdateManyWithoutLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutGameStatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: EventUncheckedUpdateManyWithoutLocationNestedInput
   }
 
   export type NPCStateUpsertWithWhereUniqueWithoutGameStateInput = {
@@ -18802,6 +24714,8 @@ export namespace Prisma {
     isCompleted?: boolean
     session: GameSessionCreateNestedOneWithoutGameStatesInput
     character: CharacterCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
     narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
@@ -18811,6 +24725,8 @@ export namespace Prisma {
     id?: string
     sessionId: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -18879,6 +24795,8 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
     narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
@@ -18888,6 +24806,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18933,211 +24853,6 @@ export namespace Prisma {
     isUnique?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type LoreCategoryCreateWithoutSubcategoriesInput = {
-    id?: string
-    name: string
-    description?: string | null
-    parentCategory?: LoreCategoryCreateNestedOneWithoutSubcategoriesInput
-    worldLore?: WorldLoreCreateNestedManyWithoutCategoryInput
-  }
-
-  export type LoreCategoryUncheckedCreateWithoutSubcategoriesInput = {
-    id?: string
-    name: string
-    description?: string | null
-    parentCategoryId?: string | null
-    worldLore?: WorldLoreUncheckedCreateNestedManyWithoutCategoryInput
-  }
-
-  export type LoreCategoryCreateOrConnectWithoutSubcategoriesInput = {
-    where: LoreCategoryWhereUniqueInput
-    create: XOR<LoreCategoryCreateWithoutSubcategoriesInput, LoreCategoryUncheckedCreateWithoutSubcategoriesInput>
-  }
-
-  export type LoreCategoryCreateWithoutParentCategoryInput = {
-    id?: string
-    name: string
-    description?: string | null
-    subcategories?: LoreCategoryCreateNestedManyWithoutParentCategoryInput
-    worldLore?: WorldLoreCreateNestedManyWithoutCategoryInput
-  }
-
-  export type LoreCategoryUncheckedCreateWithoutParentCategoryInput = {
-    id?: string
-    name: string
-    description?: string | null
-    subcategories?: LoreCategoryUncheckedCreateNestedManyWithoutParentCategoryInput
-    worldLore?: WorldLoreUncheckedCreateNestedManyWithoutCategoryInput
-  }
-
-  export type LoreCategoryCreateOrConnectWithoutParentCategoryInput = {
-    where: LoreCategoryWhereUniqueInput
-    create: XOR<LoreCategoryCreateWithoutParentCategoryInput, LoreCategoryUncheckedCreateWithoutParentCategoryInput>
-  }
-
-  export type LoreCategoryCreateManyParentCategoryInputEnvelope = {
-    data: LoreCategoryCreateManyParentCategoryInput | LoreCategoryCreateManyParentCategoryInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type WorldLoreCreateWithoutCategoryInput = {
-    id?: string
-    title: string
-    content: string
-    isDiscoverable?: boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreCreatekeywordsInput | string[]
-  }
-
-  export type WorldLoreUncheckedCreateWithoutCategoryInput = {
-    id?: string
-    title: string
-    content: string
-    isDiscoverable?: boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreCreatekeywordsInput | string[]
-  }
-
-  export type WorldLoreCreateOrConnectWithoutCategoryInput = {
-    where: WorldLoreWhereUniqueInput
-    create: XOR<WorldLoreCreateWithoutCategoryInput, WorldLoreUncheckedCreateWithoutCategoryInput>
-  }
-
-  export type WorldLoreCreateManyCategoryInputEnvelope = {
-    data: WorldLoreCreateManyCategoryInput | WorldLoreCreateManyCategoryInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type LoreCategoryUpsertWithoutSubcategoriesInput = {
-    update: XOR<LoreCategoryUpdateWithoutSubcategoriesInput, LoreCategoryUncheckedUpdateWithoutSubcategoriesInput>
-    create: XOR<LoreCategoryCreateWithoutSubcategoriesInput, LoreCategoryUncheckedCreateWithoutSubcategoriesInput>
-    where?: LoreCategoryWhereInput
-  }
-
-  export type LoreCategoryUpdateToOneWithWhereWithoutSubcategoriesInput = {
-    where?: LoreCategoryWhereInput
-    data: XOR<LoreCategoryUpdateWithoutSubcategoriesInput, LoreCategoryUncheckedUpdateWithoutSubcategoriesInput>
-  }
-
-  export type LoreCategoryUpdateWithoutSubcategoriesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    parentCategory?: LoreCategoryUpdateOneWithoutSubcategoriesNestedInput
-    worldLore?: WorldLoreUpdateManyWithoutCategoryNestedInput
-  }
-
-  export type LoreCategoryUncheckedUpdateWithoutSubcategoriesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    parentCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
-    worldLore?: WorldLoreUncheckedUpdateManyWithoutCategoryNestedInput
-  }
-
-  export type LoreCategoryUpsertWithWhereUniqueWithoutParentCategoryInput = {
-    where: LoreCategoryWhereUniqueInput
-    update: XOR<LoreCategoryUpdateWithoutParentCategoryInput, LoreCategoryUncheckedUpdateWithoutParentCategoryInput>
-    create: XOR<LoreCategoryCreateWithoutParentCategoryInput, LoreCategoryUncheckedCreateWithoutParentCategoryInput>
-  }
-
-  export type LoreCategoryUpdateWithWhereUniqueWithoutParentCategoryInput = {
-    where: LoreCategoryWhereUniqueInput
-    data: XOR<LoreCategoryUpdateWithoutParentCategoryInput, LoreCategoryUncheckedUpdateWithoutParentCategoryInput>
-  }
-
-  export type LoreCategoryUpdateManyWithWhereWithoutParentCategoryInput = {
-    where: LoreCategoryScalarWhereInput
-    data: XOR<LoreCategoryUpdateManyMutationInput, LoreCategoryUncheckedUpdateManyWithoutParentCategoryInput>
-  }
-
-  export type LoreCategoryScalarWhereInput = {
-    AND?: LoreCategoryScalarWhereInput | LoreCategoryScalarWhereInput[]
-    OR?: LoreCategoryScalarWhereInput[]
-    NOT?: LoreCategoryScalarWhereInput | LoreCategoryScalarWhereInput[]
-    id?: StringFilter<"LoreCategory"> | string
-    name?: StringFilter<"LoreCategory"> | string
-    description?: StringNullableFilter<"LoreCategory"> | string | null
-    parentCategoryId?: StringNullableFilter<"LoreCategory"> | string | null
-  }
-
-  export type WorldLoreUpsertWithWhereUniqueWithoutCategoryInput = {
-    where: WorldLoreWhereUniqueInput
-    update: XOR<WorldLoreUpdateWithoutCategoryInput, WorldLoreUncheckedUpdateWithoutCategoryInput>
-    create: XOR<WorldLoreCreateWithoutCategoryInput, WorldLoreUncheckedCreateWithoutCategoryInput>
-  }
-
-  export type WorldLoreUpdateWithWhereUniqueWithoutCategoryInput = {
-    where: WorldLoreWhereUniqueInput
-    data: XOR<WorldLoreUpdateWithoutCategoryInput, WorldLoreUncheckedUpdateWithoutCategoryInput>
-  }
-
-  export type WorldLoreUpdateManyWithWhereWithoutCategoryInput = {
-    where: WorldLoreScalarWhereInput
-    data: XOR<WorldLoreUpdateManyMutationInput, WorldLoreUncheckedUpdateManyWithoutCategoryInput>
-  }
-
-  export type WorldLoreScalarWhereInput = {
-    AND?: WorldLoreScalarWhereInput | WorldLoreScalarWhereInput[]
-    OR?: WorldLoreScalarWhereInput[]
-    NOT?: WorldLoreScalarWhereInput | WorldLoreScalarWhereInput[]
-    id?: StringFilter<"WorldLore"> | string
-    categoryId?: StringNullableFilter<"WorldLore"> | string | null
-    title?: StringFilter<"WorldLore"> | string
-    content?: StringFilter<"WorldLore"> | string
-    isDiscoverable?: BoolFilter<"WorldLore"> | boolean
-    discoveryConditions?: JsonFilter<"WorldLore">
-    keywords?: StringNullableListFilter<"WorldLore">
-  }
-
-  export type LoreCategoryCreateWithoutWorldLoreInput = {
-    id?: string
-    name: string
-    description?: string | null
-    parentCategory?: LoreCategoryCreateNestedOneWithoutSubcategoriesInput
-    subcategories?: LoreCategoryCreateNestedManyWithoutParentCategoryInput
-  }
-
-  export type LoreCategoryUncheckedCreateWithoutWorldLoreInput = {
-    id?: string
-    name: string
-    description?: string | null
-    parentCategoryId?: string | null
-    subcategories?: LoreCategoryUncheckedCreateNestedManyWithoutParentCategoryInput
-  }
-
-  export type LoreCategoryCreateOrConnectWithoutWorldLoreInput = {
-    where: LoreCategoryWhereUniqueInput
-    create: XOR<LoreCategoryCreateWithoutWorldLoreInput, LoreCategoryUncheckedCreateWithoutWorldLoreInput>
-  }
-
-  export type LoreCategoryUpsertWithoutWorldLoreInput = {
-    update: XOR<LoreCategoryUpdateWithoutWorldLoreInput, LoreCategoryUncheckedUpdateWithoutWorldLoreInput>
-    create: XOR<LoreCategoryCreateWithoutWorldLoreInput, LoreCategoryUncheckedCreateWithoutWorldLoreInput>
-    where?: LoreCategoryWhereInput
-  }
-
-  export type LoreCategoryUpdateToOneWithWhereWithoutWorldLoreInput = {
-    where?: LoreCategoryWhereInput
-    data: XOR<LoreCategoryUpdateWithoutWorldLoreInput, LoreCategoryUncheckedUpdateWithoutWorldLoreInput>
-  }
-
-  export type LoreCategoryUpdateWithoutWorldLoreInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    parentCategory?: LoreCategoryUpdateOneWithoutSubcategoriesNestedInput
-    subcategories?: LoreCategoryUpdateManyWithoutParentCategoryNestedInput
-  }
-
-  export type LoreCategoryUncheckedUpdateWithoutWorldLoreInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    parentCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
-    subcategories?: LoreCategoryUncheckedUpdateManyWithoutParentCategoryNestedInput
-  }
-
   export type GameStateCreateWithoutDecisionsInput = {
     id?: string
     savePointName?: string | null
@@ -19151,6 +24866,8 @@ export namespace Prisma {
     isCompleted?: boolean
     session: GameSessionCreateNestedOneWithoutGameStatesInput
     character: CharacterCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
     narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
@@ -19160,6 +24877,8 @@ export namespace Prisma {
     id?: string
     sessionId: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -19203,6 +24922,8 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
     narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
@@ -19212,6 +24933,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19239,6 +24962,8 @@ export namespace Prisma {
     isCompleted?: boolean
     session: GameSessionCreateNestedOneWithoutGameStatesInput
     character: CharacterCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     narrativeHistory?: NarrativeHistoryCreateNestedManyWithoutGameStateInput
@@ -19248,6 +24973,8 @@ export namespace Prisma {
     id?: string
     sessionId: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -19291,6 +25018,8 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
@@ -19300,6 +25029,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19327,6 +25058,8 @@ export namespace Prisma {
     isCompleted?: boolean
     session: GameSessionCreateNestedOneWithoutGameStatesInput
     character: CharacterCreateNestedOneWithoutGameStatesInput
+    world?: WorldCreateNestedOneWithoutGameStatesInput
+    location?: LocationCreateNestedOneWithoutGameStatesInput
     npcStates?: NPCStateCreateNestedManyWithoutGameStateInput
     decisions?: DecisionCreateNestedManyWithoutGameStateInput
     aiContextHistory?: AIContextHistoryCreateNestedManyWithoutGameStateInput
@@ -19336,6 +25069,8 @@ export namespace Prisma {
     id?: string
     sessionId: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -19379,6 +25114,8 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
@@ -19388,6 +25125,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19424,6 +25163,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     gameSessions?: GameSessionUpdateManyWithoutCharacterNestedInput
     gameStates?: GameStateUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUpdateManyWithoutCharacterNestedInput
   }
 
   export type CharacterUncheckedUpdateWithoutUserInput = {
@@ -19437,6 +25177,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     gameSessions?: GameSessionUncheckedUpdateManyWithoutCharacterNestedInput
     gameStates?: GameStateUncheckedUpdateManyWithoutCharacterNestedInput
+    characterWorldStates?: CharacterWorldStateUncheckedUpdateManyWithoutCharacterNestedInput
   }
 
   export type CharacterUncheckedUpdateManyWithoutUserInput = {
@@ -19461,6 +25202,8 @@ export namespace Prisma {
   export type GameStateCreateManyCharacterInput = {
     id?: string
     sessionId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -19470,6 +25213,13 @@ export namespace Prisma {
     worldState: JsonNullValueInput | InputJsonValue
     isAutosave?: boolean
     isCompleted?: boolean
+  }
+
+  export type CharacterWorldStateCreateManyCharacterInput = {
+    id?: string
+    worldId: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
   }
 
   export type GameSessionUpdateWithoutCharacterInput = {
@@ -19510,6 +25260,8 @@ export namespace Prisma {
     isAutosave?: BoolFieldUpdateOperationsInput | boolean
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
@@ -19519,6 +25271,8 @@ export namespace Prisma {
   export type GameStateUncheckedUpdateWithoutCharacterInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19537,6 +25291,369 @@ export namespace Prisma {
   export type GameStateUncheckedUpdateManyWithoutCharacterInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type CharacterWorldStateUpdateWithoutCharacterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    world?: WorldUpdateOneRequiredWithoutCharacterStatesNestedInput
+  }
+
+  export type CharacterWorldStateUncheckedUpdateWithoutCharacterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CharacterWorldStateUncheckedUpdateManyWithoutCharacterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CharacterWorldStateCreateManyWorldInput = {
+    id?: string
+    characterId: string
+    currentLocation?: string | null
+    lastPlayedAt?: Date | string | null
+  }
+
+  export type GameStateCreateManyWorldInput = {
+    id?: string
+    sessionId: string
+    characterId: string
+    locationId?: string | null
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+  }
+
+  export type LocationCreateManyWorldInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isStartingLocation?: boolean
+    connectedLocationIds?: LocationCreateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: string | null
+  }
+
+  export type LoreFragmentCreateManyWorldInput = {
+    id?: string
+    title: string
+    content: string
+    type: string
+    contextId?: string | null
+    isRevealed?: boolean
+    keywords?: LoreFragmentCreatekeywordsInput | string[]
+  }
+
+  export type EventCreateManyWorldInput = {
+    id?: string
+    locationId?: string | null
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+  }
+
+  export type CharacterWorldStateUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    character?: CharacterUpdateOneRequiredWithoutCharacterWorldStatesNestedInput
+  }
+
+  export type CharacterWorldStateUncheckedUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CharacterWorldStateUncheckedUpdateManyWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    currentLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    lastPlayedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type GameStateUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
+    character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
+    npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
+    decisions?: DecisionUpdateManyWithoutGameStateNestedInput
+    aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
+  }
+
+  export type GameStateUncheckedUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
+    decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
+    aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+  }
+
+  export type GameStateUncheckedUpdateManyWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type LocationUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: EventUpdateManyWithoutLocationNestedInput
+    gameStates?: GameStateUpdateManyWithoutLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: EventUncheckedUpdateManyWithoutLocationNestedInput
+    gameStates?: GameStateUncheckedUpdateManyWithoutLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateManyWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isStartingLocation?: BoolFieldUpdateOperationsInput | boolean
+    connectedLocationIds?: LocationUpdateconnectedLocationIdsInput | string[]
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type LoreFragmentUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contextId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRevealed?: BoolFieldUpdateOperationsInput | boolean
+    keywords?: LoreFragmentUpdatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentUncheckedUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contextId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRevealed?: BoolFieldUpdateOperationsInput | boolean
+    keywords?: LoreFragmentUpdatekeywordsInput | string[]
+  }
+
+  export type LoreFragmentUncheckedUpdateManyWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contextId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRevealed?: BoolFieldUpdateOperationsInput | boolean
+    keywords?: LoreFragmentUpdatekeywordsInput | string[]
+  }
+
+  export type EventUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+    location?: LocationUpdateOneWithoutEventsNestedInput
+  }
+
+  export type EventUncheckedUpdateWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type EventUncheckedUpdateManyWithoutWorldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type EventCreateManyLocationInput = {
+    id?: string
+    worldId: string
+    title: string
+    description: string
+    eventType: string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: boolean
+  }
+
+  export type GameStateCreateManyLocationInput = {
+    id?: string
+    sessionId: string
+    characterId: string
+    worldId?: string | null
+    savePointName?: string | null
+    currentLocation: string
+    saveTimestamp?: Date | string
+    narrativeContext?: string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState: JsonNullValueInput | InputJsonValue
+    worldState: JsonNullValueInput | InputJsonValue
+    isAutosave?: boolean
+    isCompleted?: boolean
+  }
+
+  export type EventUpdateWithoutLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+    world?: WorldUpdateOneRequiredWithoutEventsNestedInput
+  }
+
+  export type EventUncheckedUpdateWithoutLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type EventUncheckedUpdateManyWithoutLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    worldId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    eventType?: StringFieldUpdateOperationsInput | string
+    triggerConditions?: JsonNullValueInput | InputJsonValue
+    outcomes?: JsonNullValueInput | InputJsonValue
+    isRepeatable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type GameStateUpdateWithoutLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    session?: GameSessionUpdateOneRequiredWithoutGameStatesNestedInput
+    character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
+    decisions?: DecisionUpdateManyWithoutGameStateNestedInput
+    aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUpdateManyWithoutGameStateNestedInput
+  }
+
+  export type GameStateUncheckedUpdateWithoutLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    savePointName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentLocation?: StringFieldUpdateOperationsInput | string
+    saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    narrativeContext?: NullableStringFieldUpdateOperationsInput | string | null
+    aiContext?: JsonNullValueInput | InputJsonValue
+    characterState?: JsonNullValueInput | InputJsonValue
+    worldState?: JsonNullValueInput | InputJsonValue
+    isAutosave?: BoolFieldUpdateOperationsInput | boolean
+    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    npcStates?: NPCStateUncheckedUpdateManyWithoutGameStateNestedInput
+    decisions?: DecisionUncheckedUpdateManyWithoutGameStateNestedInput
+    aiContextHistory?: AIContextHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+    narrativeHistory?: NarrativeHistoryUncheckedUpdateManyWithoutGameStateNestedInput
+  }
+
+  export type GameStateUncheckedUpdateManyWithoutLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19551,6 +25668,8 @@ export namespace Prisma {
   export type GameStateCreateManySessionInput = {
     id?: string
     characterId: string
+    worldId?: string | null
+    locationId?: string | null
     savePointName?: string | null
     currentLocation: string
     saveTimestamp?: Date | string
@@ -19574,6 +25693,8 @@ export namespace Prisma {
     isAutosave?: BoolFieldUpdateOperationsInput | boolean
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     character?: CharacterUpdateOneRequiredWithoutGameStatesNestedInput
+    world?: WorldUpdateOneWithoutGameStatesNestedInput
+    location?: LocationUpdateOneWithoutGameStatesNestedInput
     npcStates?: NPCStateUpdateManyWithoutGameStateNestedInput
     decisions?: DecisionUpdateManyWithoutGameStateNestedInput
     aiContextHistory?: AIContextHistoryUpdateManyWithoutGameStateNestedInput
@@ -19583,6 +25704,8 @@ export namespace Prisma {
   export type GameStateUncheckedUpdateWithoutSessionInput = {
     id?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19601,6 +25724,8 @@ export namespace Prisma {
   export type GameStateUncheckedUpdateManyWithoutSessionInput = {
     id?: StringFieldUpdateOperationsInput | string
     characterId?: StringFieldUpdateOperationsInput | string
+    worldId?: NullableStringFieldUpdateOperationsInput | string | null
+    locationId?: NullableStringFieldUpdateOperationsInput | string | null
     savePointName?: NullableStringFieldUpdateOperationsInput | string | null
     currentLocation?: StringFieldUpdateOperationsInput | string
     saveTimestamp?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19802,70 +25927,6 @@ export namespace Prisma {
     relationshipWithPlayer?: IntFieldUpdateOperationsInput | number
     dialogueHistory?: JsonNullValueInput | InputJsonValue
     instanceProperties?: JsonNullValueInput | InputJsonValue
-  }
-
-  export type LoreCategoryCreateManyParentCategoryInput = {
-    id?: string
-    name: string
-    description?: string | null
-  }
-
-  export type WorldLoreCreateManyCategoryInput = {
-    id?: string
-    title: string
-    content: string
-    isDiscoverable?: boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreCreatekeywordsInput | string[]
-  }
-
-  export type LoreCategoryUpdateWithoutParentCategoryInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    subcategories?: LoreCategoryUpdateManyWithoutParentCategoryNestedInput
-    worldLore?: WorldLoreUpdateManyWithoutCategoryNestedInput
-  }
-
-  export type LoreCategoryUncheckedUpdateWithoutParentCategoryInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    subcategories?: LoreCategoryUncheckedUpdateManyWithoutParentCategoryNestedInput
-    worldLore?: WorldLoreUncheckedUpdateManyWithoutCategoryNestedInput
-  }
-
-  export type LoreCategoryUncheckedUpdateManyWithoutParentCategoryInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type WorldLoreUpdateWithoutCategoryInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isDiscoverable?: BoolFieldUpdateOperationsInput | boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreUpdatekeywordsInput | string[]
-  }
-
-  export type WorldLoreUncheckedUpdateWithoutCategoryInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isDiscoverable?: BoolFieldUpdateOperationsInput | boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreUpdatekeywordsInput | string[]
-  }
-
-  export type WorldLoreUncheckedUpdateManyWithoutCategoryInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isDiscoverable?: BoolFieldUpdateOperationsInput | boolean
-    discoveryConditions?: JsonNullValueInput | InputJsonValue
-    keywords?: WorldLoreUpdatekeywordsInput | string[]
   }
 
 

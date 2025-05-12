@@ -141,6 +141,56 @@ exports.Prisma.CharacterScalarFieldEnum = {
   isActive: 'isActive'
 };
 
+exports.Prisma.WorldScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  thumbnailUrl: 'thumbnailUrl',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CharacterWorldStateScalarFieldEnum = {
+  id: 'id',
+  characterId: 'characterId',
+  worldId: 'worldId',
+  currentLocation: 'currentLocation',
+  lastPlayedAt: 'lastPlayedAt'
+};
+
+exports.Prisma.LocationScalarFieldEnum = {
+  id: 'id',
+  worldId: 'worldId',
+  name: 'name',
+  description: 'description',
+  isStartingLocation: 'isStartingLocation',
+  connectedLocationIds: 'connectedLocationIds',
+  thumbnailUrl: 'thumbnailUrl'
+};
+
+exports.Prisma.LoreFragmentScalarFieldEnum = {
+  id: 'id',
+  worldId: 'worldId',
+  title: 'title',
+  content: 'content',
+  type: 'type',
+  contextId: 'contextId',
+  isRevealed: 'isRevealed',
+  keywords: 'keywords'
+};
+
+exports.Prisma.EventScalarFieldEnum = {
+  id: 'id',
+  worldId: 'worldId',
+  locationId: 'locationId',
+  title: 'title',
+  description: 'description',
+  eventType: 'eventType',
+  triggerConditions: 'triggerConditions',
+  outcomes: 'outcomes',
+  isRepeatable: 'isRepeatable'
+};
+
 exports.Prisma.GameSessionScalarFieldEnum = {
   id: 'id',
   characterId: 'characterId',
@@ -154,6 +204,8 @@ exports.Prisma.GameStateScalarFieldEnum = {
   id: 'id',
   sessionId: 'sessionId',
   characterId: 'characterId',
+  worldId: 'worldId',
+  locationId: 'locationId',
   savePointName: 'savePointName',
   currentLocation: 'currentLocation',
   saveTimestamp: 'saveTimestamp',
@@ -183,23 +235,6 @@ exports.Prisma.NPCStateScalarFieldEnum = {
   relationshipWithPlayer: 'relationshipWithPlayer',
   dialogueHistory: 'dialogueHistory',
   instanceProperties: 'instanceProperties'
-};
-
-exports.Prisma.LoreCategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  parentCategoryId: 'parentCategoryId'
-};
-
-exports.Prisma.WorldLoreScalarFieldEnum = {
-  id: 'id',
-  categoryId: 'categoryId',
-  title: 'title',
-  content: 'content',
-  isDiscoverable: 'isDiscoverable',
-  discoveryConditions: 'discoveryConditions',
-  keywords: 'keywords'
 };
 
 exports.Prisma.DecisionScalarFieldEnum = {
@@ -264,12 +299,15 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   User: 'User',
   Character: 'Character',
+  World: 'World',
+  CharacterWorldState: 'CharacterWorldState',
+  Location: 'Location',
+  LoreFragment: 'LoreFragment',
+  Event: 'Event',
   GameSession: 'GameSession',
   GameState: 'GameState',
   NPCTemplate: 'NPCTemplate',
   NPCState: 'NPCState',
-  LoreCategory: 'LoreCategory',
-  WorldLore: 'WorldLore',
   Decision: 'Decision',
   AIContextHistory: 'AIContextHistory',
   NarrativeHistory: 'NarrativeHistory'
