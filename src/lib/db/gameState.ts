@@ -100,9 +100,24 @@ export const gameStateRepository = {
     id: string,
     data: Partial<Omit<GameStateCreate, "session" | "character">>
   ) {
+    // Transform data to handle Decimal values
+    const transformedData = JSON.parse(
+      JSON.stringify(data, (_, value) => {
+        // Convert any Decimal values to strings
+        if (
+          value &&
+          typeof value === "object" &&
+          value.constructor?.name === "Decimal"
+        ) {
+          return value.toString();
+        }
+        return value;
+      })
+    );
+
     return prisma.gameState.update({
       where: { id },
-      data,
+      data: transformedData,
     });
   },
 
