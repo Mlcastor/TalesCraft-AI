@@ -68,6 +68,8 @@ export async function generateNarrativeResponse(
     temperature?: number;
     maxTokens?: number;
     modelName?: string;
+    worldId?: string;
+    locationId?: string;
   } = {}
 ): Promise<AIResponse> {
   // Use provided parameters or defaults
@@ -90,6 +92,11 @@ export async function generateNarrativeResponse(
 
   try {
     // Call the server-side API instead of directly using getAIResponse
+    console.log(
+      `[narrativeDirectorExample] Making API request with worldId: ${
+        options.worldId || "none"
+      }, locationId: ${options.locationId || "none"}`
+    );
     const response = await fetch("/api/ai", {
       method: "POST",
       headers: {
@@ -100,6 +107,8 @@ export async function generateNarrativeResponse(
         prompt: playerPrompt,
         character: character,
         location: location,
+        worldId: options.worldId,
+        locationId: options.locationId,
         context: {
           conversationHistory,
           mood: NarrativeMood.NEUTRAL,
@@ -153,6 +162,8 @@ export async function continueNarrative(
     temperature?: number;
     maxTokens?: number;
     modelName?: string;
+    worldId?: string;
+    locationId?: string;
   } = {}
 ): Promise<AIResponse> {
   // Determine which choice was selected
@@ -193,6 +204,11 @@ export async function continueNarrative(
 
   try {
     // Call the server-side API
+    console.log(
+      `[continueNarrative] Making API request with worldId: ${
+        options.worldId || "none"
+      }, locationId: ${options.locationId || "none"}`
+    );
     const response = await fetch("/api/ai", {
       method: "POST",
       headers: {
@@ -203,6 +219,8 @@ export async function continueNarrative(
         prompt: choiceText,
         character: playerCharacter,
         location: currentLocation,
+        worldId: options.worldId,
+        locationId: options.locationId,
         context: {
           conversationHistory,
           mood: previousResponse.metadata?.mood || NarrativeMood.NEUTRAL,

@@ -81,8 +81,8 @@ export default function CreateCharacterPage() {
 
       const data = await response.json();
 
-      // Navigate to the game page or character list
-      router.push(`/game?characterId=${data.id}`);
+      // Navigate to the game hub
+      router.push(`/hub`);
     } catch (err) {
       console.error("Error creating character:", err);
       setError(
@@ -230,7 +230,7 @@ export default function CreateCharacterPage() {
           {/* Action Buttons */}
           <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-700">
             <Link
-              href="/game"
+              href="/hub"
               className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-md transition-colors"
             >
               Cancel

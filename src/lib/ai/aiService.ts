@@ -139,6 +139,8 @@ export interface AIRequestContext {
   playerCharacter: GameCharacter;
   currentNpc?: GameCharacter; // For NPC_ROLEPLAYER
   currentLocation?: Location;
+  worldId?: string; // ID of the current world
+  locationId?: string; // ID of the current location
   worldState?: {
     discoveredLocations: string[];
     timeOfDay?: string;
@@ -208,6 +210,8 @@ export async function getAIResponse(
         prompt: input.prompt,
         character: input.playerCharacter,
         location: input.currentLocation,
+        worldId: input.worldId, // Pass worldId to the API
+        locationId: input.locationId, // Pass locationId to the API
         context: {
           conversationHistory: input.conversationHistory,
           mood: input.currentLocation?.dangerLevel || DangerLevel.LOW,

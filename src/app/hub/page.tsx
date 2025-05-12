@@ -1,7 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { getAllActiveWorlds } from "@/lib/db/world";
 import { characterRepository } from "@/lib/db/character";
 import { getCharacterWorldStates } from "@/lib/db/characterWorldState";
@@ -148,11 +147,9 @@ export default async function HubPage() {
                     >
                       {world.thumbnailUrl && (
                         <div className="mb-3 rounded-md overflow-hidden h-32 bg-gray-700">
-                          <Image
+                          <img
                             src={world.thumbnailUrl}
                             alt={world.name}
-                            width={320}
-                            height={128}
                             className="w-full h-full object-cover"
                           />
                         </div>

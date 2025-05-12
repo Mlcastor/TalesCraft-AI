@@ -12,12 +12,40 @@ export const gameStateRepository = {
    * @returns The created game state
    */
   async createGameState(data: GameStateCreate) {
+    // Extract worldId and locationId from relation connections
+    const worldId = data.world?.connect?.id || null;
+    const locationId = data.location?.connect?.id || null;
+
+    console.log(
+      `Creating game state with worldId: ${worldId}, locationId: ${locationId}`
+    );
+
+    // Don't modify the original data directly
+    const createData = { ...data };
+
+    // Make sure world and location connections are properly set for better type safety
+    if (worldId) {
+      createData.world = { connect: { id: worldId } };
+    }
+
+    if (locationId) {
+      createData.location = { connect: { id: locationId } };
+    }
+
+    // Create the game state using type-safe approach
     return prisma.gameState.create({
       data: {
-        ...data,
+        ...createData,
         aiContext: data.aiContext || {},
         isAutosave: data.isAutosave || false,
         isCompleted: data.isCompleted || false,
+      },
+      // Include relations for better data access
+      include: {
+        world: true,
+        location: true,
+        character: true,
+        session: true,
       },
     });
   },
@@ -31,6 +59,12 @@ export const gameStateRepository = {
   async getGameStateById(id: string) {
     return prisma.gameState.findUnique({
       where: { id },
+      include: {
+        world: true,
+        location: true,
+        character: true,
+        session: true,
+      },
     });
   },
 
@@ -44,6 +78,10 @@ export const gameStateRepository = {
     return prisma.gameState.findMany({
       where: { sessionId },
       orderBy: { saveTimestamp: "desc" },
+      include: {
+        world: true,
+        location: true,
+      },
     });
   },
 
@@ -57,6 +95,10 @@ export const gameStateRepository = {
     return prisma.gameState.findMany({
       where: { characterId },
       orderBy: { saveTimestamp: "desc" },
+      include: {
+        world: true,
+        location: true,
+      },
     });
   },
 
@@ -70,6 +112,12 @@ export const gameStateRepository = {
     return prisma.gameState.findFirst({
       where: { characterId },
       orderBy: { saveTimestamp: "desc" },
+      include: {
+        world: true,
+        location: true,
+        character: true,
+        session: true,
+      },
     });
   },
 
@@ -100,10 +148,8 @@ export const gameStateRepository = {
     id: string,
     data: Partial<Omit<GameStateCreate, "session" | "character">>
   ) {
-    // Transform data to handle Decimal values
     const transformedData = JSON.parse(
       JSON.stringify(data, (_, value) => {
-        // Convert any Decimal values to strings
         if (
           value &&
           typeof value === "object" &&
@@ -115,9 +161,38 @@ export const gameStateRepository = {
       })
     );
 
+    const worldId = data.world?.connect?.id || undefined;
+    const locationId = data.location?.connect?.id || undefined;
+
+    const updateData = { ...transformedData };
+
+    if (worldId) {
+      console.log(`Updating game state with explicit worldId: ${worldId}`);
+      updateData.world = {
+        ...updateData.world,
+        connect: { id: worldId },
+      };
+    }
+
+    if (locationId) {
+      console.log(
+        `Updating game state with explicit locationId: ${locationId}`
+      );
+      updateData.location = {
+        ...updateData.location,
+        connect: { id: locationId },
+      };
+    }
+
     return prisma.gameState.update({
       where: { id },
-      data: transformedData,
+      data: updateData,
+      include: {
+        world: true,
+        location: true,
+        character: true,
+        session: true,
+      },
     });
   },
 

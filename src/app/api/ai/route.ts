@@ -13,6 +13,7 @@ import {
 } from "@/lib/ai/aiService";
 import { GroqModel, AIProvider } from "@/lib/ai/aiConfig";
 import { Groq } from "groq-sdk";
+import { getWorldContextForAI, WorldContext } from "@/lib/ai/worldContext";
 
 // Type for request body
 interface AIRequest {
@@ -20,7 +21,17 @@ interface AIRequest {
   prompt: string;
   character?: GameCharacter;
   location?: Location;
+  worldId?: string;
+  locationId?: string;
   context?: Record<string, any>;
+}
+
+/**
+ * Represents a lore fragment for AI context
+ */
+interface LoreFragment {
+  title: string;
+  content: string;
 }
 
 /**
@@ -30,7 +41,14 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const requestData: AIRequest = await request.json();
-    const { role, prompt, character, location, context } = requestData;
+    const { role, prompt, character, location, worldId, locationId, context } =
+      requestData;
+
+    console.log(
+      `AI API request received - Role: ${role}, WorldId: ${
+        worldId || "none"
+      }, LocationId: ${locationId || "none"}`
+    );
 
     // Verify we have a Groq API key in the server environment
     const apiKey = process.env.GROQ_API_KEY;
@@ -44,6 +62,57 @@ export async function POST(request: NextRequest) {
 
     // Initialize Groq client
     const groq = new Groq({ apiKey });
+
+    // Fetch world context from database if worldId is provided
+    let worldContext: WorldContext | null = null;
+    let currentLocation = location;
+    let relevantLore: LoreFragment[] = [];
+
+    if (worldId) {
+      console.log(
+        `Fetching world context for worldId: ${worldId}, locationId: ${
+          locationId || "none"
+        }`
+      );
+      try {
+        worldContext = await getWorldContextForAI(worldId, locationId);
+        console.log(`World context loaded: ${worldContext.worldName}`);
+
+        // Use database location if available and no location was provided
+        if (worldContext.currentLocation && !currentLocation) {
+          console.log(
+            `Using database location: ${worldContext.currentLocation.name}`
+          );
+          currentLocation = worldContext.currentLocation;
+        }
+
+        // Use lore from database
+        relevantLore = worldContext.relevantLore;
+        console.log(
+          `Loaded ${relevantLore.length} lore fragments from database`
+        );
+      } catch (error) {
+        console.error("Error fetching world context:", error);
+        // Don't fail completely - continue with available data
+        // But include a note about the error in the response
+        return NextResponse.json({
+          text: `The world seems hazy (Error loading world context: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }). Let's proceed with what we know.`,
+          choices: [
+            { id: "continue", text: "Continue the adventure" },
+            { id: "look_around", text: "Look around carefully" },
+          ],
+          metadata: {
+            mood: NarrativeMood.MYSTERIOUS,
+            danger: DangerLevel.LOW,
+            worldContextError: true,
+          },
+        });
+      }
+    } else {
+      console.log("No worldId provided, using default context");
+    }
 
     // Construct the system prompt
     let systemPrompt = "";
@@ -65,22 +134,66 @@ ${
 }
 
 ${
-  location
-    ? `CURRENT LOCATION: ${location.name}
-- Description: ${location.description}
-- Connected Areas: ${location.connectedLocations?.join(", ") || "Unknown"}`
+  worldContext
+    ? `WORLD: ${worldContext.worldName}
+- Description: ${worldContext.worldDescription}`
+    : ""
+}
+
+${
+  currentLocation
+    ? `CURRENT LOCATION: ${currentLocation.name}
+- Description: ${currentLocation.description}
+- Connected Areas: ${
+        currentLocation.connectedLocations?.join(", ") || "Unknown"
+      }`
+    : ""
+}
+
+${
+  relevantLore.length > 0
+    ? `RELEVANT LORE:
+${relevantLore.map((lore) => `- ${lore.title}: ${lore.content}`).join("\n")}`
     : ""
 }`;
         break;
 
       case AIAgentRole.NPC_ROLEPLAYER:
         systemPrompt = `You are roleplaying as an NPC in a text-based RPG.
-Maintain consistent personality and respond to the player in-character.`;
+Maintain consistent personality and respond to the player in-character.
+
+${
+  worldContext
+    ? `WORLD: ${worldContext.worldName}
+- Description: ${worldContext.worldDescription}`
+    : ""
+}
+
+${
+  relevantLore.length > 0
+    ? `RELEVANT LORE:
+${relevantLore.map((lore) => `- ${lore.title}: ${lore.content}`).join("\n")}`
+    : ""
+}`;
         break;
 
       case AIAgentRole.LORE_MANAGER:
         systemPrompt = `You are the Lore Manager for a text-based RPG. Your role is to provide relevant world lore and
-information based on the player's current situation and discoveries.`;
+information based on the player's current situation and discoveries.
+
+${
+  worldContext
+    ? `WORLD: ${worldContext.worldName}
+- Description: ${worldContext.worldDescription}`
+    : ""
+}
+
+${
+  relevantLore.length > 0
+    ? `RELEVANT LORE:
+${relevantLore.map((lore) => `- ${lore.title}: ${lore.content}`).join("\n")}`
+    : ""
+}`;
         break;
 
       default:
@@ -141,7 +254,7 @@ Example format:
             ],
         metadata: {
           mood: context?.mood || NarrativeMood.NEUTRAL,
-          danger: location?.dangerLevel || DangerLevel.LOW,
+          danger: currentLocation?.dangerLevel || DangerLevel.LOW,
         },
       };
 

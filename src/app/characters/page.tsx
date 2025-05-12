@@ -64,7 +64,7 @@ export default async function CharactersPage() {
 
                 <div className="mt-4 flex justify-end">
                   <Link
-                    href={`/game?characterId=${character.id}`}
+                    href={`/hub`}
                     className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-medium rounded-md transition-colors"
                   >
                     Play

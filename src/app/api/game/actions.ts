@@ -96,12 +96,16 @@ async function loadLatestGameState(
  *
  * @param characterId The character ID
  * @param sessionId The session ID
+ * @param worldId The world ID (optional)
+ * @param locationId The location ID (optional)
  * @param initialState Optional initial state overrides
  * @returns The created game state
  */
 async function initializeGameState(
   characterId: string,
   sessionId: string,
+  worldId?: string,
+  locationId?: string,
   initialState: Partial<typeof DEFAULT_INITIAL_STATE> = {}
 ): Promise<GameState> {
   // Merge provided initial state with defaults
@@ -132,6 +136,16 @@ async function initializeGameState(
     session: {
       connect: { id: sessionId },
     },
+    world: worldId
+      ? {
+          connect: { id: worldId },
+        }
+      : undefined,
+    location: locationId
+      ? {
+          connect: { id: locationId },
+        }
+      : undefined,
     currentLocation: mergedInitialState.currentLocation,
     narrativeContext: mergedInitialState.narrativeContext,
     characterState: mergedInitialState.characterState,
@@ -193,9 +207,15 @@ export async function startNewGameSession(characterId: string): Promise<
  * Resume an existing game for a character
  *
  * @param characterId The ID of the character to resume the game for
+ * @param worldId The world ID (optional)
+ * @param locationId The location ID (optional)
  * @returns The game state and session
  */
-export async function resumeGameSession(characterId: string): Promise<
+export async function resumeGameSession(
+  characterId: string,
+  worldId?: string,
+  locationId?: string
+): Promise<
   | {
       gameState: GameState;
       session: GameSession;
@@ -228,14 +248,60 @@ export async function resumeGameSession(characterId: string): Promise<
       // Load the latest game state
       const loadedState = await loadLatestGameState(characterId);
       if (!loadedState) {
-        // If loading failed, initialize a new state
-        gameState = await initializeGameState(characterId, session.id);
+        // If loading failed, initialize a new state with worldId/locationId if provided
+        gameState = await initializeGameState(
+          characterId,
+          session.id,
+          worldId,
+          locationId
+        );
       } else {
         gameState = loadedState;
+
+        // Prepare update data if needed
+        const updateData: any = {};
+        let needsUpdate = false;
+
+        // Check if worldId is provided and different from the loaded game state's worldId
+        if (worldId && worldId !== gameState.worldId) {
+          console.log(
+            `[resumeGameSession] Updating game state with new worldId: ${worldId}`
+          );
+
+          updateData.world = {
+            connect: { id: worldId },
+          };
+          needsUpdate = true;
+        }
+
+        // Check if locationId is provided and different from the loaded game state's locationId
+        if (locationId && locationId !== gameState.locationId) {
+          console.log(
+            `[resumeGameSession] Updating game state with new locationId: ${locationId}`
+          );
+
+          updateData.location = {
+            connect: { id: locationId },
+          };
+          needsUpdate = true;
+        }
+
+        // Update the game state if needed
+        if (needsUpdate) {
+          gameState = await gameStateRepository.updateGameState(
+            gameState.id,
+            updateData
+          );
+        }
       }
     } else {
-      // Initialize a new game state
-      gameState = await initializeGameState(characterId, session.id);
+      // Initialize a new game state with worldId/locationId if provided
+      gameState = await initializeGameState(
+        characterId,
+        session.id,
+        worldId,
+        locationId
+      );
     }
 
     return {
@@ -306,6 +372,25 @@ export async function updateGameStateAction(
       updateData.aiContext = {
         ...((currentGameState.aiContext as Record<string, any>) || {}),
         ...updates.aiContext,
+      };
+    }
+
+    // Handle world and location updates
+    if (updates.worldId) {
+      console.log(
+        `[updateGameStateAction] Updating worldId to: ${updates.worldId}`
+      );
+      updateData.world = {
+        connect: { id: updates.worldId },
+      };
+    }
+
+    if (updates.locationId) {
+      console.log(
+        `[updateGameStateAction] Updating locationId to: ${updates.locationId}`
+      );
+      updateData.location = {
+        connect: { id: updates.locationId },
       };
     }
 
