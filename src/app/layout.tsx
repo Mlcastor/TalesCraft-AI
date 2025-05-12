@@ -1,7 +1,8 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import Navigation from "@/components/Navigation";
+import { Navigation } from "@/components/layout/Navigation";
+import { Footer } from "@/components/layout/Footer";
 import { UserSyncWrapper } from "@/components/UserSyncWrapper";
 import "./globals.css";
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         <body className={inter.className}>
           <Navigation />
           <UserSyncWrapper>{children}</UserSyncWrapper>
+          <Footer />
           <Analytics />
         </body>
       </html>
