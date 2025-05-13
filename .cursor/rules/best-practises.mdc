@@ -1,0 +1,12 @@
+---
+description: This rule explain the current codebase rules and best-practise for a clean code and clean architecture.
+globs: *.tsx, *.ts
+---
+
+# Best Practises
+
+- Never use "use client;" in "APP" pages.
+- Separate components into many reusable sub-components.
+- Never use API endpoints and use server actions instead.
+- Define the theme in "global.css" never hard coded in classname.
+- Use "shadcn" reusable components which follow accessibility standards.

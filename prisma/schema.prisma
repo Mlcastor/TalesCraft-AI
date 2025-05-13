@@ -16,15 +16,57 @@ datasource db {
 
 // User model
 model User {
-  id            String      @id @default(uuid())
-  email         String      @unique
-  createdAt     DateTime    @default(now()) @map("created_at")
-  lastLogin     DateTime?   @map("last_login")
-  isActive      Boolean     @default(true) @map("is_active")
-  preferences   Json        @default("{}")
-  characters    Character[]
+  id                      String      @id @default(uuid())
+  email                   String      @unique
+  password                String?      // Hashed password
+  name                    String?     // User's display name
+  createdAt               DateTime    @default(now()) @map("created_at")
+  lastLogin               DateTime?   @map("last_login")
+  isActive                Boolean     @default(true) @map("is_active")
+  preferences             Json        @default("{}")
+  emailVerified           Boolean     @default(false) @map("email_verified")
+  verificationToken       String?     @map("verification_token")
+  verificationTokenExpires DateTime?  @map("verification_token_expires")
+  resetPasswordToken      String?     @map("reset_password_token")
+  resetPasswordExpires    DateTime?   @map("reset_password_expires")
+  role                    String      @default("user") // Can be "user", "admin", etc.
+  characters              Character[]
+  sessions                Session[]
+  profile                 UserProfile?
 
   @@map("users")
+}
+
+// User Profile model - for additional user data
+model UserProfile {
+  id          String    @id @default(uuid())
+  userId      String    @unique @map("user_id")
+  name        String
+  avatarUrl   String?   @map("avatar_url")
+  bio         String?
+  preferences Json      @default("{}")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// Session model - for keeping track of user sessions
+model Session {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  token      String?  @unique
+  expires    DateTime
+  userAgent  String?  @map("user_agent")
+  ip         String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  lastActive DateTime @default(now()) @map("last_active")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
 }
 
 // Character model

@@ -9,7 +9,6 @@ import {
   getProviderConfig,
   isProviderConfigured,
 } from "./aiConfig";
-import { debugEnvironmentVariables } from "./debugEnv";
 
 /**
  * Represents the possible AI agent roles in the game

@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { UserMenu } from "@/components/auth/UserMenu";
 import {
-  UserButton,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
+  AuthenticatedOnly,
+  UnauthenticatedOnly,
+} from "@/components/auth/AuthWrapper";
 
 /**
  * Main navigation component for the application
@@ -22,9 +20,9 @@ export function Navigation() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <SignedIn>
+          <AuthenticatedOnly>
             <Link
-              href="/hub"
+              href="/player-hub"
               className="text-white hover:text-amber-400 transition-colors"
             >
               My Hub
@@ -35,23 +33,23 @@ export function Navigation() {
             >
               Profile
             </Link>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
+            <UserMenu />
+          </AuthenticatedOnly>
 
-          <SignedOut>
+          <UnauthenticatedOnly>
             <Link
-              href="/sign-in"
+              href="/login"
               className="text-white hover:text-amber-400 transition-colors"
             >
               Sign In
             </Link>
             <Link
-              href="/sign-up"
+              href="/register"
               className="px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-white rounded-md hover:from-amber-600 hover:to-yellow-700 transition-colors"
             >
               Sign Up
             </Link>
-          </SignedOut>
+          </UnauthenticatedOnly>
         </div>
       </div>
     </nav>

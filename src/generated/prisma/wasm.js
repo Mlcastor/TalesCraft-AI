@@ -123,10 +123,41 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  password: 'password',
+  name: 'name',
   createdAt: 'createdAt',
   lastLogin: 'lastLogin',
   isActive: 'isActive',
-  preferences: 'preferences'
+  preferences: 'preferences',
+  emailVerified: 'emailVerified',
+  verificationToken: 'verificationToken',
+  verificationTokenExpires: 'verificationTokenExpires',
+  resetPasswordToken: 'resetPasswordToken',
+  resetPasswordExpires: 'resetPasswordExpires',
+  role: 'role'
+};
+
+exports.Prisma.UserProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  avatarUrl: 'avatarUrl',
+  bio: 'bio',
+  preferences: 'preferences',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expires: 'expires',
+  userAgent: 'userAgent',
+  ip: 'ip',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastActive: 'lastActive'
 };
 
 exports.Prisma.CharacterScalarFieldEnum = {
@@ -297,6 +328,8 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  UserProfile: 'UserProfile',
+  Session: 'Session',
   Character: 'Character',
   World: 'World',
   CharacterWorldState: 'CharacterWorldState',

@@ -1,40 +1,40 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { getCurrentSession } from "@/lib/actions/auth-actions";
 
 /**
- * Creates or updates a user in our database after login/signup
+ * Creates or updates a user in our database when authentication state changes
  * This can be called from the client side after successful authentication
  */
 export async function syncUserWithDatabase() {
   try {
-    // Get the current authenticated user from Clerk
-    const user = await currentUser();
+    // Get the current authenticated user from our auth system
+    const sessionResult = await getCurrentSession();
 
-    if (!user) {
-      throw new Error("No authenticated user found");
+    if (
+      !sessionResult.success ||
+      !sessionResult.authenticated ||
+      !sessionResult.user
+    ) {
+      return { success: false, error: "No authenticated user found" };
     }
 
-    const { id, emailAddresses, createdAt } = user;
-
-    if (!emailAddresses || emailAddresses.length === 0) {
-      throw new Error("No email addresses found for user");
-    }
-
-    const primaryEmail = emailAddresses[0].emailAddress;
+    const user = sessionResult.user;
+    const userId = user.id;
+    const email = user.email;
 
     // Check if user already exists in our database
     const existingUser = await prisma.user.findUnique({
-      where: { id: id },
+      where: { id: userId },
     });
 
     if (existingUser) {
       // Update the user if they exist
       await prisma.user.update({
-        where: { id: id },
+        where: { id: userId },
         data: {
-          email: primaryEmail,
+          email,
           lastLogin: new Date(),
         },
       });
@@ -42,9 +42,9 @@ export async function syncUserWithDatabase() {
       // Create a new user if they don't exist
       await prisma.user.create({
         data: {
-          id: id,
-          email: primaryEmail,
-          createdAt: createdAt ? new Date(createdAt) : new Date(),
+          id: userId,
+          email,
+          createdAt: new Date(),
           lastLogin: new Date(),
           isActive: true,
           preferences: {},
@@ -65,11 +65,17 @@ export async function syncUserWithDatabase() {
  */
 export async function validateUserInDatabase() {
   try {
-    const { userId } = await auth();
+    const sessionResult = await getCurrentSession();
 
-    if (!userId) {
+    if (
+      !sessionResult.success ||
+      !sessionResult.authenticated ||
+      !sessionResult.user
+    ) {
       return { exists: false, error: "Not authenticated" };
     }
+
+    const userId = sessionResult.user.id;
 
     // Check if user exists in our database
     const user = await prisma.user.findUnique({

@@ -1,135 +1,151 @@
 /**
- * Logger utility for consistent logging across the application
- * Provides methods for different log levels and supports structured logging
+ * Logger Utility
+ *
+ * Provides a consistent logging interface for the application.
+ * In development, logs to console.
+ * In production, could be extended to log to external services.
  */
 
-// Define log levels
-type LogLevel = "debug" | "info" | "warn" | "error";
-
-// Options for logging
-interface LogOptions {
-  /** Context of the log (e.g., 'database', 'api', 'auth') */
+export interface LogOptions {
   context?: string;
-  /** Additional metadata for the log entry */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, any>;
+  error?: Error | string;
 }
 
 /**
- * Get current timestamp in ISO format
+ * Log levels for the application
  */
-const getTimestamp = (): string => new Date().toISOString();
+export enum LogLevel {
+  DEBUG = "debug",
+  INFO = "info",
+  WARN = "warn",
+  ERROR = "error",
+}
 
 /**
- * Format error objects for logging
- * @param error The error to format
- * @returns A structured representation of the error
- */
-const formatError = (error: unknown): Record<string, unknown> => {
-  if (error instanceof Error) {
-    return {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-      ...("cause" in error ? { cause: formatError(error.cause) } : {}),
-    };
-  }
-
-  return {
-    raw: typeof error === "object" ? JSON.stringify(error) : String(error),
-  };
-};
-
-/**
- * Logger class for structured logging
+ * Main logger class
  */
 class Logger {
-  private env: string;
+  private isDevelopment: boolean;
 
   constructor() {
-    this.env = process.env.NODE_ENV || "development";
+    this.isDevelopment = process.env.NODE_ENV !== "production";
   }
 
   /**
    * Log a debug message
-   * @param message The message to log
-   * @param options Additional options for the log entry
+   *
+   * @param message - The message to log
+   * @param options - Additional logging options
    */
   debug(message: string, options?: LogOptions): void {
-    this.log("debug", message, options);
+    this.log(LogLevel.DEBUG, message, options);
   }
 
   /**
    * Log an info message
-   * @param message The message to log
-   * @param options Additional options for the log entry
+   *
+   * @param message - The message to log
+   * @param options - Additional logging options
    */
   info(message: string, options?: LogOptions): void {
-    this.log("info", message, options);
+    this.log(LogLevel.INFO, message, options);
   }
 
   /**
    * Log a warning message
-   * @param message The message to log
-   * @param options Additional options for the log entry
+   *
+   * @param message - The message to log
+   * @param options - Additional logging options
    */
   warn(message: string, options?: LogOptions): void {
-    this.log("warn", message, options);
+    this.log(LogLevel.WARN, message, options);
   }
 
   /**
    * Log an error message
-   * @param message The message to log
-   * @param options Additional options for the log entry
+   *
+   * @param message - The message to log
+   * @param options - Additional logging options
    */
   error(message: string, options?: LogOptions): void {
-    this.log("error", message, options);
+    this.log(LogLevel.ERROR, message, options);
   }
 
   /**
-   * Internal method to log a message with the specified level
-   * @param level The log level
-   * @param message The message to log
-   * @param options Additional options for the log entry
+   * Generic log method
+   *
+   * @param level - The log level
+   * @param message - The message to log
+   * @param options - Additional logging options
    */
   private log(level: LogLevel, message: string, options?: LogOptions): void {
-    const timestamp = getTimestamp();
-    const context = options?.context || "app";
-    const metadata = options?.metadata || {};
-
-    // Format the log entry
-    const logEntry = {
-      timestamp,
-      level,
-      context,
-      message,
-      ...metadata,
-    };
-
-    // In development, use pretty console logs
-    if (this.env === "development") {
-      const colorize = (text: string): string => {
-        const colors = {
-          debug: "\x1b[34m", // blue
-          info: "\x1b[32m", // green
-          warn: "\x1b[33m", // yellow
-          error: "\x1b[31m", // red
-          reset: "\x1b[0m", // reset
-        };
-        return `${colors[level] || ""}${text}${colors.reset}`;
-      };
-
-      console.log(
-        `${timestamp} ${colorize(
-          level.toUpperCase()
-        )} [${context}]: ${message}`,
-        Object.keys(metadata).length ? metadata : ""
-      );
-    } else {
-      // In production, output structured JSON logs
-      console.log(JSON.stringify(logEntry));
+    if (!this.shouldLog(level)) {
+      return;
     }
+
+    const { context, metadata, error } = options || {};
+    const timestamp = new Date().toISOString();
+
+    // Format the log message
+    const formattedMessage = this.formatMessage(
+      level,
+      message,
+      timestamp,
+      context
+    );
+
+    // Log to the appropriate console method
+    switch (level) {
+      case LogLevel.DEBUG:
+        console.debug(formattedMessage, metadata ? metadata : "", error || "");
+        break;
+      case LogLevel.INFO:
+        console.info(formattedMessage, metadata ? metadata : "", error || "");
+        break;
+      case LogLevel.WARN:
+        console.warn(formattedMessage, metadata ? metadata : "", error || "");
+        break;
+      case LogLevel.ERROR:
+        console.error(formattedMessage, metadata ? metadata : "", error || "");
+        break;
+      default:
+        console.log(formattedMessage, metadata ? metadata : "", error || "");
+    }
+
+    // In production, here you would add logic to send logs to an external service
+    if (!this.isDevelopment) {
+      // TODO: Implement production logging service
+    }
+  }
+
+  /**
+   * Format a log message
+   */
+  private formatMessage(
+    level: LogLevel,
+    message: string,
+    timestamp: string,
+    context?: string
+  ): string {
+    return `[${timestamp}] [${level.toUpperCase()}] ${
+      context ? `[${context}] ` : ""
+    }${message}`;
+  }
+
+  /**
+   * Determine if a message should be logged based on environment and level
+   */
+  private shouldLog(level: LogLevel): boolean {
+    // In development, log everything
+    if (this.isDevelopment) {
+      return true;
+    }
+
+    // In production, only log info, warn, and error by default
+    return level !== LogLevel.DEBUG;
   }
 }
 
-// Export a singleton instance of the logger
+// Export a singleton instance
 export const logger = new Logger();
