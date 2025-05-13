@@ -226,6 +226,8 @@ exports.Prisma.GameSessionScalarFieldEnum = {
   characterId: 'characterId',
   startedAt: 'startedAt',
   endedAt: 'endedAt',
+  isActive: 'isActive',
+  lastActivityAt: 'lastActivityAt',
   durationSeconds: 'durationSeconds',
   sessionData: 'sessionData'
 };

@@ -176,6 +176,8 @@ model GameSession {
   characterId     String      @map("character_id")
   startedAt       DateTime    @default(now()) @map("started_at")
   endedAt         DateTime?   @map("ended_at")
+  isActive        Boolean     @default(true) @map("is_active")
+  lastActivityAt  DateTime    @default(now()) @map("last_activity_at")
   durationSeconds Int?        @map("duration_seconds")
   sessionData     Json        @default("{}") @map("session_data")
   character       Character   @relation(fields: [characterId], references: [id], onDelete: Cascade)

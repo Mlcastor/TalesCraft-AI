@@ -12811,6 +12811,8 @@ export namespace Prisma {
     characterId: string | null
     startedAt: Date | null
     endedAt: Date | null
+    isActive: boolean | null
+    lastActivityAt: Date | null
     durationSeconds: number | null
   }
 
@@ -12819,6 +12821,8 @@ export namespace Prisma {
     characterId: string | null
     startedAt: Date | null
     endedAt: Date | null
+    isActive: boolean | null
+    lastActivityAt: Date | null
     durationSeconds: number | null
   }
 
@@ -12827,6 +12831,8 @@ export namespace Prisma {
     characterId: number
     startedAt: number
     endedAt: number
+    isActive: number
+    lastActivityAt: number
     durationSeconds: number
     sessionData: number
     _all: number
@@ -12846,6 +12852,8 @@ export namespace Prisma {
     characterId?: true
     startedAt?: true
     endedAt?: true
+    isActive?: true
+    lastActivityAt?: true
     durationSeconds?: true
   }
 
@@ -12854,6 +12862,8 @@ export namespace Prisma {
     characterId?: true
     startedAt?: true
     endedAt?: true
+    isActive?: true
+    lastActivityAt?: true
     durationSeconds?: true
   }
 
@@ -12862,6 +12872,8 @@ export namespace Prisma {
     characterId?: true
     startedAt?: true
     endedAt?: true
+    isActive?: true
+    lastActivityAt?: true
     durationSeconds?: true
     sessionData?: true
     _all?: true
@@ -12958,6 +12970,8 @@ export namespace Prisma {
     characterId: string
     startedAt: Date
     endedAt: Date | null
+    isActive: boolean
+    lastActivityAt: Date
     durationSeconds: number | null
     sessionData: JsonValue
     _count: GameSessionCountAggregateOutputType | null
@@ -12986,6 +13000,8 @@ export namespace Prisma {
     characterId?: boolean
     startedAt?: boolean
     endedAt?: boolean
+    isActive?: boolean
+    lastActivityAt?: boolean
     durationSeconds?: boolean
     sessionData?: boolean
     character?: boolean | CharacterDefaultArgs<ExtArgs>
@@ -12998,6 +13014,8 @@ export namespace Prisma {
     characterId?: boolean
     startedAt?: boolean
     endedAt?: boolean
+    isActive?: boolean
+    lastActivityAt?: boolean
     durationSeconds?: boolean
     sessionData?: boolean
     character?: boolean | CharacterDefaultArgs<ExtArgs>
@@ -13008,6 +13026,8 @@ export namespace Prisma {
     characterId?: boolean
     startedAt?: boolean
     endedAt?: boolean
+    isActive?: boolean
+    lastActivityAt?: boolean
     durationSeconds?: boolean
     sessionData?: boolean
     character?: boolean | CharacterDefaultArgs<ExtArgs>
@@ -13018,11 +13038,13 @@ export namespace Prisma {
     characterId?: boolean
     startedAt?: boolean
     endedAt?: boolean
+    isActive?: boolean
+    lastActivityAt?: boolean
     durationSeconds?: boolean
     sessionData?: boolean
   }
 
-  export type GameSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "characterId" | "startedAt" | "endedAt" | "durationSeconds" | "sessionData", ExtArgs["result"]["gameSession"]>
+  export type GameSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "characterId" | "startedAt" | "endedAt" | "isActive" | "lastActivityAt" | "durationSeconds" | "sessionData", ExtArgs["result"]["gameSession"]>
   export type GameSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     character?: boolean | CharacterDefaultArgs<ExtArgs>
     gameStates?: boolean | GameSession$gameStatesArgs<ExtArgs>
@@ -13046,6 +13068,8 @@ export namespace Prisma {
       characterId: string
       startedAt: Date
       endedAt: Date | null
+      isActive: boolean
+      lastActivityAt: Date
       durationSeconds: number | null
       sessionData: Prisma.JsonValue
     }, ExtArgs["result"]["gameSession"]>
@@ -13477,6 +13501,8 @@ export namespace Prisma {
     readonly characterId: FieldRef<"GameSession", 'String'>
     readonly startedAt: FieldRef<"GameSession", 'DateTime'>
     readonly endedAt: FieldRef<"GameSession", 'DateTime'>
+    readonly isActive: FieldRef<"GameSession", 'Boolean'>
+    readonly lastActivityAt: FieldRef<"GameSession", 'DateTime'>
     readonly durationSeconds: FieldRef<"GameSession", 'Int'>
     readonly sessionData: FieldRef<"GameSession", 'Json'>
   }
@@ -20964,6 +20990,8 @@ export namespace Prisma {
     characterId: 'characterId',
     startedAt: 'startedAt',
     endedAt: 'endedAt',
+    isActive: 'isActive',
+    lastActivityAt: 'lastActivityAt',
     durationSeconds: 'durationSeconds',
     sessionData: 'sessionData'
   };
@@ -21874,6 +21902,8 @@ export namespace Prisma {
     characterId?: StringFilter<"GameSession"> | string
     startedAt?: DateTimeFilter<"GameSession"> | Date | string
     endedAt?: DateTimeNullableFilter<"GameSession"> | Date | string | null
+    isActive?: BoolFilter<"GameSession"> | boolean
+    lastActivityAt?: DateTimeFilter<"GameSession"> | Date | string
     durationSeconds?: IntNullableFilter<"GameSession"> | number | null
     sessionData?: JsonFilter<"GameSession">
     character?: XOR<CharacterScalarRelationFilter, CharacterWhereInput>
@@ -21885,6 +21915,8 @@ export namespace Prisma {
     characterId?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    lastActivityAt?: SortOrder
     durationSeconds?: SortOrderInput | SortOrder
     sessionData?: SortOrder
     character?: CharacterOrderByWithRelationInput
@@ -21899,6 +21931,8 @@ export namespace Prisma {
     characterId?: StringFilter<"GameSession"> | string
     startedAt?: DateTimeFilter<"GameSession"> | Date | string
     endedAt?: DateTimeNullableFilter<"GameSession"> | Date | string | null
+    isActive?: BoolFilter<"GameSession"> | boolean
+    lastActivityAt?: DateTimeFilter<"GameSession"> | Date | string
     durationSeconds?: IntNullableFilter<"GameSession"> | number | null
     sessionData?: JsonFilter<"GameSession">
     character?: XOR<CharacterScalarRelationFilter, CharacterWhereInput>
@@ -21910,6 +21944,8 @@ export namespace Prisma {
     characterId?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    lastActivityAt?: SortOrder
     durationSeconds?: SortOrderInput | SortOrder
     sessionData?: SortOrder
     _count?: GameSessionCountOrderByAggregateInput
@@ -21927,6 +21963,8 @@ export namespace Prisma {
     characterId?: StringWithAggregatesFilter<"GameSession"> | string
     startedAt?: DateTimeWithAggregatesFilter<"GameSession"> | Date | string
     endedAt?: DateTimeNullableWithAggregatesFilter<"GameSession"> | Date | string | null
+    isActive?: BoolWithAggregatesFilter<"GameSession"> | boolean
+    lastActivityAt?: DateTimeWithAggregatesFilter<"GameSession"> | Date | string
     durationSeconds?: IntNullableWithAggregatesFilter<"GameSession"> | number | null
     sessionData?: JsonWithAggregatesFilter<"GameSession">
   }
@@ -23156,6 +23194,8 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     character: CharacterCreateNestedOneWithoutGameSessionsInput
@@ -23167,6 +23207,8 @@ export namespace Prisma {
     characterId: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     gameStates?: GameStateUncheckedCreateNestedManyWithoutSessionInput
@@ -23176,6 +23218,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     character?: CharacterUpdateOneRequiredWithoutGameSessionsNestedInput
@@ -23187,6 +23231,8 @@ export namespace Prisma {
     characterId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     gameStates?: GameStateUncheckedUpdateManyWithoutSessionNestedInput
@@ -23197,6 +23243,8 @@ export namespace Prisma {
     characterId: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
   }
@@ -23205,6 +23253,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
   }
@@ -23214,6 +23264,8 @@ export namespace Prisma {
     characterId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
   }
@@ -24335,6 +24387,8 @@ export namespace Prisma {
     characterId?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
+    isActive?: SortOrder
+    lastActivityAt?: SortOrder
     durationSeconds?: SortOrder
     sessionData?: SortOrder
   }
@@ -24348,6 +24402,8 @@ export namespace Prisma {
     characterId?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
+    isActive?: SortOrder
+    lastActivityAt?: SortOrder
     durationSeconds?: SortOrder
   }
 
@@ -24356,6 +24412,8 @@ export namespace Prisma {
     characterId?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
+    isActive?: SortOrder
+    lastActivityAt?: SortOrder
     durationSeconds?: SortOrder
   }
 
@@ -26506,6 +26564,8 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     gameStates?: GameStateCreateNestedManyWithoutSessionInput
@@ -26515,6 +26575,8 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     gameStates?: GameStateUncheckedCreateNestedManyWithoutSessionInput
@@ -26675,6 +26737,8 @@ export namespace Prisma {
     characterId?: StringFilter<"GameSession"> | string
     startedAt?: DateTimeFilter<"GameSession"> | Date | string
     endedAt?: DateTimeNullableFilter<"GameSession"> | Date | string | null
+    isActive?: BoolFilter<"GameSession"> | boolean
+    lastActivityAt?: DateTimeFilter<"GameSession"> | Date | string
     durationSeconds?: IntNullableFilter<"GameSession"> | number | null
     sessionData?: JsonFilter<"GameSession">
   }
@@ -27689,6 +27753,8 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     character: CharacterCreateNestedOneWithoutGameSessionsInput
@@ -27699,6 +27765,8 @@ export namespace Prisma {
     characterId: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
   }
@@ -27932,6 +28000,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     character?: CharacterUpdateOneRequiredWithoutGameSessionsNestedInput
@@ -27942,6 +28012,8 @@ export namespace Prisma {
     characterId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
   }
@@ -28756,6 +28828,8 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     endedAt?: Date | string | null
+    isActive?: boolean
+    lastActivityAt?: Date | string
     durationSeconds?: number | null
     sessionData?: JsonNullValueInput | InputJsonValue
   }
@@ -28786,6 +28860,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     gameStates?: GameStateUpdateManyWithoutSessionNestedInput
@@ -28795,6 +28871,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
     gameStates?: GameStateUncheckedUpdateManyWithoutSessionNestedInput
@@ -28804,6 +28882,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     sessionData?: JsonNullValueInput | InputJsonValue
   }

@@ -83,3 +83,24 @@ export type EventWithParsedJson = Omit<
   triggerConditions: TriggerConditions;
   outcomes: EventOutcome[];
 };
+
+// Game Session type for frontend UI
+export interface GameSessionUI {
+  id: string;
+  character: {
+    id: string;
+    name: string;
+    userId: string;
+  };
+  world: {
+    id: string;
+    name: string;
+  };
+  gameState?: {
+    id: string;
+    stateData: any;
+  } | null;
+  isActive: boolean;
+  startedAt: Date;
+  lastActivityAt: Date;
+}

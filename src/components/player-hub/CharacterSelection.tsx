@@ -121,8 +121,9 @@ export function CharacterSelection({
               )}
 
               <Link
-                href={`/game/select?characterId=${character.id}&worldId=${worldId}`}
+                href={`/player-hub/characters/${character.id}/play/${worldId}`}
                 className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-medium rounded-md transition-colors inline-block w-full text-center"
+                id={`character-${character.id}`}
               >
                 {hasVisitedBefore ? "Continue Adventure" : "Begin Adventure"}
               </Link>

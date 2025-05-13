@@ -8,6 +8,8 @@ import { getUserCharacters } from "@/lib/actions/character-actions";
 import { getWorldById } from "@/lib/actions/world-actions";
 import { getCharacterWorldStateForWorld } from "@/lib/actions/character-actions";
 import { CharacterWorldStateWithWorld } from "@/types/database";
+import { StartGameButton } from "@/components/game/StartGameButton";
+import { getRouteParamAsync } from "@/lib/utils/routeUtils";
 
 interface WorldDetailPageProps {
   params: { worldId: string };
@@ -16,7 +18,9 @@ interface WorldDetailPageProps {
 export async function generateMetadata({
   params,
 }: WorldDetailPageProps): Promise<Metadata> {
-  const world = await getWorldById(params.worldId);
+  // In Next.js 15, we must await the params object itself
+  const { worldId } = await params;
+  const world = await getWorldById(worldId);
 
   if (!world) {
     return {
@@ -38,7 +42,8 @@ export async function generateMetadata({
 export default async function WorldDetailPage({
   params,
 }: WorldDetailPageProps) {
-  const { worldId } = params;
+  // In Next.js 15, we must await the params object itself
+  const { worldId } = await params;
   const session = await getServerSession();
 
   if (!session || !session.user.id) {
@@ -58,7 +63,7 @@ export default async function WorldDetailPage({
 
   if (!characters || characters.length === 0) {
     // No characters available, redirect to character creation
-    redirect("/player-hub/characters/create");
+    redirect(`/player-hub/characters/create?worldId=${worldId}`);
   }
 
   // Get the character-world states for each character
@@ -91,15 +96,36 @@ export default async function WorldDetailPage({
         label: "Back to Hub",
       }}
     >
-      {/* Character Selection */}
-      <CharacterSelection
-        characters={characters}
-        worldId={worldId}
-        characterWorldStates={characterWorldStates}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* World details panel */}
+        <div>
+          <WorldDetails world={world} />
+        </div>
 
-      {/* World Details */}
-      <WorldDetails world={world} />
+        {/* Character selection panel */}
+        <div>
+          <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden mb-4">
+            <div className="bg-gray-700 p-4 border-b border-gray-600">
+              <h2 className="text-xl font-bold text-white">Select Character</h2>
+              <p className="text-sm text-gray-300">
+                Choose a character to play as in this world
+              </p>
+            </div>
+            <CharacterSelection
+              characters={characters}
+              worldId={worldId}
+              characterWorldStates={characterWorldStates}
+            />
+          </div>
+
+          {/* Start game button */}
+          <StartGameButton
+            characters={characters}
+            worldId={worldId}
+            characterWorldStates={characterWorldStates}
+          />
+        </div>
+      </div>
     </HubLayout>
   );
 }

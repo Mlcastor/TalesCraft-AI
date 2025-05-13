@@ -19,29 +19,25 @@ declare global {
  */
 function createPrismaClient(): PrismaClient {
   const client = new PrismaClient({
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "error", "warn"]
-        : ["error"],
+    log: ["error"], // Only log errors regardless of environment
   });
 
   // Set up event handlers for development logging
   if (process.env.NODE_ENV === "development") {
-    // Custom logger middleware instead of events
+    // Custom logger middleware for errors only
     client.$use(async (params, next) => {
-      const before = Date.now();
-      const result = await next(params);
-      const duration = Date.now() - before;
-
-      logger.debug(`Prisma Query: ${params.model}.${params.action}`, {
-        context: "prisma",
-        metadata: {
-          params,
-          duration,
-        },
-      });
-
-      return result;
+      try {
+        return await next(params);
+      } catch (error) {
+        logger.error(`Prisma Error: ${params.model}.${params.action}`, {
+          context: "prisma",
+          metadata: {
+            params,
+            error,
+          },
+        });
+        throw error;
+      }
     });
   }
 
