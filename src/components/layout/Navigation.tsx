@@ -25,7 +25,7 @@ export function Navigation() {
               href="/player-hub"
               className="text-white hover:text-amber-400 transition-colors"
             >
-              My Hub
+              Player Hub
             </Link>
             <Link
               href="/profile"

@@ -7,8 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "seed:world": "dotenv -e .env.local next-cli src/scripts/seed-default-world.ts"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
@@ -19,6 +18,7 @@
     "bcrypt": "^6.0.0",
     "better-auth": "^1.2.7",
     "groq-sdk": "^0.21.0",
+    "jose": "^6.0.11",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "next": "15.3.2",

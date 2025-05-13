@@ -408,3 +408,7 @@ export const getCharactersByWorldId =
   characterWorldStateRepository.getCharactersByWorldId.bind(
     characterWorldStateRepository
   );
+
+// Export findCharacterWorldState for direct usage
+export const findCharacterWorldState = (characterId: string, worldId: string) =>
+  characterWorldStateRepository.findCharacterWorldState(characterId, worldId);
