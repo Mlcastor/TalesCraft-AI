@@ -6,6 +6,9 @@ import type { NarrativeHistory, GameState } from "@/types/database";
 import { isNotEmpty } from "@/lib/utils/validation";
 import { logger } from "@/lib/utils/logger";
 import { Prisma } from "@/generated/prisma";
+// Import our AI service
+import { aiService } from "@/lib/ai/AIService";
+import { responseParser } from "@/lib/ai/ResponseParser";
 
 /**
  * Service for managing narrative generation and history
@@ -69,12 +72,32 @@ export class NarrativeService extends BaseService {
       const narrativeHistory = await this.getNarrativeHistory(gameStateId);
 
       try {
-        // This is where we would integrate with an AI service
-        // For the MVP, we'll use a fallback mechanism
-        const narrativeResponse = this.generateFallbackNarrative(
-          gameState,
-          narrativeHistory
-        );
+        // Try to use AI service for narrative generation
+        let narrativeResponse;
+
+        // Check if we have an API key configured
+        if (process.env.GROQ_API_KEY) {
+          // Use the AI service for narrative generation
+          narrativeResponse = await this.generateNarrativeWithAI(
+            gameState,
+            narrativeHistory
+          );
+        } else {
+          // Use the fallback for development/testing
+          narrativeResponse = this.generateFallbackNarrative(
+            gameState,
+            narrativeHistory
+          );
+
+          logger.debug("Using fallback narrative (no API key)", {
+            context: "service",
+            metadata: {
+              service: this.serviceName,
+              operation: "generateNarrative",
+              gameStateId,
+            },
+          });
+        }
 
         // Record the generated narrative
         await this.recordNarrativeEntry(
@@ -103,6 +126,98 @@ export class NarrativeService extends BaseService {
         return this.generateErrorFallbackNarrative();
       }
     }, "generateNarrative");
+  }
+
+  /**
+   * Generate narrative using AI service
+   *
+   * @param gameState - The game state to generate narrative for
+   * @param narrativeHistory - Previous narrative history
+   * @returns Generated narrative text and decisions
+   */
+  private async generateNarrativeWithAI(
+    gameState: GameState,
+    narrativeHistory: NarrativeHistory[]
+  ): Promise<{
+    narrativeText: string;
+    decisions: Array<{ text: string; consequences?: string }>;
+  }> {
+    try {
+      // Extract character name safely from characterState
+      let characterName = "Adventurer";
+      if (
+        gameState.characterState &&
+        typeof gameState.characterState === "object" &&
+        "name" in gameState.characterState
+      ) {
+        characterName = String(gameState.characterState.name);
+      }
+
+      // Extract context from game state
+      const context = {
+        characterName,
+        location: gameState.currentLocation || "unknown location",
+        characterState: gameState.characterState || {},
+        worldState: gameState.worldState || {},
+        gameStateId: gameState.id,
+      };
+
+      // Format narrative history for AI
+      const formattedHistory = narrativeHistory.map((entry) => ({
+        type: entry.type as "narrative" | "playerResponse",
+        content: entry.content,
+      }));
+
+      // Call the AI service
+      const aiResponse = await aiService.generateNarrative(
+        context,
+        formattedHistory
+      );
+
+      // Parse the response
+      const parsedResponse = responseParser.parseNarrativeResponse(aiResponse);
+
+      // Map suggestedDecisions to include consequences if available
+      let decisions: Array<{ text: string; consequences?: string }> = [];
+
+      if (
+        parsedResponse.suggestedDecisions &&
+        Array.isArray(parsedResponse.suggestedDecisions)
+      ) {
+        decisions = parsedResponse.suggestedDecisions.map((d) => {
+          const decision: { text: string; consequences?: string } = {
+            text: d.text,
+          };
+          // Check if d has a consequences property before accessing it
+          if (d && typeof d === "object" && "consequences" in d) {
+            decision.consequences = String(d.consequences);
+          }
+          return decision;
+        });
+      }
+
+      if (decisions.length === 0) {
+        decisions = this.getDefaultDecisions();
+      }
+
+      // Return the structured narrative and decisions
+      return {
+        narrativeText: parsedResponse.text,
+        decisions,
+      };
+    } catch (error) {
+      logger.error("Error in AI narrative generation", {
+        context: "service",
+        metadata: {
+          service: this.serviceName,
+          operation: "generateNarrativeWithAI",
+          error,
+        },
+      });
+
+      // Fall back to basic narrative generation
+      return this.generateErrorFallbackNarrative();
+    }
   }
 
   /**
@@ -228,12 +343,12 @@ export class NarrativeService extends BaseService {
   }
 
   /**
-   * Generate a fallback narrative response for development/MVP purposes
-   * This is a simplified implementation that will be replaced with AI integration
+   * Generate a fallback narrative based on the game state
+   * Used for development and when AI service is unavailable
    *
-   * @param gameState - The current game state
+   * @param gameState - The game state to generate narrative for
    * @param narrativeHistory - Previous narrative history
-   * @returns Generated narrative text and decision options
+   * @returns Generated narrative text and decisions
    */
   private generateFallbackNarrative(
     gameState: GameState,
@@ -242,50 +357,36 @@ export class NarrativeService extends BaseService {
     narrativeText: string;
     decisions: Array<{ text: string; consequences?: string }>;
   } {
-    // Extract the current location from the game state
-    const currentLocation = gameState.currentLocation;
+    // In a real implementation, this would use templates and game state data
+    // For MVP, we'll provide a simple response
+    let characterName = "Adventurer";
 
-    // Extract character data
-    const characterState = gameState.characterState as Record<string, any>;
-    const characterName = characterState.name || "Adventurer";
-
-    // Check if this is the first narrative (no history yet)
-    const isFirstNarrative = narrativeHistory.length === 0;
-
-    // Generate appropriate narrative based on context
-    let narrativeText = "";
-    if (isFirstNarrative) {
-      narrativeText = `As ${characterName}, you find yourself in ${currentLocation}. The journey begins here, and the path ahead is yours to choose. The world around you is vibrant with potential adventure.`;
-    } else {
-      narrativeText = `Continuing your journey in ${currentLocation}, ${characterName}, you sense that your decisions have weight in this world. What will you do next?`;
+    // Safely extract character name
+    if (
+      gameState.characterState &&
+      typeof gameState.characterState === "object" &&
+      "name" in gameState.characterState
+    ) {
+      characterName = String(gameState.characterState.name);
     }
 
-    // Generate a set of generic decisions
-    const decisions = [
-      {
-        text: "Explore the surroundings carefully",
-        consequences:
-          "You might discover hidden secrets or valuable resources.",
-      },
-      {
-        text: "Move forward with determination",
-        consequences: "You might make faster progress but could miss details.",
-      },
-      {
-        text: "Interact with nearby objects or features",
-        consequences:
-          "You might learn more about the environment or trigger events.",
-      },
-      {
-        text: "Look for signs of other characters or creatures",
-        consequences:
-          "You might make contact with helpful allies or potential threats.",
-      },
-    ];
+    const location = gameState.currentLocation || "Unknown";
 
+    // Generate a simple narrative based on location
+    let narrativeText = `${characterName} stands in ${location}, contemplating the next move. `;
+    narrativeText +=
+      "The world around seems ripe for adventure, with many possibilities ahead.";
+
+    // Very basic context awareness from narrative history
+    if (narrativeHistory.length > 0) {
+      narrativeText +=
+        " You reflect on your recent experiences and consider your path forward.";
+    }
+
+    // Simple location-based decisions
     return {
       narrativeText,
-      decisions,
+      decisions: this.getDefaultDecisions(),
     };
   }
 
@@ -320,6 +421,35 @@ export class NarrativeService extends BaseService {
         },
       ],
     };
+  }
+
+  /**
+   * Get default decisions for fallback cases
+   *
+   * @returns Array of default decision options
+   */
+  private getDefaultDecisions(): Array<{
+    text: string;
+    consequences?: string;
+  }> {
+    return [
+      {
+        text: "Explore the surroundings",
+        consequences: "Discover more about this location.",
+      },
+      {
+        text: "Move to a new area",
+        consequences: "Find new opportunities elsewhere.",
+      },
+      {
+        text: "Rest and prepare",
+        consequences: "Recover strength before proceeding.",
+      },
+      {
+        text: "Interact with nearby people",
+        consequences: "Seek information or assistance from others.",
+      },
+    ];
   }
 
   /**

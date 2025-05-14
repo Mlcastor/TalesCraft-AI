@@ -1,97 +1,91 @@
-import { Suspense } from "react";
+import { Metadata, ResolvingMetadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import {
-  verifyGameSession,
-  getLatestGameStateForSession,
-} from "@/lib/actions/gameSession-actions";
-import { getServerSession } from "@/lib/auth/session";
+import { verifyGameSession } from "@/lib/actions/gameSession-actions";
+import { getLatestGameStateForSession } from "@/lib/actions/game-state-actions";
+import { logger } from "@/lib/utils/logger";
 import { GameContainer } from "@/components/game/GameContainer";
-import { LoadingIndicator } from "@/components/game/LoadingIndicator";
-import { ErrorBoundary } from "@/components/game/ErrorBoundary";
 
-interface GamePageProps {
+// Define dynamic metadata generation for SEO optimization
+export async function generateMetadata(
+  { params }: { params: { sessionId: string } },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // Read route parameters
+  const { sessionId } = await params;
+
+  try {
+    // Verify the session exists and is active
+    const session = await verifyGameSession(sessionId);
+    const sessionData = session.sessionData as Record<string, any>;
+    const characterName = sessionData?.characterName || "Player";
+    const worldName = sessionData?.worldName || "Game World";
+
+    return {
+      title: `${characterName} | ${worldName} - Tales Craft AI`,
+      description: `Join ${characterName} on their adventure in ${worldName}. An AI-powered narrative experience by Tales Craft AI.`,
+      openGraph: {
+        title: `${characterName}'s Adventure in ${worldName}`,
+        description: `Join ${characterName} on their adventure in ${worldName}. An AI-powered narrative experience by Tales Craft AI.`,
+        type: "website",
+      },
+    };
+  } catch (error) {
+    // In case of error, return generic metadata
+    return {
+      title: "Tales Craft AI",
+      description: "AI-powered narrative adventures",
+    };
+  }
+}
+
+type GamePageProps = {
   params: {
     sessionId: string;
   };
-}
+};
 
 /**
- * Game page that uses the session ID from the URL
- * This implements dynamic session routing as specified in task 2.1
+ * Game page that renders a specific game session
+ *
+ * @param props Component props containing session ID
+ * @returns The game page with proper server-side validation
  */
 export default async function GamePage({ params }: GamePageProps) {
-  const { sessionId } = await params;
-
-  // Verify user is authenticated
-  const session = await getServerSession();
-  if (!session) {
-    // Redirect to login if not authenticated
-    return redirect(
-      "/login?returnUrl=" + encodeURIComponent(`/game/${sessionId}`)
-    );
-  }
+  const { sessionId } = params;
 
   try {
-    // Verify the game session exists and is active
-    const gameSession = await verifyGameSession(sessionId);
-
-    // Ensure the logged-in user owns this character/session
-    // This would require additional queries we'll skip for the MVP
-    // In a full implementation, we would check character ownership here
+    // Verify the session exists and is active
+    const session = await verifyGameSession(sessionId);
 
     // Get the latest game state ID for this session
     const latestStateId = await getLatestGameStateForSession(sessionId);
 
+    // If no state exists, redirect to player hub
+    if (!latestStateId) {
+      logger.warn(
+        `No game state found for session ${sessionId}, redirecting to player hub`
+      );
+      redirect("/player-hub");
+    }
+
+    // Return the game container with the session ID and latest state ID
     return (
-      <ErrorBoundary
-        fallback={
-          <div className="p-8 text-center">
-            There was an error loading the game. Please try again.
-          </div>
-        }
-      >
-        <div className="flex flex-col h-full min-h-screen bg-background text-foreground">
-          <header className="border-b p-4">
-            <h1 className="text-2xl font-bold">Tales Craft AI</h1>
-          </header>
-
-          <main className="flex-1 p-2 sm:p-4 md:p-6 overflow-hidden">
-            <Suspense fallback={<LoadingIndicator message="Loading game..." />}>
-              <GameContainer
-                sessionId={sessionId}
-                initialStateId={latestStateId || undefined}
-              />
-            </Suspense>
-          </main>
-
-          <footer className="border-t p-2 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Tales Craft AI</p>
-          </footer>
-        </div>
-      </ErrorBoundary>
+      <main className="flex flex-col h-full w-full">
+        <GameContainer sessionId={sessionId} initialStateId={latestStateId} />
+      </main>
     );
   } catch (error) {
-    console.error("Error loading game session:", error);
+    // Log error for server-side debugging
+    logger.error("Error loading game page", {
+      context: "server-component",
+      metadata: {
+        component: "GamePage",
+        sessionId,
+        error,
+      },
+    });
+
+    // If session doesn't exist or is inactive, return 404
     return notFound();
-  }
-}
-
-// Generate metadata for the page dynamically
-export async function generateMetadata({ params }: GamePageProps) {
-  const { sessionId } = params;
-
-  try {
-    // Try to get session info for the metadata
-    const gameSession = await verifyGameSession(sessionId);
-    return {
-      title: `Tales Craft AI - Game Session`,
-      description: `Continue your adventure in the game world.`,
-    };
-  } catch (error) {
-    // Default metadata if session verification fails
-    return {
-      title: "Tales Craft AI - Game",
-      description: "Embark on an AI-driven narrative adventure.",
-    };
   }
 }
