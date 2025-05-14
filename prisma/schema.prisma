@@ -18,7 +18,7 @@ datasource db {
 model User {
   id                      String      @id @default(uuid())
   email                   String      @unique
-  password                String?      // Hashed password
+  password                String?     // Hashed password
   name                    String?     // User's display name
   createdAt               DateTime    @default(now()) @map("created_at")
   lastLogin               DateTime?   @map("last_login")

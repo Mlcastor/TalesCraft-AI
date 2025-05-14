@@ -1,18 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Character } from "@/types/database";
+import { Button } from "@/components/ui/button";
+import { CharacterWorldStateWithWorld } from "@/types/database";
+
+interface Character {
+  id: string;
+  name: string;
+  backstory?: string | null;
+}
 
 interface StartGameButtonProps {
   characters: Character[];
   worldId: string;
-  characterWorldStates: Record<string, any>;
+  characterWorldStates: Record<string, CharacterWorldStateWithWorld | null>;
 }
 
-/**
- * Button component for starting or resuming a game session
- */
 export function StartGameButton({
   characters,
   worldId,
@@ -23,112 +27,81 @@ export function StartGameButton({
     null
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Auto-select a character if there's only one
-  useEffect(() => {
-    if (characters.length === 1) {
-      setSelectedCharacterId(characters[0].id);
-      // Also store in localStorage for persistence
-      localStorage.setItem("selectedCharacterId", characters[0].id);
-    }
-  }, [characters]);
+  // Find a character with an existing game state in this world
+  // Check if the character has an active session in this world
+  const characterWithExistingState = characters.find((char) => {
+    const state = characterWorldStates[char.id];
+    return state && state.lastPlayedAt !== null;
+  });
 
-  // Check URL parameters for selected character
-  useEffect(() => {
-    // Get URL search params
-    const searchParams = new URLSearchParams(window.location.search);
-    const errorParam = searchParams.get("error");
-
-    if (errorParam === "failed_to_start_game") {
-      setError("Failed to start game. Please try again.");
-    }
-
-    // Listen for character selection events
-    const handleCharacterClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const characterLink = target.closest('a[id^="character-"]');
-
-      if (characterLink) {
-        const characterId = characterLink.id.replace("character-", "");
-        setSelectedCharacterId(characterId);
-        // Store in localStorage for persistence
-        localStorage.setItem("selectedCharacterId", characterId);
-      }
-    };
-
-    document.addEventListener("click", handleCharacterClick);
-
-    // Check localStorage on mount
-    const storedCharId = localStorage.getItem("selectedCharacterId");
-    if (storedCharId && characters.some((c) => c.id === storedCharId)) {
-      setSelectedCharacterId(storedCharId);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleCharacterClick);
-    };
-  }, [characters]);
-
-  async function handleStartGame() {
+  // Auto-select the first character with an existing game state, or the first character if none have state
+  React.useEffect(() => {
     if (!selectedCharacterId) {
-      setError("Please select a character first");
-      return;
+      if (characterWithExistingState) {
+        setSelectedCharacterId(characterWithExistingState.id);
+      } else if (characters.length > 0) {
+        setSelectedCharacterId(characters[0].id);
+      }
     }
+  }, [characters, characterWithExistingState, selectedCharacterId]);
+
+  // Start the game with the selected character
+  const handleStartGame = () => {
+    if (!selectedCharacterId) return;
 
     setIsLoading(true);
-    setError(null);
+    // Navigate to the play page for the selected character and world
+    router.push(
+      `/player-hub/characters/${selectedCharacterId}/play/${worldId}`
+    );
+  };
 
-    try {
-      // Navigate to the play route directly, which handles session creation
-      router.push(
-        `/player-hub/characters/${selectedCharacterId}/play/${worldId}`
-      );
-    } catch (error) {
-      console.error("Error navigating to game:", error);
-      setError("Failed to start game. Please try again.");
-      setIsLoading(false);
-    }
+  // If no characters are available, don't render anything
+  if (characters.length === 0) {
+    return null;
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700 p-4">
-      {error && (
-        <div className="bg-red-900/50 border border-red-700 p-3 rounded-md mb-4 text-white">
-          {error}
+    <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden p-4">
+      <h3 className="text-lg font-semibold text-white mb-4">Quick Start</h3>
+
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Select Character
+          </label>
+          <select
+            value={selectedCharacterId || ""}
+            onChange={(e) => setSelectedCharacterId(e.target.value)}
+            className="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
+          >
+            {characters.map((character) => {
+              const hasProgress =
+                characterWorldStates[character.id]?.lastPlayedAt !== null;
+              return (
+                <option key={character.id} value={character.id}>
+                  {character.name}
+                  {hasProgress ? " (Has progress)" : ""}
+                </option>
+              );
+            })}
+          </select>
         </div>
-      )}
 
-      <button
-        onClick={handleStartGame}
-        disabled={isLoading || !selectedCharacterId}
-        className={`w-full py-3 px-6 rounded-md font-bold text-lg flex items-center justify-center ${
-          !selectedCharacterId
-            ? "bg-gray-700 cursor-not-allowed text-gray-400"
-            : "bg-amber-500 hover:bg-amber-600 text-gray-900"
-        }`}
-      >
-        {isLoading ? (
-          <>
-            <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin mr-2"></div>
-            Starting Game...
-          </>
-        ) : (
-          <>
-            {selectedCharacterId
-              ? "Start Adventure"
-              : "Select a Character to Begin"}
-          </>
-        )}
-      </button>
-
-      <p className="mt-2 text-center text-sm text-gray-400">
-        {selectedCharacterId
-          ? characterWorldStates[selectedCharacterId]
-            ? "Continue your previous adventure"
-            : "Begin a new adventure"
-          : "Select a character first"}
-      </p>
+        <Button
+          onClick={handleStartGame}
+          disabled={!selectedCharacterId || isLoading}
+          className="w-full"
+          size="lg"
+        >
+          {isLoading
+            ? "Starting Game..."
+            : characterWithExistingState
+            ? "Continue Adventure"
+            : "Start New Adventure"}
+        </Button>
+      </div>
     </div>
   );
 }

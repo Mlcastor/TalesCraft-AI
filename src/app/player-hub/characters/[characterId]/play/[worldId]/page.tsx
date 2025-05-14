@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth/session";
-import { getOrCreateGameSession } from "@/lib/actions/game-actions";
+import { getOrCreateGameSession } from "@/lib/actions/game-session-actions";
 
 interface PlayGamePageProps {
   params: {
@@ -23,25 +23,21 @@ export default async function PlayGamePage({ params }: PlayGamePageProps) {
   const session = await getServerSession();
   if (!session?.user) {
     console.log("User not authenticated, redirecting to login");
-    return redirect("/auth/login?redirect=/player-hub");
+    redirect("/auth/login?redirect=/player-hub");
   }
 
-  // Don't use try/catch for redirects - they're not errors
-  // Instead, handle each decision point with explicit redirects
-
-  // Create or get the game session
-  const gameSession = await getOrCreateGameSession(characterId, worldId);
-
-  // If game session creation failed
-  if (!gameSession) {
-    console.warn(
-      `Failed to create game session for character: ${characterId}, world: ${worldId}`
-    );
-    return redirect(`/player-hub/world/${worldId}?error=failed_to_start_game`);
+  // Handle session retrieval without using try/catch around the redirect
+  let sessionId;
+  try {
+    // Get the game session ID
+    sessionId = await getOrCreateGameSession(characterId, worldId);
+    console.log(`Game session created/found: ${sessionId}, redirecting...`);
+  } catch (error) {
+    console.error("Error creating game session:", error);
+    redirect(`/player-hub/world/${worldId}?error=failed_to_start_game`);
   }
 
-  console.log(`Game session created/found: ${gameSession.id}`);
-
-  // Everything successful - redirect to game page
-  return redirect(`/game/${gameSession.id}`);
+  // Redirect OUTSIDE the try/catch block
+  // This line will only execute if the session was successfully created
+  redirect(`/game/${sessionId}`);
 }
