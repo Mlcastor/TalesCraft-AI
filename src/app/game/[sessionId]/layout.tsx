@@ -1,7 +1,5 @@
-"use client";
-
 import { ReactNode } from "react";
-import { SessionProvider } from "@/contexts/SessionContext";
+import { SafeSessionProvider } from "@/contexts/SafeSessionContext";
 import { GameSettingsProvider } from "@/contexts/GameSettingsContext";
 
 interface GameLayoutProps {
@@ -13,17 +11,20 @@ interface GameLayoutProps {
 
 /**
  * Layout component for game pages
- * Wraps all game content with SessionProvider for session management
+ * Wraps all game content with SafeSessionProvider for session management
  * and GameSettingsProvider for game settings
  */
-export default function GameLayout({ children, params }: GameLayoutProps) {
-  const { sessionId } = params;
+export default async function GameLayout({
+  children,
+  params,
+}: GameLayoutProps) {
+  const { sessionId } = await params;
 
   return (
-    <SessionProvider initialSessionId={sessionId}>
+    <SafeSessionProvider initialSessionId={sessionId}>
       <GameSettingsProvider>
         <div className="flex flex-col h-full">{children}</div>
       </GameSettingsProvider>
-    </SessionProvider>
+    </SafeSessionProvider>
   );
 }

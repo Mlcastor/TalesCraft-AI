@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { GameState } from "@/types/game";
-import { useSession } from "@/contexts/SessionContext";
+import { useSafeSession } from "@/contexts/SafeSessionContext";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NarrativeDisplay } from "./NarrativeDisplay";
 import { DecisionSelector } from "./DecisionSelector";
@@ -42,8 +42,9 @@ export function GameContainer({
   // Auto-save timer ref
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Use the session context
-  const { currentSession, endSession: endGameSessionContext } = useSession();
+  // Use the session context with our new safe version
+  const { currentSession, endSession: endGameSessionContext } =
+    useSafeSession();
 
   // Initialize the game when the component mounts
   useEffect(() => {
