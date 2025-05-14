@@ -1,5 +1,12 @@
 import { logger } from "@/lib/utils/logger";
-import { ValidationError } from "@/lib/errors/DatabaseError";
+import { TransactionError, ValidationError } from "@/lib/errors/DatabaseError";
+import { BaseRepository } from "@/lib/db/base/BaseRepository";
+
+// Import type for transaction client from BaseRepository
+type TransactionClient = Omit<
+  import("@/generated/prisma").PrismaClient,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>;
 
 /**
  * Base service class that provides common functionality for all service classes
@@ -12,11 +19,21 @@ export abstract class BaseService {
   protected readonly serviceName: string;
 
   /**
+   * Repository dependencies for this service
+   */
+  protected repositories: Record<string, BaseRepository>;
+
+  /**
    * Create a new BaseService
    * @param serviceName The name of the service
+   * @param repositories Repository dependencies for this service
    */
-  constructor(serviceName: string) {
+  constructor(
+    serviceName: string,
+    repositories: Record<string, BaseRepository> = {}
+  ) {
     this.serviceName = serviceName;
+    this.repositories = repositories;
   }
 
   /**
@@ -75,6 +92,66 @@ export abstract class BaseService {
   }
 
   /**
+   * Execute operations within a transaction that spans multiple repositories
+   *
+   * @param fn Function containing operations to perform within a transaction
+   * @param options Options for transaction execution
+   * @returns Result of the transaction
+   * @throws TransactionError if the transaction fails
+   */
+  protected async withTransaction<T>(
+    fn: (tx: TransactionClient) => Promise<T>,
+    options: {
+      primaryRepository?: string;
+    } = {}
+  ): Promise<T> {
+    // Determine which repository to use for the transaction
+    const primaryRepoName =
+      options.primaryRepository || Object.keys(this.repositories)[0];
+    const primaryRepo = this.repositories[primaryRepoName];
+
+    if (!primaryRepo) {
+      throw new TransactionError(
+        `Cannot execute transaction: No repository found for ${primaryRepoName}`,
+        { entity: this.serviceName }
+      );
+    }
+
+    try {
+      logger.debug(`Starting transaction in ${this.serviceName}`, {
+        context: "service",
+        metadata: {
+          service: this.serviceName,
+          primaryRepository: primaryRepoName,
+        },
+      });
+
+      // Execute the transaction using the primary repository's executeTransaction method
+      return await (primaryRepo as any).executeTransaction(
+        async (tx: TransactionClient) => {
+          return await fn(tx);
+        }
+      );
+    } catch (error) {
+      logger.error(`Transaction failed in ${this.serviceName}`, {
+        context: "service",
+        metadata: {
+          service: this.serviceName,
+          primaryRepository: primaryRepoName,
+          error,
+        },
+      });
+
+      throw new TransactionError(
+        `Transaction failed in ${this.serviceName}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        { cause: error, entity: this.serviceName }
+      );
+    }
+  }
+
+  /**
    * Validate input data against a schema
    *
    * @param data The data to validate
@@ -122,5 +199,22 @@ export abstract class BaseService {
 
       throw error;
     }
+  }
+
+  /**
+   * Get a repository by name with type safety
+   *
+   * @param name The name of the repository
+   * @returns The repository instance
+   * @throws Error if the repository is not found
+   */
+  protected getRepository<T extends BaseRepository>(name: string): T {
+    const repository = this.repositories[name] as T;
+
+    if (!repository) {
+      throw new Error(`Repository '${name}' not found in ${this.serviceName}`);
+    }
+
+    return repository;
   }
 }

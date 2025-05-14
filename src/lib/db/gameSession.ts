@@ -1,5 +1,4 @@
-import { prisma } from "./prisma";
-import type { GameSession, GameSessionCreate } from "@/types/database";
+import type { GameSession } from "@/types/database";
 import { BaseRepository } from "./base/BaseRepository";
 import { Prisma } from "@/generated/prisma";
 import { RecordNotFoundError } from "@/lib/errors/DatabaseError";
@@ -17,99 +16,66 @@ export class GameSessionRepository extends BaseRepository {
   }
 
   /**
+   * Find a game session by ID
+   *
+   * @param id Game session ID
+   * @returns The game session or null if not found
+   */
+  async findById(id: string): Promise<GameSession | null> {
+    return this.executeOperation(
+      (client) =>
+        client.gameSession.findUnique({
+          where: { id },
+        }),
+      "findById"
+    );
+  }
+
+  /**
+   * Find multiple game sessions based on query parameters
+   *
+   * @param options Query options
+   * @returns Array of game sessions matching the criteria
+   */
+  async findMany(options?: {
+    where?: Record<string, any>;
+    orderBy?: Record<string, "asc" | "desc">;
+    take?: number;
+    skip?: number;
+  }): Promise<GameSession[]> {
+    return this.executeOperation(
+      (client) =>
+        client.gameSession.findMany({
+          where: options?.where,
+          orderBy: options?.orderBy,
+          take: options?.take,
+          skip: options?.skip,
+        }),
+      "findMany"
+    );
+  }
+
+  /**
    * Create a new game session
    *
    * @param data Game session creation data
    * @returns The created game session
    */
-  async createGameSession(data: GameSessionCreate) {
+  async create(
+    data: Omit<GameSession, "id" | "createdAt" | "updatedAt">
+  ): Promise<GameSession> {
     return this.executeOperation(
       (client) =>
         client.gameSession.create({
           data: {
             ...data,
-            startedAt: new Date(),
+            startedAt: data.startedAt || new Date(),
+            lastActivityAt: data.lastActivityAt || new Date(),
+            isActive: data.isActive !== undefined ? data.isActive : true,
+            sessionData: data.sessionData || {},
           },
         }),
-      "createGameSession"
-    );
-  }
-
-  /**
-   * Get a game session by ID
-   *
-   * @param id Game session ID
-   * @returns The game session
-   * @throws RecordNotFoundError if the game session does not exist
-   */
-  async getGameSessionById(id: string) {
-    return this.executeOperation(async (client) => {
-      const session = await client.gameSession.findUnique({
-        where: { id },
-      });
-
-      return this.ensureExists(session, id);
-    }, "getGameSessionById");
-  }
-
-  /**
-   * Check if a session exists
-   *
-   * @param id Session ID
-   * @returns True if the session exists, false otherwise
-   */
-  async sessionExists(id: string): Promise<boolean> {
-    return this.executeOperation(async (client) => {
-      const count = await client.gameSession.count({
-        where: { id },
-      });
-
-      return count > 0;
-    }, "sessionExists");
-  }
-
-  /**
-   * Get all game sessions for a character
-   *
-   * @param characterId Character ID
-   * @param options Optional pagination options
-   * @returns Array of game sessions
-   */
-  async getSessionsByCharacterId(
-    characterId: string,
-    options?: { limit?: number; offset?: number }
-  ) {
-    return this.executeOperation(
-      (client) =>
-        client.gameSession.findMany({
-          where: { characterId },
-          orderBy: { startedAt: "desc" },
-          ...(options?.limit ? { take: options.limit } : {}),
-          ...(options?.offset ? { skip: options.offset } : {}),
-        }),
-      "getSessionsByCharacterId"
-    );
-  }
-
-  /**
-   * Get the most recent active game session for a character
-   *
-   * @param characterId Character ID
-   * @returns The most recent active game session or null if not found
-   */
-  async getActiveSessionForCharacter(characterId: string) {
-    return this.executeOperation(
-      (client) =>
-        client.gameSession.findFirst({
-          where: {
-            characterId,
-            endedAt: null,
-          },
-          orderBy: {
-            startedAt: "desc",
-          },
-        }),
-      "getActiveSessionForCharacter"
+      "create"
     );
   }
 
@@ -121,10 +87,10 @@ export class GameSessionRepository extends BaseRepository {
    * @returns The updated game session
    * @throws RecordNotFoundError if the game session does not exist
    */
-  async updateGameSession(
+  async update(
     id: string,
-    data: Partial<Omit<GameSessionCreate, "character">>
-  ) {
+    data: Prisma.GameSessionUpdateInput
+  ): Promise<GameSession> {
     try {
       return await this.executeOperation(
         (client) =>
@@ -132,10 +98,9 @@ export class GameSessionRepository extends BaseRepository {
             where: { id },
             data,
           }),
-        "updateGameSession"
+        "update"
       );
     } catch (error) {
-      // Handle record not found error
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === "P2025"
@@ -147,13 +112,105 @@ export class GameSessionRepository extends BaseRepository {
   }
 
   /**
+   * Delete a game session
+   *
+   * @param id Game session ID
+   * @returns True if the session was deleted
+   * @throws RecordNotFoundError if the game session does not exist
+   */
+  async delete(id: string): Promise<boolean> {
+    try {
+      await this.executeOperation(
+        (client) =>
+          client.gameSession.delete({
+            where: { id },
+          }),
+        "delete"
+      );
+      return true;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2025"
+      ) {
+        throw new RecordNotFoundError("GameSession", id);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Count game sessions matching criteria
+   *
+   * @param where Filter criteria
+   * @returns Number of matching sessions
+   */
+  async count(where?: Record<string, any>): Promise<number> {
+    return this.executeOperation(
+      (client) => client.gameSession.count({ where }),
+      "count"
+    );
+  }
+
+  /**
+   * Execute operations within a transaction
+   *
+   * @param fn Function containing operations to perform within a transaction
+   * @returns Result of the transaction
+   */
+  async transaction<R>(fn: () => Promise<R>): Promise<R> {
+    return this.executeTransaction(async (tx) => fn());
+  }
+
+  /**
+   * Find all game sessions for a character
+   *
+   * @param characterId Character ID
+   * @returns Array of game sessions
+   */
+  async findByCharacterId(characterId: string): Promise<GameSession[]> {
+    return this.findMany({
+      where: { characterId },
+      orderBy: { startedAt: "desc" },
+    });
+  }
+
+  /**
+   * Find active game sessions for a character
+   *
+   * @param characterId Character ID
+   * @returns Array of active game sessions
+   */
+  async findActiveByCharacterId(characterId: string): Promise<GameSession[]> {
+    return this.findMany({
+      where: {
+        characterId,
+        isActive: true,
+        endedAt: null,
+      },
+      orderBy: { lastActivityAt: "desc" },
+    });
+  }
+
+  /**
+   * Update the last activity timestamp for a session
+   *
+   * @param id Game session ID
+   * @returns The updated game session
+   */
+  async updateLastActivity(id: string): Promise<GameSession> {
+    return this.update(id, {
+      lastActivityAt: new Date(),
+    });
+  }
+
+  /**
    * End a game session
    *
    * @param id Game session ID
    * @returns The updated game session
-   * @throws RecordNotFoundError if the game session does not exist
    */
-  async endGameSession(id: string) {
+  async endSession(id: string): Promise<GameSession> {
     return this.executeTransaction(async (tx) => {
       // Find the session first to calculate duration
       const session = await tx.gameSession.findUnique({
@@ -176,28 +233,10 @@ export class GameSessionRepository extends BaseRepository {
         data: {
           endedAt,
           durationSeconds,
+          isActive: false,
         },
       });
     });
-  }
-
-  /**
-   * Count active sessions for a character
-   *
-   * @param characterId Character ID
-   * @returns Number of active sessions
-   */
-  async countActiveSessionsForCharacter(characterId: string): Promise<number> {
-    return this.executeOperation(
-      (client) =>
-        client.gameSession.count({
-          where: {
-            characterId,
-            endedAt: null,
-          },
-        }),
-      "countActiveSessionsForCharacter"
-    );
   }
 }
 

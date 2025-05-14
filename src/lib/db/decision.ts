@@ -1,5 +1,4 @@
-import { prisma } from "./prisma";
-import type { Decision, DecisionCreate } from "@/types/database";
+import type { Decision } from "@/types/database";
 import { BaseRepository } from "./base/BaseRepository";
 import { Prisma } from "@/generated/prisma";
 import { RecordNotFoundError } from "@/lib/errors/DatabaseError";
@@ -17,12 +16,52 @@ export class DecisionRepository extends BaseRepository {
   }
 
   /**
+   * Find a decision by ID
+   *
+   * @param id Decision ID
+   * @returns The decision or null if not found
+   */
+  async findById(id: string): Promise<Decision | null> {
+    return this.executeOperation(
+      (client) =>
+        client.decision.findUnique({
+          where: { id },
+        }),
+      "findById"
+    );
+  }
+
+  /**
+   * Find multiple decisions based on query parameters
+   *
+   * @param options Query options
+   * @returns Array of decisions matching the criteria
+   */
+  async findMany(options?: {
+    where?: Record<string, any>;
+    orderBy?: Record<string, "asc" | "desc">;
+    take?: number;
+    skip?: number;
+  }): Promise<Decision[]> {
+    return this.executeOperation(
+      (client) =>
+        client.decision.findMany({
+          where: options?.where,
+          orderBy: options?.orderBy,
+          take: options?.take,
+          skip: options?.skip,
+        }),
+      "findMany"
+    );
+  }
+
+  /**
    * Create a new decision
    *
    * @param data Decision creation data
    * @returns The created decision
    */
-  async createDecision(data: DecisionCreate) {
+  async create(data: Prisma.DecisionCreateInput): Promise<Decision> {
     return this.executeOperation(
       (client) =>
         client.decision.create({
@@ -32,113 +71,7 @@ export class DecisionRepository extends BaseRepository {
             consequences: data.consequences || {},
           },
         }),
-      "createDecision"
-    );
-  }
-
-  /**
-   * Get a decision by ID
-   *
-   * @param id Decision ID
-   * @returns The decision
-   * @throws RecordNotFoundError if the decision does not exist
-   */
-  async getDecisionById(id: string) {
-    return this.executeOperation(async (client) => {
-      const decision = await client.decision.findUnique({
-        where: { id },
-      });
-
-      return this.ensureExists(decision, id);
-    }, "getDecisionById");
-  }
-
-  /**
-   * Find a decision by ID (returns null if not found)
-   *
-   * @param id Decision ID
-   * @returns The decision or null if not found
-   */
-  async findDecisionById(id: string) {
-    return this.executeOperation(
-      (client) =>
-        client.decision.findUnique({
-          where: { id },
-        }),
-      "findDecisionById"
-    );
-  }
-
-  /**
-   * Get all decisions for a game state
-   *
-   * @param gameStateId Game state ID
-   * @param options Optional pagination options
-   * @returns Array of decisions
-   */
-  async getDecisionsByGameStateId(
-    gameStateId: string,
-    options?: { limit?: number; offset?: number }
-  ) {
-    return this.executeOperation(
-      (client) =>
-        client.decision.findMany({
-          where: { gameStateId },
-          orderBy: { timestamp: "desc" },
-          ...(options?.limit ? { take: options.limit } : {}),
-          ...(options?.offset ? { skip: options.offset } : {}),
-        }),
-      "getDecisionsByGameStateId"
-    );
-  }
-
-  /**
-   * Get all decisions for a specific decision point
-   *
-   * @param decisionPointId Decision point ID
-   * @param options Optional pagination options
-   * @returns Array of decisions
-   */
-  async getDecisionsByDecisionPointId(
-    decisionPointId: string,
-    options?: { limit?: number; offset?: number }
-  ) {
-    return this.executeOperation(
-      (client) =>
-        client.decision.findMany({
-          where: { decisionPointId },
-          orderBy: { timestamp: "desc" },
-          ...(options?.limit ? { take: options.limit } : {}),
-          ...(options?.offset ? { skip: options.offset } : {}),
-        }),
-      "getDecisionsByDecisionPointId"
-    );
-  }
-
-  /**
-   * Get decisions involving specific NPCs
-   *
-   * @param npcIds NPC IDs
-   * @param options Optional pagination options
-   * @returns Array of decisions
-   */
-  async getDecisionsInvolvingNpcs(
-    npcIds: string[],
-    options?: { limit?: number; offset?: number }
-  ) {
-    return this.executeOperation(
-      (client) =>
-        client.decision.findMany({
-          where: {
-            relatedNpcIds: {
-              hasSome: npcIds,
-            },
-          },
-          orderBy: { timestamp: "desc" },
-          ...(options?.limit ? { take: options.limit } : {}),
-          ...(options?.offset ? { skip: options.offset } : {}),
-        }),
-      "getDecisionsInvolvingNpcs"
+      "create"
     );
   }
 
@@ -150,10 +83,10 @@ export class DecisionRepository extends BaseRepository {
    * @returns The updated decision
    * @throws RecordNotFoundError if the decision does not exist
    */
-  async updateDecision(
+  async update(
     id: string,
-    data: Partial<Omit<DecisionCreate, "gameState" | "playerChoice">>
-  ) {
+    data: Prisma.DecisionUpdateInput
+  ): Promise<Decision> {
     try {
       return await this.executeOperation(
         (client) =>
@@ -161,7 +94,7 @@ export class DecisionRepository extends BaseRepository {
             where: { id },
             data,
           }),
-        "updateDecision"
+        "update"
       );
     } catch (error) {
       // Handle record not found error
@@ -179,18 +112,19 @@ export class DecisionRepository extends BaseRepository {
    * Delete a decision
    *
    * @param id Decision ID
-   * @returns The deleted decision
+   * @returns True if the decision was deleted
    * @throws RecordNotFoundError if the decision does not exist
    */
-  async deleteDecision(id: string) {
+  async delete(id: string): Promise<boolean> {
     try {
-      return await this.executeOperation(
+      await this.executeOperation(
         (client) =>
           client.decision.delete({
             where: { id },
           }),
-        "deleteDecision"
+        "delete"
       );
+      return true;
     } catch (error) {
       // Handle record not found error
       if (
@@ -204,19 +138,126 @@ export class DecisionRepository extends BaseRepository {
   }
 
   /**
-   * Count decisions for a game state
+   * Count decisions matching criteria
+   *
+   * @param where Filter criteria
+   * @returns Number of matching decisions
+   */
+  async count(where?: Record<string, any>): Promise<number> {
+    return this.executeOperation(
+      (client) => client.decision.count({ where }),
+      "count"
+    );
+  }
+
+  /**
+   * Execute operations within a transaction
+   *
+   * @param fn Function containing operations to perform within a transaction
+   * @returns Result of the transaction
+   */
+  async transaction<R>(fn: () => Promise<R>): Promise<R> {
+    return this.executeTransaction(async (tx) => fn());
+  }
+
+  /**
+   * Find decisions by game state ID
    *
    * @param gameStateId Game state ID
-   * @returns Number of decisions
+   * @param options Optional pagination options
+   * @returns Array of decisions
    */
-  async countDecisionsForGameState(gameStateId: string): Promise<number> {
-    return this.executeOperation(
-      (client) =>
-        client.decision.count({
-          where: { gameStateId },
-        }),
-      "countDecisionsForGameState"
-    );
+  async findByGameStateId(
+    gameStateId: string,
+    options?: { limit?: number; offset?: number }
+  ): Promise<Decision[]> {
+    return this.findMany({
+      where: { gameStateId },
+      orderBy: { timestamp: "desc" },
+      take: options?.limit,
+      skip: options?.offset,
+    });
+  }
+
+  /**
+   * Find decisions by decision point ID
+   *
+   * @param decisionPointId Decision point ID
+   * @param options Optional pagination options
+   * @returns Array of decisions
+   */
+  async findByDecisionPointId(
+    decisionPointId: string,
+    options?: { limit?: number; offset?: number }
+  ): Promise<Decision[]> {
+    return this.findMany({
+      where: { decisionPointId },
+      orderBy: { timestamp: "desc" },
+      take: options?.limit,
+      skip: options?.offset,
+    });
+  }
+
+  /**
+   * Find decisions involving specific NPCs
+   *
+   * @param npcIds NPC IDs
+   * @param options Optional pagination options
+   * @returns Array of decisions
+   */
+  async findInvolvingNpcs(
+    npcIds: string[],
+    options?: { limit?: number; offset?: number }
+  ): Promise<Decision[]> {
+    return this.findMany({
+      where: {
+        relatedNpcIds: {
+          hasSome: npcIds,
+        },
+      },
+      orderBy: { timestamp: "desc" },
+      take: options?.limit,
+      skip: options?.offset,
+    });
+  }
+
+  /**
+   * Find recent decisions by character ID
+   *
+   * @param characterId Character ID
+   * @param limit Maximum number of decisions to return
+   * @returns Array of decisions
+   */
+  async findRecentByCharacterId(
+    characterId: string,
+    limit?: number
+  ): Promise<Decision[]> {
+    return this.executeOperation(async (client) => {
+      // First find all game state IDs associated with this character
+      const gameSessions = await client.gameSession.findMany({
+        where: { characterId },
+        select: {
+          id: true,
+          gameStates: {
+            select: { id: true },
+          },
+        },
+      });
+
+      // Extract all game state IDs
+      const gameStateIds = gameSessions.flatMap((session) =>
+        session.gameStates.map((state) => state.id)
+      );
+
+      // Find decisions for these game states
+      return client.decision.findMany({
+        where: {
+          gameStateId: { in: gameStateIds },
+        },
+        orderBy: { timestamp: "desc" },
+        take: limit,
+      });
+    }, "findRecentByCharacterId");
   }
 
   /**
@@ -225,7 +266,9 @@ export class DecisionRepository extends BaseRepository {
    * @param decisions Array of decision creation data
    * @returns Array of created decisions
    */
-  async createManyDecisions(decisions: DecisionCreate[]): Promise<Decision[]> {
+  async createMany(
+    decisions: Prisma.DecisionCreateInput[]
+  ): Promise<Decision[]> {
     return this.executeTransaction(async (tx) => {
       const results: Decision[] = [];
 

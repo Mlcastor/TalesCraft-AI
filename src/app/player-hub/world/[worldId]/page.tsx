@@ -8,8 +8,6 @@ import { getUserCharacters } from "@/lib/actions/character-actions";
 import { getWorldById } from "@/lib/actions/world-actions";
 import { getCharacterWorldStateForWorld } from "@/lib/actions/character-actions";
 import { CharacterWorldStateWithWorld } from "@/types/database";
-import { StartGameButton } from "@/components/game/StartGameButton";
-import { getRouteParamAsync } from "@/lib/utils/routeUtils";
 
 interface WorldDetailPageProps {
   params: { worldId: string };
@@ -117,13 +115,6 @@ export default async function WorldDetailPage({
               characterWorldStates={characterWorldStates}
             />
           </div>
-
-          {/* Start game button */}
-          <StartGameButton
-            characters={characters}
-            worldId={worldId}
-            characterWorldStates={characterWorldStates}
-          />
         </div>
       </div>
     </HubLayout>
