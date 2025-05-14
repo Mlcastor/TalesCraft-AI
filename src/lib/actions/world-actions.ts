@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { getAllActiveWorlds, getWorldWithRelatedData } from "@/lib/db/world";
 
 /**

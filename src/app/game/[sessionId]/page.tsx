@@ -51,7 +51,7 @@ type GamePageProps = {
  * @returns The game page with proper server-side validation
  */
 export default async function GamePage({ params }: GamePageProps) {
-  const { sessionId } = params;
+  const { sessionId } = await params;
 
   try {
     // Verify the session exists and is active

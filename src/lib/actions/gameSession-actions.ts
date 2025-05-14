@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { ValidationError } from "@/lib/errors/DatabaseError";
 import { gameEngine } from "@/lib/game-engine";
 import { gameSessionService } from "@/lib/services/GameSessionService";
@@ -56,9 +55,6 @@ export async function startGame(
         worldId,
       },
     });
-
-    // Revalidate player hub page to show the new session
-    revalidatePath("/player-hub");
 
     return { session, initialState };
   } catch (error) {
@@ -150,9 +146,6 @@ export async function endGame(sessionId: string): Promise<GameSession> {
         duration: session.durationSeconds,
       },
     });
-
-    // Revalidate player hub page to update session list
-    revalidatePath("/player-hub");
 
     return session;
   } catch (error) {

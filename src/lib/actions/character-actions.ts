@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { characterRepository } from "@/lib/db/character";
 import {
   getCharacterWorldState,
@@ -43,9 +42,6 @@ export async function createCharacter(data: {
       isActive: true,
       lastPlayedAt: null,
     });
-
-    // Revalidate the hub page to show the new character
-    revalidatePath("/player-hub");
 
     return { success: true, character };
   } catch (error) {

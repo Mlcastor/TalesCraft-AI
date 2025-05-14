@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth/session";
-import { getOrCreateGameSession } from "@/lib/actions/game-session-actions";
+import { getOrCreateGameSession } from "@/lib/actions/gameSession-actions";
 
 interface PlayGamePageProps {
   params: {

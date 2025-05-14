@@ -20,7 +20,6 @@ import {
 import { prisma } from "@/lib/db/prisma";
 import { logger } from "@/lib/utils/logger";
 import { User } from "@/types/authTypes";
-import { headers as getHeaders } from "next/headers";
 
 // Validation schemas
 const loginSchema = z.object({

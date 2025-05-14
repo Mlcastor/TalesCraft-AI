@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { ValidationError } from "@/lib/errors/DatabaseError";
 import { gameEngine } from "@/lib/game-engine";
 import { narrativeService } from "@/lib/services/NarrativeService";
