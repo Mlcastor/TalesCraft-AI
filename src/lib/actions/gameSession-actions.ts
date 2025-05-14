@@ -1,61 +1,216 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { GameSession } from "@/types/database";
 import { ValidationError } from "@/lib/errors/DatabaseError";
+import { gameEngine } from "@/lib/game-engine";
 import { gameSessionService } from "@/lib/services/GameSessionService";
-import { gameStateService } from "@/lib/services/GameStateService";
 import { logger } from "@/lib/utils/logger";
+import { GameSession } from "@/types/game";
+import { isNotEmpty } from "@/lib/utils/validation";
+import { sessionController } from "@/lib/game-engine/SessionController";
 
 /**
- * Get or create a game session for a character in a world
+ * Start a new game session
  *
- * @param characterId The character ID
- * @param worldId The world ID
- * @returns The session ID for the game session
+ * @param characterId The character ID to use for the session
+ * @param worldId The world ID to use for the session
+ * @returns Object containing the created session and initial game state
  */
-export async function getOrCreateGameSession(
+export async function startGame(
   characterId: string,
   worldId: string
-): Promise<string> {
+): Promise<{
+  session: GameSession;
+  initialState: any;
+}> {
   try {
-    // First check if the character has any active sessions in this world
-    const activeSessions = await gameSessionService.getSessions(characterId);
-
-    const activeSessionInWorld = activeSessions.find(
-      (session) =>
-        session.isActive &&
-        (session.sessionData as Record<string, any>)?.worldId === worldId
-    );
-
-    // If an active session exists, return its ID
-    if (activeSessionInWorld) {
-      // Update activity timestamp
-      await gameSessionService.updateSessionActivity(activeSessionInWorld.id);
-      return activeSessionInWorld.id;
+    // Validate inputs
+    if (!isNotEmpty(characterId)) {
+      throw new ValidationError(
+        "Character ID is required",
+        { characterId: "Character ID is required" },
+        { entity: "gameSession-actions" }
+      );
     }
 
-    // Create a new session
-    const newSession = await gameSessionService.createSession(
+    if (!isNotEmpty(worldId)) {
+      throw new ValidationError(
+        "World ID is required",
+        { worldId: "World ID is required" },
+        { entity: "gameSession-actions" }
+      );
+    }
+
+    // Use the GameEngine to start the game
+    const { session, initialState } = await gameEngine.startGame(
       characterId,
       worldId
     );
-    logger.info(
-      `Created new game session ${newSession.id} for character ${characterId} in world ${worldId}`
-    );
 
-    return newSession.id;
-  } catch (error) {
-    logger.error("Failed to get or create game session", {
+    logger.info("Game started", {
       context: "server-action",
       metadata: {
-        action: "getOrCreateGameSession",
+        action: "startGame",
+        sessionId: session.id,
+        characterId,
+        worldId,
+      },
+    });
+
+    // Revalidate player hub page to show the new session
+    revalidatePath("/player-hub");
+
+    return { session, initialState };
+  } catch (error) {
+    logger.error("Failed to start game", {
+      context: "server-action",
+      metadata: {
+        action: "startGame",
         characterId,
         worldId,
         error,
       },
     });
+
+    throw error;
+  }
+}
+
+/**
+ * Load an existing game session
+ *
+ * @param sessionId The session ID to load
+ * @returns Object containing the loaded session and game state
+ */
+export async function loadGame(sessionId: string): Promise<{
+  session: GameSession;
+  state: any;
+}> {
+  try {
+    // Validate inputs
+    if (!isNotEmpty(sessionId)) {
+      throw new ValidationError(
+        "Session ID is required",
+        { sessionId: "Session ID is required" },
+        { entity: "gameSession-actions" }
+      );
+    }
+
+    // Use the GameEngine to load the game
+    const { session, state } = await gameEngine.loadGame(sessionId);
+
+    logger.info("Game loaded", {
+      context: "server-action",
+      metadata: {
+        action: "loadGame",
+        sessionId,
+      },
+    });
+
+    return { session, state };
+  } catch (error) {
+    logger.error("Failed to load game", {
+      context: "server-action",
+      metadata: {
+        action: "loadGame",
+        sessionId,
+        error,
+      },
+    });
+
+    throw error;
+  }
+}
+
+/**
+ * End an active game session
+ *
+ * @param sessionId The session ID to end
+ * @returns The ended game session
+ */
+export async function endGame(sessionId: string): Promise<GameSession> {
+  try {
+    // Validate inputs
+    if (!isNotEmpty(sessionId)) {
+      throw new ValidationError(
+        "Session ID is required",
+        { sessionId: "Session ID is required" },
+        { entity: "gameSession-actions" }
+      );
+    }
+
+    // Use the GameEngine to end the game
+    const session = await gameEngine.endGame(sessionId);
+
+    logger.info("Game ended", {
+      context: "server-action",
+      metadata: {
+        action: "endGame",
+        sessionId,
+        duration: session.durationSeconds,
+      },
+    });
+
+    // Revalidate player hub page to update session list
+    revalidatePath("/player-hub");
+
+    return session;
+  } catch (error) {
+    logger.error("Failed to end game", {
+      context: "server-action",
+      metadata: {
+        action: "endGame",
+        sessionId,
+        error,
+      },
+    });
+
+    throw error;
+  }
+}
+
+/**
+ * Get all game sessions for a character
+ *
+ * @param characterId The character ID to get sessions for
+ * @returns Array of game sessions
+ */
+export async function getGameSessions(
+  characterId: string
+): Promise<GameSession[]> {
+  try {
+    // Validate inputs
+    if (!isNotEmpty(characterId)) {
+      throw new ValidationError(
+        "Character ID is required",
+        { characterId: "Character ID is required" },
+        { entity: "gameSession-actions" }
+      );
+    }
+
+    // Use the GameEngine to get the game sessions
+    const sessions = await gameEngine.getGameSessions(characterId);
+
+    logger.debug("Game sessions retrieved", {
+      context: "server-action",
+      metadata: {
+        action: "getGameSessions",
+        characterId,
+        sessionCount: sessions.length,
+      },
+    });
+
+    return sessions;
+  } catch (error) {
+    logger.error("Failed to get game sessions", {
+      context: "server-action",
+      metadata: {
+        action: "getGameSessions",
+        characterId,
+        error,
+      },
+    });
+
     throw error;
   }
 }
@@ -71,7 +226,18 @@ export async function verifyGameSession(
   sessionId: string
 ): Promise<GameSession> {
   try {
-    const session = await gameSessionService.getSession(sessionId);
+    // Validate input
+    if (!isNotEmpty(sessionId)) {
+      throw new ValidationError(
+        "Session ID is required",
+        { sessionId: "Session ID is required" },
+        { entity: "gameSession-actions" }
+      );
+    }
+
+    // Use the SessionController to get the session
+    // This handles the proper type conversion from DB to engine types
+    const session = await sessionController.getSession(sessionId);
 
     if (!session) {
       logger.warn(`Game session ${sessionId} not found`);
@@ -92,7 +258,7 @@ export async function verifyGameSession(
     }
 
     // Update the session's activity timestamp
-    await gameSessionService.updateSessionActivity(sessionId);
+    await sessionController.updateSessionActivity(sessionId);
 
     return session;
   } catch (error) {
@@ -110,60 +276,47 @@ export async function verifyGameSession(
 }
 
 /**
- * End a game session
+ * Get or create a game session for a character in a world
  *
- * @param sessionId The session ID to end
- * @returns The ended game session
+ * @param characterId The character ID
+ * @param worldId The world ID
+ * @returns The session ID for the game session
  */
-export async function endGameSession(sessionId: string): Promise<GameSession> {
+export async function getOrCreateGameSession(
+  characterId: string,
+  worldId: string
+): Promise<string> {
   try {
-    const session = await gameSessionService.endSession(sessionId);
+    // First check if the character has any active sessions in this world
+    const dbSessions = await gameSessionService.getSessions(characterId);
 
-    // Revalidate any cached pages that might show session lists
-    revalidatePath("/player-hub");
+    const activeSessionInWorld = dbSessions.find(
+      (session) =>
+        session.isActive &&
+        (session.sessionData as Record<string, any>)?.worldId === worldId
+    );
 
-    return session;
+    // If an active session exists, return its ID
+    if (activeSessionInWorld) {
+      // Update activity timestamp
+      await gameSessionService.updateSessionActivity(activeSessionInWorld.id);
+      return activeSessionInWorld.id;
+    }
+
+    // If no active session exists, create a new one using startGame
+    const { session } = await startGame(characterId, worldId);
+
+    return session.id;
   } catch (error) {
-    logger.error("Failed to end game session", {
+    logger.error("Failed to get or create game session", {
       context: "server-action",
       metadata: {
-        action: "endGameSession",
-        sessionId,
+        action: "getOrCreateGameSession",
+        characterId,
+        worldId,
         error,
       },
     });
-
-    throw error;
-  }
-}
-
-/**
- * Get the latest game state for a session, useful for resuming gameplay
- *
- * @param sessionId The session ID
- * @returns The latest game state ID, or null if none exists
- */
-export async function getLatestGameStateForSession(
-  sessionId: string
-): Promise<string | null> {
-  try {
-    // Verify the session exists and is active
-    await verifyGameSession(sessionId);
-
-    // Get the latest game state
-    const latestState = await gameStateService.getLatestGameState(sessionId);
-
-    return latestState?.id || null;
-  } catch (error) {
-    logger.error("Failed to get latest game state for session", {
-      context: "server-action",
-      metadata: {
-        action: "getLatestGameStateForSession",
-        sessionId,
-        error,
-      },
-    });
-
     throw error;
   }
 }
