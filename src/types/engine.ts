@@ -208,11 +208,38 @@ export interface GameEngineProviderProps {
  * Game engine context
  */
 export interface GameEngineContext {
+  // Core state
   engine: GameEngine | null;
   currentSession: GameSession | null;
   currentState: GameState | null;
   isLoading: boolean;
   error: string | null;
+
+  // Derived state for optimization
+  currentWorldId?: string;
+  currentCharacterId?: string;
+  isGameActive: boolean;
+
+  // Core game operations
+  loadGame: (sessionId: string) => Promise<{
+    session: GameSession;
+    state: GameState;
+  }>;
+
+  saveGameState: (
+    sessionId: string,
+    savePointName?: string
+  ) => Promise<GameState>;
+
+  makeDecision: (
+    sessionId: string,
+    decisionIndex: number
+  ) => Promise<{
+    narrativeResponse: NarrativeResponse;
+    updatedState: GameState;
+  }>;
+
+  clearError: () => void;
 }
 
 /**

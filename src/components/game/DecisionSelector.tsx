@@ -1,12 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
+import { useDecisions, Decision } from "@/hooks/game/useDecisions";
 import { provideFeedback } from "@/lib/utils/feedback";
-
-interface Decision {
-  text: string;
-  consequences?: string;
-}
 
 interface DecisionSelectorProps {
   decisions: Decision[];
@@ -20,6 +16,7 @@ interface DecisionSelectorProps {
 
 /**
  * Component for displaying decision options and handling player choices
+ * Uses useDecisions hook for state management
  * Features:
  * - Keyboard shortcuts (1, 2, 3 keys) for quick selection
  * - Hover effects for better UI feedback
@@ -35,7 +32,13 @@ export function DecisionSelector({
   soundEffectsVolume = 50,
   hapticFeedbackEnabled = true,
 }: DecisionSelectorProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // Use the decisions hook for internal state management
+  // We're not using the full hook capabilities to maintain backward compatibility
+  const { hoveredDecisionIndex, setHoveredDecisionIndex } = useDecisions({
+    sessionId: "", // Not needed for this usage
+    initialDecisions: decisions,
+    keyboardShortcutsEnabled: false, // We'll handle keyboard shortcuts here for backward compatibility
+  });
 
   // Handle decision selection with feedback
   const selectDecision = useCallback(
@@ -47,7 +50,7 @@ export function DecisionSelector({
         provideFeedback(
           "click",
           soundEffectsVolume,
-          hapticFeedbackEnabled ? [50] : 0
+          hapticFeedbackEnabled ? [50] : undefined
         );
       }
 
@@ -91,16 +94,16 @@ export function DecisionSelector({
           <button
             key={index}
             className={`text-left p-3 rounded-md border border-border transition-all duration-200 ${
-              hoveredIndex === index
+              hoveredDecisionIndex === index
                 ? "bg-accent text-accent-foreground shadow-md translate-x-1"
                 : "hover:bg-accent hover:text-accent-foreground"
             } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => selectDecision(index)}
             disabled={isDisabled}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            onFocus={() => setHoveredIndex(index)}
-            onBlur={() => setHoveredIndex(null)}
+            onMouseEnter={() => setHoveredDecisionIndex(index)}
+            onMouseLeave={() => setHoveredDecisionIndex(null)}
+            onFocus={() => setHoveredDecisionIndex(index)}
+            onBlur={() => setHoveredDecisionIndex(null)}
             aria-label={`Choose option ${index + 1}: ${decision.text}`}
           >
             <div className="flex items-center">
@@ -113,7 +116,7 @@ export function DecisionSelector({
             {showConsequences && decision.consequences && (
               <div
                 className={`mt-2 text-sm text-muted-foreground italic pl-8 transition-opacity duration-200 ${
-                  hoveredIndex === index ? "opacity-100" : "opacity-70"
+                  hoveredDecisionIndex === index ? "opacity-100" : "opacity-70"
                 }`}
               >
                 {decision.consequences}

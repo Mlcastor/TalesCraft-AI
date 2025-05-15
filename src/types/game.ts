@@ -74,8 +74,8 @@ export interface Ability {
 export interface World {
   id: string;
   name: string;
-  description: string;
-  thumbnailUrl?: string;
+  description: string | null;
+  thumbnailUrl?: string | null;
   isActive: boolean;
   createdAt: Date;
 }

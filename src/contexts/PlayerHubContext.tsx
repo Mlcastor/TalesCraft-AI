@@ -17,7 +17,7 @@ import {
   getUserCharacters,
   getAllCharacterWorldStates,
 } from "@/lib/actions/character-actions";
-import { getActiveWorlds } from "@/lib/actions/world-actions";
+import { getAllActiveWorlds } from "@/lib/actions/world-actions";
 
 /**
  * Player Hub context interface
@@ -142,7 +142,7 @@ export function PlayerHubProvider({
       setCharacters(charactersResult || []);
 
       // Load worlds
-      const worldsResult = await getActiveWorlds();
+      const worldsResult = await getAllActiveWorlds();
       setWorlds(worldsResult || []);
 
       // Load character-world states

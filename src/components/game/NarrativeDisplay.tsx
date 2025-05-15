@@ -1,7 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { speakText } from "@/lib/utils/feedback";
+import { useEffect, useState } from "react";
+import {
+  useNarrativeTextState,
+  useNarrativeHistory,
+  useNarrativeTextActions,
+  useNarrativeSpeech,
+  useNarrativeScrollRef,
+} from "@/hooks/game/useNarrativeSelectors";
+import { useNarrativeContext } from "@/hooks/game/useNarrativeContext";
 
 interface NarrativeDisplayProps {
   narrative?: {
@@ -18,6 +25,7 @@ interface NarrativeDisplayProps {
 
 /**
  * Component for displaying the game narrative and history
+ * Uses selector hooks for efficient rendering
  * Features:
  * - Text animation typing effect
  * - Text-to-speech support
@@ -29,11 +37,6 @@ export function NarrativeDisplay({
   textSpeed = "medium",
   textToSpeechEnabled = false,
 }: NarrativeDisplayProps) {
-  const [displayedText, setDisplayedText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [showFullHistory, setShowFullHistory] = useState(false);
-  const historyContainerRef = useRef<HTMLDivElement>(null);
-
   // Convert to typing speed in milliseconds
   const typingSpeed = (() => {
     switch (textSpeed) {
@@ -50,50 +53,47 @@ export function NarrativeDisplay({
     }
   })();
 
-  // Handle text animation effect
+  // Initialize context with props - this is still needed for initial setup
+  useNarrativeContext({
+    initialText: narrative?.text || "",
+    initialHistory: narrative?.history || [],
+    textToSpeechEnabled,
+    autoScroll: true,
+  });
+
+  // Use selector hooks for efficient rendering
+  const { narrativeText: displayedText, isTyping } = useNarrativeTextState();
+  const narrativeHistory = useNarrativeHistory();
+  const { typeNarrativeText, skipTypingAnimation } = useNarrativeTextActions();
+  const { toggleTextToSpeech } = useNarrativeSpeech();
+  const narrativeEndRef = useNarrativeScrollRef();
+
+  // Track if we've shown full history
+  const [showFullHistory, setShowFullHistory] = useState(false);
+
+  // Initialize narrative when it changes
   useEffect(() => {
-    if (!narrative?.text || typingSpeed === 0) {
-      // If instant, just set the text
-      setDisplayedText(narrative?.text || "");
-      setIsTyping(false);
-      return;
+    if (!narrative?.text) return;
+
+    // Update text-to-speech state
+    toggleTextToSpeech(textToSpeechEnabled);
+
+    // If instant speed selected, skip animation
+    if (typingSpeed === 0) {
+      // Just set the text without animation
+      skipTypingAnimation();
+    } else if (narrative.text) {
+      // Otherwise start typing animation
+      typeNarrativeText(narrative.text, typingSpeed);
     }
-
-    setIsTyping(true);
-    setDisplayedText(""); // Reset for new animation
-
-    let currentIndex = 0;
-    const textLength = narrative.text.length;
-
-    // Create typing animation
-    const typingInterval = setInterval(() => {
-      if (currentIndex < textLength) {
-        setDisplayedText((prev) => prev + narrative.text.charAt(currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-        setIsTyping(false);
-      }
-    }, typingSpeed);
-
-    // Text-to-speech if enabled
-    if (textToSpeechEnabled && narrative.text) {
-      speakText(narrative.text);
-    }
-
-    // Clean up interval on unmount or narrative change
-    return () => {
-      clearInterval(typingInterval);
-    };
-  }, [narrative?.text, typingSpeed, textToSpeechEnabled]);
-
-  // Scroll history to bottom when new content is added
-  useEffect(() => {
-    if (historyContainerRef.current && !showFullHistory) {
-      historyContainerRef.current.scrollTop =
-        historyContainerRef.current.scrollHeight;
-    }
-  }, [narrative?.history, showFullHistory]);
+  }, [
+    narrative?.text,
+    typingSpeed,
+    textToSpeechEnabled,
+    typeNarrativeText,
+    skipTypingAnimation,
+    toggleTextToSpeech,
+  ]);
 
   // Toggle history view
   const toggleHistory = () => {
@@ -124,16 +124,16 @@ export function NarrativeDisplay({
 
   // Get visible history - either all or just recent entries
   const visibleHistory = showFullHistory
-    ? narrative.history
-    : narrative.history.slice(-5);
+    ? narrativeHistory
+    : narrativeHistory.slice(-5);
 
   // Show "Show more/less" button only if there's enough history
-  const showHistoryToggle = narrative.history.length > 5;
+  const showHistoryToggle = narrativeHistory.length > 5;
 
   return (
     <div className="p-4 bg-muted/30 rounded-lg overflow-hidden h-96 flex flex-col relative">
       <div
-        ref={historyContainerRef}
+        ref={narrativeEndRef}
         className={`flex-1 overflow-y-auto mb-4 ${
           showFullHistory ? "pb-4" : ""
         }`}
@@ -194,10 +194,7 @@ export function NarrativeDisplay({
         {/* Skip animation button */}
         {isTyping && textSpeed !== "instant" && (
           <button
-            onClick={() => {
-              setDisplayedText(narrative.text);
-              setIsTyping(false);
-            }}
+            onClick={skipTypingAnimation}
             className="text-xs text-primary hover:underline mt-2"
           >
             Skip
@@ -207,7 +204,7 @@ export function NarrativeDisplay({
         {/* Text-to-speech button */}
         {!isTyping && textToSpeechEnabled && narrative.text && (
           <button
-            onClick={() => speakText(narrative.text)}
+            onClick={() => toggleTextToSpeech(true)}
             className="text-xs text-primary hover:underline mt-2 ml-2"
             aria-label="Read aloud"
           >

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getOrCreateGameSession } from "@/lib/actions/game-session-actions";
+import { useSafeSession } from "@/contexts/SafeSessionContext";
+import { useGameActions } from "@/hooks/game/useGameActions";
 
 interface Character {
   id: string;
@@ -22,22 +23,29 @@ export default function CharacterSelectionForWorld({
   worldId,
 }: CharacterSelectionProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { loadSession } = useSafeSession();
+  const gameActions = useGameActions();
+  const [uiError, setUiError] = useState<string | null>(null);
 
   const handleCharacterSelect = async (characterId: string) => {
+    setUiError(null);
+    gameActions.clearErrors();
+
     try {
-      setIsLoading(true);
-      setError(null);
+      const sessionId = await gameActions.startGame(characterId, worldId);
 
-      // Get the game session ID
-      const sessionId = await getOrCreateGameSession(characterId, worldId);
+      if (!sessionId) {
+        setUiError(gameActions.status.error || "Failed to start game session.");
+        return;
+      }
 
-      // Handle the redirect in the client component
+      await loadSession(sessionId);
+
       router.push(`/game/${sessionId}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to start game");
-      setIsLoading(false);
+      const message =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      setUiError(message);
     }
   };
 
@@ -60,13 +68,15 @@ export default function CharacterSelectionForWorld({
     );
   }
 
+  const displayError = uiError || gameActions.status.error;
+
   return (
     <div className="p-6 rounded-lg border border-border">
       <h3 className="text-xl font-bold mb-4">Select Character</h3>
 
-      {error && (
+      {displayError && (
         <div className="p-3 mb-4 bg-destructive/10 text-destructive rounded-md">
-          {error}
+          {displayError}
         </div>
       )}
 
@@ -84,10 +94,13 @@ export default function CharacterSelectionForWorld({
             </p>
             <Button
               onClick={() => handleCharacterSelect(character.id)}
-              disabled={isLoading}
+              disabled={gameActions.status.isLoading}
               className="w-full"
             >
-              {isLoading ? "Loading..." : "Select Character"}
+              {gameActions.status.isLoading &&
+              gameActions.status.lastActionType === "startGame"
+                ? "Starting Game..."
+                : "Select Character"}
             </Button>
           </div>
         ))}

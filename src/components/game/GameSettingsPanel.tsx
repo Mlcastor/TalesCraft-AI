@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useGameSettings, GameSettings } from "@/contexts/GameSettingsContext";
+import { GameSettings } from "@/contexts/GameSettingsContext";
 import {
   Dialog,
   DialogContent,
@@ -9,13 +9,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { X, Save, RotateCcw, Settings } from "lucide-react";
+import {
+  useAllGameSettings,
+  useSettingsActions,
+} from "@/hooks/game/useGameSettingsSelectors";
 
 /**
  * Game settings panel component
  * Allows players to adjust game settings like text size, sound, accessibility, etc.
  */
 export function GameSettingsPanel() {
-  const { settings, updateSettings, resetSettings } = useGameSettings();
+  const settings = useAllGameSettings();
+  const { updateSettings, resetSettings } = useSettingsActions();
   const [isOpen, setIsOpen] = useState(false);
   const [tempSettings, setTempSettings] = useState<GameSettings>(settings);
 

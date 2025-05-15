@@ -1,9 +1,16 @@
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { verifyGameSession } from "@/lib/actions/gameSession-actions";
-import { getLatestGameStateForSession } from "@/lib/actions/game-state-actions";
+import {
+  getLatestGameStateForSession,
+  getGameState,
+} from "@/lib/actions/game-state-actions";
+import {
+  getWorldById,
+  getWorldWithRelatedData,
+} from "@/lib/actions/world-actions";
 import { logger } from "@/lib/utils/logger";
-import { GameContainer } from "@/components/game/GameContainer";
+import { GameContainer } from "@/components/containers";
 
 // Define dynamic metadata generation for SEO optimization
 export async function generateMetadata(
@@ -47,6 +54,12 @@ type GamePageProps = {
 /**
  * Game page that renders a specific game session
  *
+ * This component:
+ * 1. Validates the session
+ * 2. Fetches the latest game state
+ * 3. Fetches world data if a worldId exists
+ * 4. Passes all necessary data to the GameContainer
+ *
  * @param props Component props containing session ID
  * @returns The game page with proper server-side validation
  */
@@ -68,10 +81,84 @@ export default async function GamePage({ params }: GamePageProps) {
       redirect("/player-hub");
     }
 
-    // Return the game container with the session ID and latest state ID
+    // Get the game state
+    const gameState = await getGameState(latestStateId);
+
+    if (!gameState) {
+      logger.error("Game state not found despite having a valid ID", {
+        context: "server-component",
+        metadata: { component: "GamePage", sessionId, latestStateId },
+      });
+      return notFound();
+    }
+
+    // Initialize world data variables
+    let world = null;
+    let worldWithRelatedData = null;
+
+    // Fetch world data directly if we have a worldId
+    if (gameState.worldId) {
+      logger.info("Fetching world data for game page", {
+        context: "server-component",
+        metadata: {
+          component: "GamePage",
+          sessionId,
+          worldId: gameState.worldId,
+        },
+      });
+
+      try {
+        // Fetch in parallel for performance
+        [world, worldWithRelatedData] = await Promise.all([
+          getWorldById(gameState.worldId),
+          getWorldWithRelatedData(gameState.worldId),
+        ]);
+
+        logger.debug("World data fetched successfully", {
+          context: "server-component",
+          metadata: {
+            component: "GamePage",
+            sessionId,
+            worldId: gameState.worldId,
+            hasWorld: !!world,
+            hasWorldWithRelatedData: !!worldWithRelatedData,
+            worldName: world?.name,
+            locationsCount: worldWithRelatedData?.locations?.length,
+          },
+        });
+      } catch (error) {
+        logger.error("Failed to fetch world data", {
+          context: "server-component",
+          metadata: {
+            component: "GamePage",
+            sessionId,
+            worldId: gameState.worldId,
+            error,
+          },
+        });
+        // Continue without world data rather than failing the entire page
+      }
+    } else {
+      logger.warn("No worldId found in game state", {
+        context: "server-component",
+        metadata: {
+          component: "GamePage",
+          sessionId,
+          gameStateId: latestStateId,
+        },
+      });
+    }
+
+    // Return the game container with all required data
     return (
       <main className="flex flex-col h-full w-full">
-        <GameContainer sessionId={sessionId} initialStateId={latestStateId} />
+        <GameContainer
+          sessionId={sessionId}
+          initialStateId={latestStateId}
+          initialGameState={gameState}
+          world={world}
+          worldWithRelatedData={worldWithRelatedData}
+        />
       </main>
     );
   } catch (error) {
