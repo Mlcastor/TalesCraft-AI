@@ -8,7 +8,7 @@ import {
   getUserCharacters,
   getAllCharacterWorldStates,
 } from "@/lib/actions/character-actions";
-import { getAllActiveWorlds } from "@/lib/actions/world-actions";
+import { getActiveWorlds } from "@/lib/actions/world-actions";
 
 export const metadata: Metadata = {
   title: "Player Hub | Tales Craft AI",
@@ -29,7 +29,7 @@ export default async function PlayerHubPage() {
 
   // Fetch characters and worlds
   const characters = (await getUserCharacters()) || [];
-  const worlds = await getAllActiveWorlds();
+  const worlds = await getActiveWorlds();
 
   // Get character-world states for each character
   const characterWorldStatesByCharacter = await getAllCharacterWorldStates(
