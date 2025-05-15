@@ -4,7 +4,7 @@ import { ValidationError } from "@/lib/errors/DatabaseError";
 import { gameEngine } from "@/lib/game-engine";
 import { gameSessionService } from "@/lib/services/GameSessionService";
 import { logger } from "@/lib/utils/logger";
-import { GameSession } from "@/types/game";
+import { GameSession, GameState } from "@/types/game";
 import { isNotEmpty } from "@/lib/utils/validation";
 import { sessionController } from "@/lib/game-engine/SessionController";
 
@@ -20,7 +20,7 @@ export async function startGame(
   worldId: string
 ): Promise<{
   session: GameSession;
-  initialState: any;
+  initialState: GameState;
 }> {
   try {
     // Validate inputs
@@ -80,7 +80,7 @@ export async function startGame(
  */
 export async function loadGame(sessionId: string): Promise<{
   session: GameSession;
-  state: any;
+  state: GameState;
 }> {
   try {
     // Validate inputs

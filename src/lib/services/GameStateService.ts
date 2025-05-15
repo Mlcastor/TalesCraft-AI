@@ -2,7 +2,8 @@ import { ValidationError } from "@/lib/errors/DatabaseError";
 import { BaseService } from "./base/BaseService";
 import { GameStateRepository } from "@/lib/db/gameState";
 import { GameSessionRepository } from "@/lib/db/gameSession";
-import type { GameState, NPCState } from "@/types/database";
+import type { GameState as DbGameState, NPCState } from "@/types/database";
+import type { GameState } from "@/types/game"; // Import the full GameState type
 import { isNotEmpty } from "@/lib/utils/validation";
 import { Prisma } from "@/generated/prisma";
 
@@ -30,6 +31,34 @@ export class GameStateService extends BaseService {
     });
     this.gameStateRepository = gameStateRepository;
     this.gameSessionRepository = gameSessionRepository;
+  }
+
+  /**
+   * Convert database state to a fully typed GameState object
+   * This centralizes the conversion logic to avoid duplication
+   *
+   * @param dbState - The database state to convert
+   * @returns A properly typed GameState object
+   */
+  public convertDbStateToGameState(dbState: DbGameState): GameState {
+    return {
+      id: dbState.id,
+      sessionId: dbState.sessionId,
+      characterId: dbState.characterId,
+      worldId: dbState.worldId ?? undefined,
+      locationId: dbState.locationId ?? undefined,
+      savePointName: dbState.savePointName ?? undefined,
+      currentLocation: dbState.currentLocation,
+      saveTimestamp: dbState.saveTimestamp,
+      narrativeContext: dbState.narrativeContext ?? undefined,
+      aiContext: dbState.aiContext as Record<string, any>,
+      characterState: dbState.characterState as Record<string, any>,
+      worldState: dbState.worldState as Record<string, any>,
+      isAutosave: dbState.isAutosave,
+      isCompleted: dbState.isCompleted,
+      isLoading: false,
+      error: null,
+    };
   }
 
   /**
@@ -133,7 +162,8 @@ export class GameStateService extends BaseService {
         );
       }
 
-      return await this.gameStateRepository.findById(stateId);
+      const dbState = await this.gameStateRepository.findById(stateId);
+      return dbState ? this.convertDbStateToGameState(dbState) : null;
     }, "getGameState");
   }
 
@@ -163,7 +193,10 @@ export class GameStateService extends BaseService {
         );
       }
 
-      return await this.gameStateRepository.findLatestBySessionId(sessionId);
+      const dbState = await this.gameStateRepository.findLatestBySessionId(
+        sessionId
+      );
+      return dbState ? this.convertDbStateToGameState(dbState) : null;
     }, "getLatestGameState");
   }
 
@@ -293,15 +326,15 @@ export class GameStateService extends BaseService {
       }
 
       // Get the state
-      const gameState = await this.gameStateRepository.findById(stateId);
-      if (!gameState) {
+      const dbState = await this.gameStateRepository.findById(stateId);
+      if (!dbState) {
         return null;
       }
 
       // Update session activity
-      await this.gameSessionRepository.updateLastActivity(gameState.sessionId);
+      await this.gameSessionRepository.updateLastActivity(dbState.sessionId);
 
-      return gameState;
+      return this.convertDbStateToGameState(dbState);
     }, "loadGameState");
   }
 
@@ -322,8 +355,8 @@ export class GameStateService extends BaseService {
       }
 
       // Get the base state
-      const gameState = await this.gameStateRepository.findById(stateId);
-      if (!gameState) {
+      const dbState = await this.gameStateRepository.findById(stateId);
+      if (!dbState) {
         return null;
       }
 
@@ -331,7 +364,7 @@ export class GameStateService extends BaseService {
       // such as NPCs, items, decisions history, narrative history, etc.
       // For the MVP, we'll focus on just loading the base state
 
-      return gameState;
+      return this.convertDbStateToGameState(dbState);
     }, "reconstructGameState");
   }
 }

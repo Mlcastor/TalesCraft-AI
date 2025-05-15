@@ -2,7 +2,6 @@
 
 import { GameState } from "@/types/game";
 import { ValidationError } from "@/lib/errors/DatabaseError";
-import { gameEngine } from "@/lib/game-engine";
 import { gameStateService } from "@/lib/services/GameStateService";
 import { logger } from "@/lib/utils/logger";
 import { verifyGameSession } from "./gameSession-actions";

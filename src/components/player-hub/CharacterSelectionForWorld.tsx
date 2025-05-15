@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getOrCreateGameSession } from "@/lib/actions/game-session-actions";
+import { getOrCreateGameSession } from "@/lib/actions/gameSession-actions";
 
 interface Character {
   id: string;

@@ -8,105 +8,146 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useGame } from "./GameProvider";
-import { makeGameDecision, saveGameState } from "@/lib/actions/game-actions";
+import { useGame } from "@/contexts/GameProvider";
+import { saveGameState } from "@/lib/actions/game-state-actions";
+import { Input } from "@/components/ui/input";
+import { logger } from "@/lib/utils/logger";
+
+/**
+ * Defines the structure of a decision option.
+ * This should be consistent with the `GameState` type's decision structure.
+ */
+interface DecisionOption {
+  text: string;
+  consequences?: string; // Optional field for consequences
+}
+
+/**
+ * Fallback decision data to display when no actual game data is available.
+ * Useful for UI development and previewing the component's appearance.
+ */
+const fallbackDecisions: DecisionOption[] = [
+  { text: "Venture down the overgrown trail into the dark thicket." },
+  { text: "Follow the stone-paved road towards the distant light." },
+  { text: "Examine the ancient archway for inscriptions or clues." },
+  { text: "Call out into the mist to check for any response." },
+];
 
 export default function GameControls() {
-  const { state, dispatch } = useGame();
+  const { state, makePlayerDecision } = useGame();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleDecision = async (index: number) => {
-    try {
-      // Update local state to show player's choice
-      dispatch({ type: "MAKE_DECISION", payload: { index } });
-
-      // Get the session ID from the URL
-      const sessionId = window.location.pathname.split("/").pop() as string;
-
-      // Make the decision via server action
-      const result = await makeGameDecision(sessionId, index);
-
-      // Update game state with new narrative
-      dispatch({
-        type: "UPDATE_NARRATIVE",
-        payload: {
-          text: result.narrativeText,
-          decisions: result.newDecisionPoints,
-        },
-      });
-    } catch (error) {
-      dispatch({
-        type: "SET_ERROR",
-        payload: error instanceof Error ? error.message : "An error occurred",
-      });
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
+    await makePlayerDecision(index);
   };
 
   const handleSaveGame = async () => {
+    if (!state.sessionId) {
+      logger.error("Cannot save game: No active session ID.", {
+        context: "GameControls",
+      });
+      return;
+    }
+    setIsSaving(true);
     try {
-      const sessionId = window.location.pathname.split("/").pop() as string;
-      await saveGameState(sessionId, saveName);
+      await saveGameState(state.sessionId, saveName);
       setIsSaveDialogOpen(false);
+      setSaveName("");
+      logger.debug("Game saved successfully", {
+        context: "GameControls",
+        metadata: { sessionId: state.sessionId, saveName },
+      });
     } catch (error) {
-      console.error("Failed to save game:", error);
+      logger.error("Failed to save game", {
+        context: "GameControls",
+        error: error instanceof Error ? error : new Error(String(error)),
+        metadata: { sessionId: state.sessionId, saveName },
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  return (
-    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background to-transparent">
-      <div className="container mx-auto max-w-4xl">
-        <div className="flex justify-end space-x-2 mb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsSaveDialogOpen(true)}
-          >
-            Save Game
-          </Button>
-        </div>
+  // Determine which decisions to display: actual game decisions or fallback data.
+  const decisionsToDisplay: DecisionOption[] =
+    state.currentGameState?.decisions &&
+    state.currentGameState.decisions.length > 0
+      ? state.currentGameState.decisions
+      : fallbackDecisions;
 
-        <div className="grid gap-3 md:grid-cols-2">
-          {state.decisions.map((decision, index) => (
-            <Button
-              key={index}
-              onClick={() => handleDecision(index)}
-              disabled={state.isLoading}
-              variant="secondary"
-              className="p-4 h-auto text-left justify-start"
-            >
-              {decision.text}
-            </Button>
-          ))}
+  return (
+    <div className="container mx-auto max-w-4xl">
+      {state.error ? (
+        <div className="text-center text-destructive">
+          <p>Error: {state.error}</p>
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="flex justify-end space-x-2 mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSaveDialogOpen(true)}
+              disabled={
+                !state.sessionId ||
+                state.isMakingDecision ||
+                state.isLoadingInitialGame
+              }
+            >
+              Save Game
+            </Button>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            {decisionsToDisplay.map((decision, index) => (
+              <Button
+                key={index}
+                onClick={() => handleDecision(index)}
+                disabled={state.isMakingDecision || state.isLoadingInitialGame}
+                variant="secondary"
+                className="p-4 h-auto text-left justify-start"
+              >
+                {decision.text}
+              </Button>
+            ))}
+          </div>
+        </>
+      )}
 
       <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Save Game</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Save Name</label>
-              <input
+              <label htmlFor="saveName" className="text-sm font-medium">
+                Save Name (Optional)
+              </label>
+              <Input
+                id="saveName"
                 type="text"
                 value={saveName}
-                onChange={(e) => setSaveName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSaveName(e.target.value)
+                }
                 placeholder="Enter a name for your save"
-                className="w-full p-2 border rounded-md"
+                disabled={isSaving}
               />
             </div>
             <div className="flex justify-end space-x-2">
               <Button
                 variant="outline"
                 onClick={() => setIsSaveDialogOpen(false)}
+                disabled={isSaving}
               >
                 Cancel
               </Button>
-              <Button onClick={handleSaveGame}>Save</Button>
+              <Button onClick={handleSaveGame} disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save"}
+              </Button>
             </div>
           </div>
         </DialogContent>

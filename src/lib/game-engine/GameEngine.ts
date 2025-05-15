@@ -17,7 +17,6 @@ import {
   NarrativeContextManager,
   narrativeContextManager as defaultNarrativeContextManager,
 } from "./NarrativeContextManager";
-import { gameSessionService } from "@/lib/services/GameSessionService";
 import { gameStateService } from "@/lib/services/GameStateService";
 import { narrativeService } from "@/lib/services/NarrativeService";
 import { logger } from "@/lib/utils/logger";

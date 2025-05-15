@@ -1,14 +1,13 @@
 import {
-  GameStateService,
-  gameStateService as defaultGameStateService,
-} from "@/lib/services/GameStateService";
-import {
   GameEvent,
   GameStateManager as GameStateManagerInterface,
 } from "@/types/engine";
 import { GameState } from "@/types/game";
 import { logger } from "@/lib/utils/logger";
-
+import {
+  gameStateService,
+  GameStateService,
+} from "@/lib/services/GameStateService";
 /**
  * GameStateManager implementation
  *
@@ -43,7 +42,7 @@ export class GameStateManager implements GameStateManagerInterface {
    * @param options - Configuration options
    */
   constructor(
-    stateService: GameStateService = defaultGameStateService,
+    stateService: GameStateService = gameStateService,
     options: { maxHistorySize?: number } = {}
   ) {
     this.gameStateService = stateService;
