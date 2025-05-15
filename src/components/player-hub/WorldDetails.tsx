@@ -1,28 +1,8 @@
 import Image from "next/image";
-
-// Extended world type that includes related data
-interface WorldWithRelations {
-  id: string;
-  name: string;
-  description: string | null;
-  thumbnailUrl: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  locations?: Array<{
-    id: string;
-    name: string;
-    description: string | null;
-    isStartingLocation: boolean;
-  }>;
-  loreFragments?: Array<{
-    id: string;
-    title: string;
-    content: string | null;
-  }>;
-}
+import { WorldWithRelatedData } from "@/types/game";
 
 interface WorldDetailsProps {
-  world: WorldWithRelations;
+  world: WorldWithRelatedData;
   isLoading?: boolean;
 }
 

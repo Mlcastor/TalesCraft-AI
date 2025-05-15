@@ -338,10 +338,17 @@ export class GameStateManager implements GameStateManagerInterface {
 
     const { previousLocation, newLocation } = event.payload as any;
 
-    return {
+    // Update state immediately for UI
+    const updatedState = {
       ...state,
       currentLocation: newLocation,
     };
+
+    // Note: The persistent database update for CharacterWorldState
+    // is handled by the GameEngine.updateCharacterLocation method
+    // which is called before emitting the LOCATION_CHANGED event.
+
+    return updatedState;
   }
 
   /**

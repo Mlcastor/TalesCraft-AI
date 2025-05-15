@@ -5,7 +5,10 @@ import { HubLayout } from "@/components/player-hub/HubLayout";
 import { CharacterSelection } from "@/components/player-hub/CharacterSelection";
 import { WorldDetails } from "@/components/player-hub/WorldDetails";
 import { getUserCharacters } from "@/lib/actions/character-actions";
-import { getWorldById } from "@/lib/actions/world-actions";
+import {
+  getWorldById,
+  getWorldWithRelatedData,
+} from "@/lib/actions/world-actions";
 import { getCharacterWorldStateForWorld } from "@/lib/actions/character-actions";
 import { CharacterWorldStateWithWorld } from "@/types/database";
 
@@ -49,7 +52,7 @@ export default async function WorldDetailPage({
   }
 
   // Get the world data with related entities
-  const world = await getWorldById(worldId);
+  const world = await getWorldWithRelatedData(worldId);
 
   if (!world) {
     // World not found or not accessible

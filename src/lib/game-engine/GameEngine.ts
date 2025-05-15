@@ -21,6 +21,7 @@ import { gameSessionService } from "@/lib/services/GameSessionService";
 import { gameStateService } from "@/lib/services/GameStateService";
 import { narrativeService } from "@/lib/services/NarrativeService";
 import { logger } from "@/lib/utils/logger";
+import { updateCharacterLocation } from "@/lib/actions/character-world-state-actions";
 
 /**
  * Core Game Engine implementation
@@ -256,9 +257,16 @@ export class GameEngine implements GameEngineInterface {
    * Load an existing game session
    *
    * @param sessionId - The session ID to load
+   * @param options - Optional flags for controlling behavior
    * @returns Object containing the loaded session and state
    */
-  public async loadGame(sessionId: string): Promise<{
+  public async loadGame(
+    sessionId: string,
+    options: { emitEvents?: boolean; alreadyProcessed?: boolean } = {
+      emitEvents: true,
+      alreadyProcessed: false,
+    }
+  ): Promise<{
     session: GameSession;
     state: GameState;
   }> {
@@ -288,16 +296,19 @@ export class GameEngine implements GameEngineInterface {
         // This would depend on the specific format of your narrative context
       }
 
-      // Emit state loaded event
-      this.emitEvent({
-        type: "STATE_LOADED",
-        payload: {
-          stateId: state.id,
+      // Emit state loaded event if not disabled
+      if (options.emitEvents !== false) {
+        this.emitEvent({
+          type: "STATE_LOADED",
+          payload: {
+            stateId: state.id,
+            sessionId,
+            alreadyProcessed: options.alreadyProcessed,
+          },
+          timestamp: new Date(),
           sessionId,
-        },
-        timestamp: new Date(),
-        sessionId,
-      });
+        });
+      }
 
       logger.info("Game loaded", {
         context: "game-engine",
@@ -468,23 +479,33 @@ export class GameEngine implements GameEngineInterface {
    * Load a specific game state
    *
    * @param stateId - The state ID to load
+   * @param options - Optional flags for controlling behavior
    * @returns The loaded game state
    */
-  public async loadGameState(stateId: string): Promise<GameState> {
+  public async loadGameState(
+    stateId: string,
+    options: { emitEvents?: boolean; alreadyProcessed?: boolean } = {
+      emitEvents: true,
+      alreadyProcessed: false,
+    }
+  ): Promise<GameState> {
     try {
       // Load the state
       const loadedState = await this.stateManager.loadState(stateId);
 
-      // Emit state loaded event
-      this.emitEvent({
-        type: "STATE_LOADED",
-        payload: {
-          stateId,
+      // Emit state loaded event if not disabled
+      if (options.emitEvents !== false) {
+        this.emitEvent({
+          type: "STATE_LOADED",
+          payload: {
+            stateId,
+            sessionId: loadedState.sessionId,
+            alreadyProcessed: options.alreadyProcessed,
+          },
+          timestamp: new Date(),
           sessionId: loadedState.sessionId,
-        },
-        timestamp: new Date(),
-        sessionId: loadedState.sessionId,
-      });
+        });
+      }
 
       logger.debug("Game state loaded", {
         context: "game-engine",
@@ -723,13 +744,13 @@ export class GameEngine implements GameEngineInterface {
         return cachedState;
       }
 
-      // Load from service if not in cache
-      const dbState = await gameStateService.loadGameState(stateId);
+      // Load from service if not in cache (without emitting events to prevent loops)
+      const dbState = await this.loadGameState(stateId, { emitEvents: false });
       if (!dbState) {
         return null;
       }
 
-      return this.convertDbStateToGameState(dbState);
+      return dbState;
     } catch (error) {
       logger.error("Failed to get game state", {
         context: "game-engine",
@@ -783,6 +804,80 @@ export class GameEngine implements GameEngineInterface {
           sessionId,
           error,
         },
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Update a character's location and persist it to the database
+   *
+   * @param characterId - The character ID
+   * @param worldId - The world ID
+   * @param newLocation - The new location name
+   * @param previousLocation - The previous location name
+   * @param sessionId - The session ID for emitting events
+   */
+  public async updateCharacterLocation(
+    characterId: string,
+    worldId: string,
+    newLocation: string,
+    previousLocation: string,
+    sessionId: string
+  ): Promise<void> {
+    try {
+      // Update the character's location in the database
+      await updateCharacterLocation(characterId, worldId, newLocation);
+
+      // Emit a location changed event
+      this.emitEvent({
+        type: "LOCATION_CHANGED",
+        payload: {
+          previousLocation,
+          newLocation,
+        },
+        timestamp: new Date(),
+        sessionId,
+      });
+
+      logger.debug("Character location updated", {
+        context: "game-engine",
+        metadata: {
+          characterId,
+          worldId,
+          previousLocation,
+          newLocation,
+          sessionId,
+        },
+      });
+    } catch (error) {
+      logger.error("Failed to update character location", {
+        context: "game-engine",
+        metadata: {
+          characterId,
+          worldId,
+          newLocation,
+          previousLocation,
+          sessionId,
+          error,
+        },
+      });
+
+      this.emitEvent({
+        type: "ERROR_OCCURRED",
+        payload: {
+          message: "Failed to update character location",
+          context: {
+            characterId,
+            worldId,
+            newLocation,
+            previousLocation,
+            error: error instanceof Error ? error.message : String(error),
+          },
+        },
+        timestamp: new Date(),
+        sessionId,
       });
 
       throw error;

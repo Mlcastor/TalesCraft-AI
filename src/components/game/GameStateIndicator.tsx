@@ -5,13 +5,16 @@ import {
   Map,
   User,
   Globe,
+  MapPin,
   ChevronDown,
   ChevronUp,
+  ChevronsDown,
   Heart,
   Shield,
   Zap,
   Users,
 } from "lucide-react";
+import { useWorld } from "@/contexts/WorldProvider";
 
 interface GameStateIndicatorProps {
   characterState: Record<string, any>;
@@ -32,6 +35,7 @@ export function GameStateIndicator({
   location,
 }: GameStateIndicatorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { currentWorld, worldWithRelatedData } = useWorld();
 
   // Toggle expanded view
   const toggleExpanded = () => {
@@ -71,6 +75,20 @@ export function GameStateIndicator({
     return "text-red-500";
   };
 
+  // Function to get location details if available
+  const getLocationDetails = () => {
+    if (!worldWithRelatedData?.locations || !location) return null;
+
+    // Try to find the location in the world data
+    const locationData = worldWithRelatedData.locations.find(
+      (loc: any) => loc.name.toLowerCase() === location.toLowerCase()
+    );
+
+    return locationData;
+  };
+
+  const locationDetails = getLocationDetails();
+
   // Basic collapsed view
   if (!isExpanded) {
     return (
@@ -105,7 +123,7 @@ export function GameStateIndicator({
           <div className="text-sm">
             <p>
               <span className="font-medium">Name:</span>{" "}
-              {worldState.name || "Unknown"}
+              {currentWorld?.name || worldState.name || "Unknown"}
             </p>
             {worldState.time && (
               <p>
@@ -118,34 +136,45 @@ export function GameStateIndicator({
 
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground mb-1 flex items-center gap-1">
-            <Map size={14} />
+            <MapPin size={14} />
             Location
           </h3>
-          <p className="text-sm">{location || "Unknown"}</p>
-          <button
-            onClick={toggleExpanded}
-            className="text-xs text-primary flex items-center mt-2 hover:underline"
-          >
-            Show more <ChevronDown size={12} className="ml-1" />
-          </button>
+          <div className="text-sm">
+            <p>{location || "Unknown"}</p>
+            {locationDetails && (
+              <p className="text-xs text-muted-foreground truncate">
+                {locationDetails.description?.substring(0, 50)}
+                {locationDetails.description?.length > 50 ? "..." : ""}
+              </p>
+            )}
+          </div>
         </div>
+
+        <button
+          onClick={toggleExpanded}
+          className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Expand game state panel"
+        >
+          <ChevronsDown size={16} />
+        </button>
       </div>
     );
   }
 
   // Expanded view with more details
   return (
-    <div className="bg-muted/20 p-4 rounded-md">
-      {/* Header with collapse button */}
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-md font-semibold">Game Status</h3>
-        <button
-          onClick={toggleExpanded}
-          className="text-xs text-primary flex items-center hover:underline"
-        >
-          Show less <ChevronUp size={12} className="ml-1" />
-        </button>
-      </div>
+    <div className="bg-muted/20 p-3 rounded-md relative">
+      <button
+        onClick={toggleExpanded}
+        className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="Collapse game state panel"
+      >
+        <ChevronUp size={16} />
+      </button>
+
+      <h3 className="text-sm font-semibold mb-4 pb-1 border-b border-muted">
+        Game State
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Character Section */}
@@ -218,10 +247,20 @@ export function GameStateIndicator({
         <div className="bg-background/30 p-3 rounded-md">
           <h4 className="text-sm font-semibold flex items-center gap-1 mb-3 pb-1 border-b border-muted">
             <Globe size={14} />
-            World: {worldState.name || "Unknown"}
+            World: {currentWorld?.name || worldState.name || "Unknown"}
           </h4>
 
           <div>
+            {/* Description from world data */}
+            {currentWorld?.description && (
+              <div className="mb-2">
+                <p className="text-xs font-medium">Description:</p>
+                <p className="text-xs line-clamp-3">
+                  {currentWorld.description}
+                </p>
+              </div>
+            )}
+
             {/* Time */}
             {worldState.time && (
               <div className="mb-2">
@@ -260,58 +299,60 @@ export function GameStateIndicator({
         {/* Location & NPCs Section */}
         <div className="bg-background/30 p-3 rounded-md">
           <h4 className="text-sm font-semibold flex items-center gap-1 mb-3 pb-1 border-b border-muted">
-            <Map size={14} />
+            <MapPin size={14} />
             Location: {location || "Unknown"}
           </h4>
 
           <div>
             {/* Location Description */}
-            {characterState.discoveredLocations && (
-              <div className="mb-3">
-                <p className="text-xs font-medium">Discovered Places:</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {characterState.discoveredLocations.map(
-                    (place: string, index: number) => (
-                      <span
-                        key={index}
-                        className={`text-xs px-2 py-0.5 rounded-full ${
-                          place === location
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted"
-                        }`}
-                      >
-                        {place}
-                      </span>
-                    )
-                  )}
-                </div>
+            {locationDetails ? (
+              <div className="mb-2">
+                <p className="text-xs font-medium">Description:</p>
+                <p className="text-xs">{locationDetails.description}</p>
+              </div>
+            ) : (
+              <div className="mb-2">
+                <p className="text-xs">
+                  {worldState.locationDescription || ""}
+                </p>
               </div>
             )}
 
-            {/* NPC Relationships */}
-            {npcs.length > 0 && (
-              <div>
-                <p className="text-xs font-medium flex items-center gap-1">
-                  <Users size={12} /> NPC Relationships:
-                </p>
-                <ul className="text-xs ml-1 mt-1 space-y-1">
-                  {npcs.map((npc) => (
-                    <li key={npc.name} className="flex justify-between">
-                      <span>{npc.name}:</span>
-                      <span className={getRelationshipColor(npc.relationship)}>
-                        {npc.relationship >= 75
-                          ? "Ally"
-                          : npc.relationship >= 50
-                          ? "Friend"
-                          : npc.relationship >= 25
-                          ? "Neutral"
-                          : "Hostile"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {/* Connected Locations */}
+            {locationDetails?.connected_location_ids &&
+              locationDetails.connected_location_ids.length > 0 && (
+                <div className="mb-2">
+                  <p className="text-xs font-medium">Connected locations:</p>
+                  <ul className="text-xs ml-2 mt-1">
+                    {locationDetails.connected_location_ids.map(
+                      (locId: string) => {
+                        const connectedLoc =
+                          worldWithRelatedData?.locations.find(
+                            (l: any) => l.id === locId
+                          );
+                        return (
+                          <li key={locId}>
+                            • {connectedLoc?.name || "Unknown"}
+                          </li>
+                        );
+                      }
+                    )}
+                  </ul>
+                </div>
+              )}
+
+            {/* NPCs at this location */}
+            {characterState.npcsPresent &&
+              characterState.npcsPresent.length > 0 && (
+                <div>
+                  <p className="text-xs font-medium">NPCs Present:</p>
+                  <ul className="text-xs ml-2 mt-1">
+                    {characterState.npcsPresent.map((npc: string) => (
+                      <li key={npc}>• {npc}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
           </div>
         </div>
       </div>

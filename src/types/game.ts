@@ -80,11 +80,11 @@ export interface World {
   createdAt: Date;
 }
 
+// World state specific to a game session
 export interface WorldState {
   id: string;
   name: string;
   description: string;
-  // World state specific to a game session
   activeQuests?: Record<string, any>;
   availableEvents?: string[];
   globalState?: Record<string, any>;
@@ -98,16 +98,16 @@ export interface Location {
   id: string;
   worldId: string;
   name: string;
-  description: string;
+  description: string | null;
   isStartingLocation: boolean;
   connectedLocationIds: string[];
-  thumbnailUrl?: string;
+  thumbnailUrl?: string | null;
 }
 
 export interface LocationState {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   // Location state specific to a game session
   visitedAt?: Date;
   availableNpcs?: string[];
@@ -121,7 +121,7 @@ export interface LoreFragment {
   title: string;
   content: string;
   type: string;
-  contextId?: string;
+  contextId?: string | null;
   isRevealed: boolean;
   keywords: string[];
 }
@@ -129,7 +129,7 @@ export interface LoreFragment {
 export interface Event {
   id: string;
   worldId: string;
-  locationId?: string;
+  locationId?: string | null;
   title: string;
   description: string;
   eventType: string;
@@ -147,6 +147,12 @@ export interface Event {
     };
   }>;
   isRepeatable: boolean;
+}
+
+export interface WorldWithRelatedData extends World {
+  locations: Location[];
+  loreFragments: LoreFragment[];
+  events: Event[];
 }
 
 /**

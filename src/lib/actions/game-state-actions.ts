@@ -6,6 +6,8 @@ import { gameEngine } from "@/lib/game-engine";
 import { gameStateService } from "@/lib/services/GameStateService";
 import { logger } from "@/lib/utils/logger";
 import { verifyGameSession } from "./gameSession-actions";
+import { GameEngine } from "@/lib/game-engine/GameEngine";
+import { isNotEmpty } from "@/lib/utils/validation";
 
 /**
  * Save the current game state to create a save point
@@ -19,10 +21,9 @@ export async function saveGameState(
   savePointName?: string
 ): Promise<GameState> {
   try {
-    // Validate inputs
-    if (!sessionId) {
+    if (!isNotEmpty(sessionId)) {
       throw new ValidationError(
-        "Session ID is required",
+        "Session ID is required to save game state",
         { sessionId: "Session ID is required" },
         { entity: "game-state-actions" }
       );
@@ -31,20 +32,20 @@ export async function saveGameState(
     // Verify the session exists and is active
     await verifyGameSession(sessionId);
 
-    // Use GameEngine to save the state
-    const savedState = await gameEngine.saveGameState(sessionId, savePointName);
+    const engine = new GameEngine();
+    const state = await engine.saveGameState(sessionId, savePointName);
 
-    logger.info("Game state saved", {
+    logger.debug("Game state saved", {
       context: "server-action",
       metadata: {
         action: "saveGameState",
         sessionId,
-        stateId: savedState.id,
+        stateId: state.id,
         savePointName,
       },
     });
 
-    return savedState;
+    return state;
   } catch (error) {
     logger.error("Failed to save game state", {
       context: "server-action",
@@ -64,32 +65,44 @@ export async function saveGameState(
  * Load a specific game state
  *
  * @param stateId The state ID to load
- * @returns The loaded game state
+ * @param options Optional flags for loading behavior
+ * @returns The loaded game state or null if not found
  */
-export async function loadGameState(stateId: string): Promise<GameState> {
+export async function loadGameState(
+  stateId: string,
+  options: { alreadyProcessed?: boolean } = { alreadyProcessed: true }
+): Promise<GameState | null> {
   try {
-    // Validate inputs
-    if (!stateId) {
+    if (!isNotEmpty(stateId)) {
       throw new ValidationError(
-        "State ID is required",
+        "State ID is required to load game state",
         { stateId: "State ID is required" },
         { entity: "game-state-actions" }
       );
     }
 
-    // Use GameEngine to load the state
-    const loadedState = await gameEngine.loadGameState(stateId);
+    // Set alreadyProcessed to true by default if not specified
+    const alreadyProcessed = options.alreadyProcessed ?? true;
 
-    logger.info("Game state loaded", {
+    // Create a new GameEngine instance
+    const engine = new GameEngine();
+
+    // Load the state with the alreadyProcessed flag to prevent loops
+    const state = await engine.loadGameState(stateId, {
+      alreadyProcessed,
+    });
+
+    logger.debug("Game state loaded", {
       context: "server-action",
       metadata: {
         action: "loadGameState",
         stateId,
-        sessionId: loadedState.sessionId,
+        sessionId: state.sessionId,
+        alreadyProcessed,
       },
     });
 
-    return loadedState;
+    return state;
   } catch (error) {
     logger.error("Failed to load game state", {
       context: "server-action",
@@ -122,7 +135,8 @@ export async function getGameState(stateId: string): Promise<GameState | null> {
     }
 
     // Use GameEngine to get the state
-    const state = await gameEngine.getGameState(stateId);
+    const engine = new GameEngine();
+    const state = await engine.getGameState(stateId);
 
     logger.debug("Game state retrieved", {
       context: "server-action",
@@ -172,6 +186,15 @@ export async function getLatestGameStateForSession(
 
     // Use GameStateService to get the latest state
     const latestState = await gameStateService.getLatestGameState(sessionId);
+
+    logger.debug("Latest game state retrieved", {
+      context: "server-action",
+      metadata: {
+        action: "getLatestGameStateForSession",
+        sessionId,
+        stateId: latestState?.id || "none",
+      },
+    });
 
     // Return the state ID or null if no state exists
     return latestState?.id || null;

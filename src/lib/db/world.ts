@@ -1,5 +1,4 @@
 import { Prisma } from "@/generated/prisma";
-import { prisma } from "./prisma";
 import { BaseRepository } from "./base/BaseRepository";
 import { RecordNotFoundError } from "@/lib/errors/DatabaseError";
 
@@ -244,16 +243,3 @@ export class WorldRepository extends BaseRepository {
 
 // Export singleton instance
 export const worldRepository = new WorldRepository();
-
-// Backwards compatibility exports for existing code
-export const getAllActiveWorlds =
-  worldRepository.getAllActiveWorlds.bind(worldRepository);
-export const getWorldById = worldRepository.getWorldById.bind(worldRepository);
-export const createWorld = worldRepository.createWorld.bind(worldRepository);
-export const updateWorld = worldRepository.updateWorld.bind(worldRepository);
-export const getWorldWithRelatedData =
-  worldRepository.getWorldWithRelatedData.bind(worldRepository);
-export const getWorldWithStartingLocations =
-  worldRepository.getWorldWithStartingLocations.bind(worldRepository);
-export const deactivateWorld =
-  worldRepository.deactivateWorld.bind(worldRepository);

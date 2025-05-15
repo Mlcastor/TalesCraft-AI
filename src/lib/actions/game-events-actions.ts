@@ -6,6 +6,7 @@ import { logger } from "@/lib/utils/logger";
 import { GameEventType, GameEvent, GameEventPayload } from "@/types/engine";
 import { isNotEmpty } from "@/lib/utils/validation";
 import { verifyGameSession } from "./gameSession-actions";
+import { GameEngine } from "@/lib/game-engine/GameEngine";
 
 /**
  * Allowed client-initiated event types
@@ -315,39 +316,41 @@ export async function triggerGameEvent(
   payload: any
 ): Promise<boolean> {
   try {
-    // Validate input
-    if (!isNotEmpty(sessionId)) {
-      throw new ValidationError(
-        "Session ID is required",
-        { sessionId: "Session ID is required" },
-        { entity: "game-events-actions" }
-      );
+    // Validate the session and event payload
+    if (!sessionId) {
+      throw new Error("Session ID is required");
     }
 
-    if (!isNotEmpty(eventType)) {
-      throw new ValidationError(
-        "Event type is required",
-        { eventType: "Event type is required" },
-        { entity: "game-events-actions" }
-      );
-    }
-
-    // Verify the session exists and is active
-    await verifyGameSession(sessionId);
-
-    // For security, only allow specific event types to be triggered by the client
-    if (!ALLOWED_CLIENT_EVENT_TYPES.includes(eventType)) {
-      throw new ValidationError(
-        "Event type not allowed",
-        { eventType: "This event type cannot be triggered from the client" },
-        { entity: "game-events-actions" }
-      );
-    }
-
-    // Validate that the payload matches the expected structure for the event type
     validateEventPayload(eventType, payload);
 
-    // Create the event object
+    // Create a game engine instance
+    const engine = new GameEngine();
+
+    // Check if the session exists
+    const session = await engine.loadGame(sessionId);
+    if (!session) {
+      throw new Error(`Session with ID ${sessionId} not found`);
+    }
+
+    // Handle special events that require additional business logic
+    if (eventType === "LOCATION_CHANGED") {
+      const { previousLocation, newLocation } = payload;
+
+      // For LOCATION_CHANGED, use the updateCharacterLocation method
+      // which handles both database updates and event emission
+      await engine.updateCharacterLocation(
+        session.session.characterId,
+        session.state.worldId as string,
+        newLocation,
+        previousLocation,
+        sessionId
+      );
+
+      // Event already emitted in updateCharacterLocation, so just return success
+      return true;
+    }
+
+    // For other events, create and emit the event
     const event: GameEvent = {
       type: eventType,
       payload,
@@ -355,23 +358,19 @@ export async function triggerGameEvent(
       sessionId,
     };
 
-    // Use the gameEngine to emit the event
-    // Note: The gameEngine.emitEvent is private, so we need to expose it via the public API
-    // For now, we'll use the on method to indirectly trigger events
-    // In a real implementation, we'd need to extend the GameEngine to support this
-    const success = await simulateEventTrigger(sessionId, event);
+    // Simulate the event trigger (perform any necessary side effects)
+    await simulateEventTrigger(sessionId, event);
 
-    logger.info("Game event triggered", {
+    logger.debug("Game event triggered", {
       context: "server-action",
       metadata: {
         action: "triggerGameEvent",
         sessionId,
         eventType,
-        success,
       },
     });
 
-    return success;
+    return true;
   } catch (error) {
     logger.error("Failed to trigger game event", {
       context: "server-action",
@@ -525,7 +524,8 @@ async function simulateEventTrigger(
     // Handle different event types
     switch (event.type) {
       case "LOCATION_CHANGED": {
-        // Type assertion since we've validated the payload structure
+        // This is now handled by GameEngine.updateCharacterLocation
+        // and should not reach here directly
         const payload = event.payload as GameEventPayload["LOCATION_CHANGED"];
         logger.info("Simulating LOCATION_CHANGED event", {
           context: "game-engine",

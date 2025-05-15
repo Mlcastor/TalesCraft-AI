@@ -34,7 +34,11 @@ export type GameEventPayload = {
   SESSION_STARTED: { sessionId: string; characterId: string; worldId: string };
   SESSION_ENDED: { sessionId: string; duration: number };
   STATE_SAVED: { stateId: string; savePointName?: string };
-  STATE_LOADED: { stateId: string; sessionId: string };
+  STATE_LOADED: {
+    stateId: string;
+    sessionId: string;
+    alreadyProcessed?: boolean;
+  };
   NARRATIVE_UPDATED: {
     text: string;
     decisions: Array<{ text: string; consequences?: string }>;

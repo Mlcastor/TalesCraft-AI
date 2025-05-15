@@ -8,12 +8,22 @@ import { LoadingIndicator } from "./LoadingIndicator";
 import { NarrativeDisplay } from "./NarrativeDisplay";
 import { DecisionSelector } from "./DecisionSelector";
 import { GameStateIndicator } from "./GameStateIndicator";
-import { saveGameState } from "@/lib/actions/game-state-actions";
+import {
+  saveGameState,
+  loadGameState,
+  getGameState,
+  getLatestGameStateForSession,
+} from "@/lib/actions/game-state-actions";
+import { makeDecision } from "@/lib/actions/decision-actions";
+import { generateNarrative } from "@/lib/actions/narrative-actions";
 import { GameSettingsPanel } from "./GameSettingsPanel";
 import { useGameSettings } from "@/contexts/GameSettingsContext";
 import { provideFeedback } from "@/lib/utils/feedback";
-import { Save, AlertCircle } from "lucide-react";
+import { Save, AlertCircle, Globe } from "lucide-react";
 import { SkeletonLoader } from "./SkeletonLoader";
+import { useWorld } from "@/contexts/WorldProvider";
+import { logger } from "@/lib/utils/logger";
+import Link from "next/link";
 
 interface GameContainerProps {
   sessionId: string;
@@ -39,6 +49,12 @@ export function GameContainer({
   // Use the settings context
   const { settings } = useGameSettings();
 
+  // Use the world context
+  const { setCurrentWorldId, currentWorld } = useWorld();
+
+  // Track if we've already set the world ID to prevent repeated calls
+  const worldIdSetRef = useRef<string | null>(null);
+
   // Auto-save timer ref
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -50,6 +66,14 @@ export function GameContainer({
   useEffect(() => {
     async function initializeGame() {
       try {
+        logger.debug("GameContainer: Initializing game", {
+          context: "game-container",
+          metadata: {
+            sessionId,
+            initialStateId: initialStateId || "none",
+          },
+        });
+
         setIsLoading(true);
         setError(null);
 
@@ -60,43 +84,95 @@ export function GameContainer({
           return;
         }
 
-        // For the MVP, we'll display a placeholder
-        // In a real implementation, we would load the game state from initialStateId
-        // and initialize the game engine
+        let state: GameState | null = null;
 
-        setTimeout(() => {
-          setGameState({
-            id: initialStateId || "placeholder-state-id",
-            sessionId: sessionId,
-            characterId: "placeholder-character-id",
-            currentLocation: "Starting Area",
-            saveTimestamp: new Date(),
-            aiContext: {},
-            characterState: { name: "Hero", health: 100 },
-            worldState: { name: "Fantasy World" },
-            isAutosave: false,
-            isCompleted: false,
-            isLoading: false,
-            error: null,
-            narrative: {
-              text: "Welcome to Tales Craft AI! Your adventure is about to begin in a world of magic and mystery.",
-              history: [
-                {
-                  type: "narrative",
-                  content:
-                    "Welcome to Tales Craft AI! Your adventure is about to begin in a world of magic and mystery.",
+        // If initialStateId is provided, load that specific state
+        if (initialStateId) {
+          state = await loadGameState(initialStateId);
+        } else {
+          // Otherwise, get the latest state for this session
+          const latestStateId = await getLatestGameStateForSession(sessionId);
+          if (latestStateId) {
+            state = await getGameState(latestStateId);
+          } else {
+            // Generate initial narrative if no state exists yet
+            const initialNarrative = await generateNarrative(sessionId);
+            if (initialNarrative) {
+              // Create a basic state with the initial narrative
+              state = {
+                id: "initial-state", // This will be replaced when saved
+                sessionId: sessionId,
+                characterId: currentSession.characterId || "",
+                currentLocation: "Starting Area",
+                saveTimestamp: new Date(),
+                aiContext: {},
+                characterState: { name: "Hero", health: 100 },
+                worldState: { name: "Fantasy World" },
+                isAutosave: false,
+                isCompleted: false,
+                narrative: {
+                  text: initialNarrative.narrativeText,
+                  history: [
+                    {
+                      type: "narrative",
+                      content: initialNarrative.narrativeText,
+                    },
+                  ],
                 },
-              ],
-            },
-            decisions: [
-              { text: "Explore the nearby forest" },
-              { text: "Head to the village" },
-              { text: "Rest and prepare for your journey" },
-            ],
-          });
+                decisions: initialNarrative.decisions,
+              };
 
-          setIsLoading(false);
-        }, 1500); // Simulate loading delay
+              // Save this initial state
+              await saveGameState(sessionId);
+            }
+          }
+        }
+
+        if (state) {
+          setGameState(state);
+
+          // If there's a world ID in the state, set it in the world context
+          // but only if we haven't already set it for this ID (prevents multiple loads)
+          if (state.worldId && worldIdSetRef.current !== state.worldId) {
+            logger.debug("GameContainer: Setting world ID", {
+              context: "game-container",
+              metadata: {
+                worldId: state.worldId,
+                previouslySet: worldIdSetRef.current,
+              },
+            });
+
+            // Track that we've set this world ID
+            worldIdSetRef.current = state.worldId;
+
+            // Only set the world ID if we don't already have world data for this ID
+            if (!currentWorld || currentWorld.id !== state.worldId) {
+              try {
+                await setCurrentWorldId(state.worldId);
+              } catch (err) {
+                logger.error("Error setting world ID:", {
+                  context: "game-container",
+                  metadata: {
+                    error: err instanceof Error ? err.message : String(err),
+                    worldId: state.worldId,
+                  },
+                });
+              }
+            } else {
+              logger.debug(
+                "GameContainer: World data already loaded, skipping setCurrentWorldId",
+                {
+                  context: "game-container",
+                  metadata: { worldId: state.worldId },
+                }
+              );
+            }
+          }
+        } else {
+          setError("Could not load or create game state");
+        }
+
+        setIsLoading(false);
       } catch (error) {
         console.error("Error initializing game:", error);
         setError("Failed to initialize game. Please try again.");
@@ -105,7 +181,13 @@ export function GameContainer({
     }
 
     initializeGame();
-  }, [sessionId, initialStateId, currentSession]);
+  }, [
+    sessionId,
+    initialStateId,
+    currentSession,
+    setCurrentWorldId,
+    currentWorld,
+  ]);
 
   // Set up auto-save functionality
   useEffect(() => {
@@ -206,7 +288,7 @@ export function GameContainer({
   // Handle player decision
   const handleDecision = useCallback(
     async (decisionIndex: number) => {
-      if (!gameState) return;
+      if (!gameState || !sessionId) return;
 
       try {
         setIsLoading(true);
@@ -216,46 +298,80 @@ export function GameContainer({
           provideFeedback("decision", settings.soundEffectsVolume);
         }
 
-        // For the MVP, we'll simulate a decision
-        // In a real implementation, we would call the game engine to process the decision
-
-        // Simulate processing delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
+        // Get the selected decision text for history
         const selectedDecision =
           gameState.decisions?.[decisionIndex]?.text || "Unknown choice";
 
-        // Update game state with the player's decision
+        // Update the UI immediately with the player's choice for better UX
         setGameState((prevState) => {
-          if (!prevState) return null;
+          if (!prevState || !prevState.narrative) return prevState;
 
           // Add player's choice to narrative history
           const updatedHistory = [
-            ...(prevState.narrative?.history || []),
+            ...(prevState.narrative.history || []),
             { type: "playerResponse" as const, content: selectedDecision },
           ];
 
-          // Generate a simple response based on the decision
-          const responseText = `You decided to ${selectedDecision.toLowerCase()}. As you do, you notice the world around you reacting to your choice.`;
-
-          // Add the narrative response to history
-          const newHistory = [
-            ...updatedHistory,
-            { type: "narrative" as const, content: responseText },
-          ];
-
-          // Return updated state
           return {
             ...prevState,
             narrative: {
-              text: responseText,
+              text: prevState.narrative.text,
+              history: updatedHistory,
+            },
+          };
+        });
+
+        // Call the actual server action to process the decision
+        const { narrativeResponse, updatedState } = await makeDecision(
+          sessionId,
+          decisionIndex
+        );
+
+        // Update the game state with the response
+        setGameState((prevState) => {
+          if (!prevState) return null;
+
+          // Get the existing history from either the current state or the updated state
+          const existingHistory = [...(prevState.narrative?.history || [])];
+
+          // Add the narrative response to history
+          const newHistory = [
+            ...existingHistory,
+            {
+              type: "narrative" as const,
+              content: narrativeResponse.narrativeText,
+            },
+          ];
+
+          // If world ID has changed, update it in the world context
+          if (
+            updatedState.worldId &&
+            updatedState.worldId !== prevState.worldId &&
+            worldIdSetRef.current !== updatedState.worldId
+          ) {
+            logger.debug("GameContainer: World ID changed in decision", {
+              context: "game-container",
+              metadata: {
+                previousWorldId: prevState.worldId,
+                newWorldId: updatedState.worldId,
+              },
+            });
+
+            // Track this world ID
+            worldIdSetRef.current = updatedState.worldId;
+
+            // Set the new world ID in the context
+            setCurrentWorldId(updatedState.worldId);
+          }
+
+          // Return updated state with narrative properly assigned
+          return {
+            ...updatedState,
+            narrative: {
+              text: narrativeResponse.narrativeText,
               history: newHistory,
             },
-            decisions: [
-              { text: "Continue onward" },
-              { text: "Take a different path" },
-              { text: "Examine your surroundings" },
-            ],
+            decisions: narrativeResponse.newDecisionPoints,
           };
         });
 
@@ -271,7 +387,14 @@ export function GameContainer({
         setIsLoading(false);
       }
     },
-    [gameState, settings.soundEffectsVolume, settings.autoSaveEnabled, saveGame]
+    [
+      gameState,
+      sessionId,
+      settings.soundEffectsVolume,
+      settings.autoSaveEnabled,
+      saveGame,
+      setCurrentWorldId,
+    ]
   );
 
   // Handle ending the game session
@@ -282,6 +405,11 @@ export function GameContainer({
         await saveGame();
 
         await endGameSessionContext(sessionId);
+
+        // Clear world context when ending game session
+        worldIdSetRef.current = null;
+        setCurrentWorldId(null);
+
         router.push("/player-hub"); // Redirect to hub after ending session
       }
     } catch (error) {
@@ -361,6 +489,16 @@ export function GameContainer({
               )}
             </div>
           )}
+
+          {/* World Info button */}
+          <Link
+            href={`/game/${sessionId}/world-info`}
+            className="flex items-center gap-1 px-3 py-1 bg-muted hover:bg-muted/80 text-muted-foreground rounded-md transition-colors"
+            aria-label="World Information"
+          >
+            <Globe size={16} />
+            <span className="text-sm">World Info</span>
+          </Link>
 
           {/* Manual save button */}
           <button
