@@ -79,6 +79,13 @@ export class AIService implements AIServiceInterface {
         }
       );
 
+      logger.debug("Narrative generated", {
+        context: "ai-service",
+        metadata: {
+          aiResponse,
+        },
+      });
+
       return aiResponse;
     } catch (error) {
       logger.error("Error generating narrative", {
@@ -410,44 +417,107 @@ Analyze this decision and provide impact assessment with suggested narrative dir
    * @returns Enriched context with additional fields
    */
   private enrichContext(context: Record<string, any>): Record<string, any> {
-    const enriched = { ...context };
+    if (!context) {
+      return {};
+    }
 
-    // Add mood information if not present
-    if (!enriched.mood) {
-      // Infer mood from context if possible
-      if (
-        context.worldState?.danger === "high" ||
-        context.worldState?.danger === "extreme"
-      ) {
-        enriched.mood = NarrativeMood.FRIGHTENED;
-      } else if (context.location?.toLowerCase().includes("tavern")) {
-        enriched.mood = NarrativeMood.FRIENDLY;
-      } else {
-        enriched.mood = NarrativeMood.NEUTRAL;
+    const newContext = { ...context };
+
+    if (!newContext.mood) {
+      newContext.mood = NarrativeMood.NEUTRAL;
+    }
+    if (!newContext.dangerLevel) {
+      newContext.dangerLevel = DangerLevel.LOW;
+    }
+
+    // Safely access location name for enrichment logic
+    const locationName =
+      typeof newContext.location === "object" && newContext.location !== null
+        ? (newContext.location as { name?: string }).name?.toLowerCase()
+        : typeof newContext.location === "string"
+        ? newContext.location.toLowerCase()
+        : undefined;
+
+    // Example: Infer mood from recent events or character traits
+    if (newContext.characterState?.traits?.includes("Anxious")) {
+      if (newContext.mood === NarrativeMood.NEUTRAL) {
+        newContext.mood = NarrativeMood.TENSE;
       }
-    }
-
-    // Add danger level if not present
-    if (!enriched.dangerLevel) {
-      // Infer danger from context if possible
-      if (
-        context.worldState?.enemies?.length > 0 ||
-        context.worldState?.threat?.toLowerCase().includes("high")
-      ) {
-        enriched.dangerLevel = DangerLevel.HIGH;
-      } else if (context.location?.toLowerCase().includes("dungeon")) {
-        enriched.dangerLevel = DangerLevel.MODERATE;
-      } else {
-        enriched.dangerLevel = DangerLevel.LOW;
+    } else if (
+      newContext.characterState?.traits?.includes("Brave") &&
+      newContext.dangerLevel === DangerLevel.HIGH
+    ) {
+      if (newContext.mood === NarrativeMood.NEUTRAL) {
+        newContext.mood = NarrativeMood.DETERMINED;
       }
+    } else if (
+      locationName?.includes("creepy") ||
+      locationName?.includes("eerie")
+    ) {
+      if (newContext.mood === NarrativeMood.NEUTRAL) {
+        newContext.mood = NarrativeMood.MYSTERIOUS;
+      }
+    } else if (
+      locationName?.includes("battlefield") ||
+      locationName?.includes("warzone")
+    ) {
+      if (newContext.mood === NarrativeMood.NEUTRAL) {
+        newContext.mood = NarrativeMood.HOSTILE;
+      }
+    } else if (
+      locationName?.includes("ruins") &&
+      newContext.dangerLevel === DangerLevel.MODERATE
+    ) {
+      if (newContext.mood === NarrativeMood.NEUTRAL) {
+        newContext.mood = NarrativeMood.CAUTIOUS;
+      }
+    } else if (
+      locationName?.includes("graveyard") ||
+      locationName?.includes("crypt")
+    ) {
+      if (newContext.mood === NarrativeMood.NEUTRAL) {
+        newContext.mood = NarrativeMood.FRIGHTENED;
+      }
+    } else if (
+      locationName?.includes("tavern") ||
+      locationName?.includes("inn")
+    ) {
+      if (newContext.mood === NarrativeMood.NEUTRAL) {
+        newContext.mood = NarrativeMood.FRIENDLY;
+      }
+    } else {
+      // Default mood if no specific conditions met and not already set
+      if (!newContext.mood) newContext.mood = NarrativeMood.NEUTRAL;
     }
 
-    // Add NPC mentions if relevant
-    if (context.worldState?.npcs && Array.isArray(context.worldState.npcs)) {
-      enriched.npcsPresent = context.worldState.npcs;
+    // Example: Infer danger level from location or recent events
+    if (
+      locationName?.includes("ruins") ||
+      locationName?.includes("lair") ||
+      locationName?.includes("stronghold")
+    ) {
+      if (newContext.dangerLevel === DangerLevel.LOW) {
+        newContext.dangerLevel = DangerLevel.MODERATE;
+      }
+    } else if (
+      locationName?.includes("frontline") ||
+      locationName?.includes("abyss")
+    ) {
+      newContext.dangerLevel = DangerLevel.HIGH;
+    } else if (
+      locationName?.includes("sanctuary") ||
+      locationName?.includes("hidden grove")
+    ) {
+      if (newContext.dangerLevel !== DangerLevel.NONE) {
+        // Don't override if explicitly set to NONE
+        newContext.dangerLevel = DangerLevel.LOW;
+      }
+    } else {
+      // Default danger level if no specific conditions met and not already set
+      if (!newContext.dangerLevel) newContext.dangerLevel = DangerLevel.LOW;
     }
 
-    return enriched;
+    return newContext;
   }
 
   /**

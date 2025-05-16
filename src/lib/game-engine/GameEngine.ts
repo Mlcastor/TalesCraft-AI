@@ -3,7 +3,12 @@ import {
   GameEvent,
   GameEventType,
 } from "@/types/engine";
-import { GameSession, GameState, NarrativeResponse } from "@/types/game";
+import {
+  GameSession,
+  GameState,
+  NarrativeResponse,
+  Decision,
+} from "@/types/game";
 import {
   GameStateManager,
   gameStateManager as defaultGameStateManager,
@@ -17,8 +22,12 @@ import {
   NarrativeContextManager,
   narrativeContextManager as defaultNarrativeContextManager,
 } from "./NarrativeContextManager";
+import { NarrativeContext, NarrativeEvent } from "@/types/narrative";
 import { gameStateService } from "@/lib/services/GameStateService";
-import { narrativeService } from "@/lib/services/NarrativeService";
+import {
+  NarrativeService,
+  narrativeService,
+} from "@/lib/services/NarrativeService";
 import { logger } from "@/lib/utils/logger";
 import { updateCharacterLocation } from "@/lib/actions/character-world-state-actions";
 
@@ -192,8 +201,78 @@ export class GameEngine implements GameEngineInterface {
       // Initialize state manager with the initial state
       this.stateManager.initialize(initialState);
 
-      // Initialize narrative context
-      this.narrativeManager.resetContext();
+      // Initialize narrative context manager with data from the new state
+      this.narrativeManager.resetContext(); // Keep the reset for a clean start
+
+      // Prepare character data for NarrativeContextManager, ensuring string types
+      const characterContextData: NarrativeContext["character"] = {
+        id: initialState.characterId,
+        name:
+          typeof initialState.characterState.name === "string"
+            ? initialState.characterState.name
+            : "Adventurer",
+        traits: Array.isArray(initialState.characterState.traits)
+          ? initialState.characterState.traits
+          : [],
+        backstory:
+          typeof initialState.characterState.backstory === "string"
+            ? initialState.characterState.backstory
+            : undefined,
+        appearance:
+          typeof initialState.characterState.appearance === "string"
+            ? initialState.characterState.appearance
+            : undefined,
+      };
+
+      const worldContextData: NarrativeContext["world"] = {
+        id: initialState.worldId || "unknown_world_id",
+        name:
+          typeof initialState.worldState.name === "string"
+            ? initialState.worldState.name
+            : "Mysterious World",
+        description:
+          typeof initialState.worldState.description === "string"
+            ? initialState.worldState.description
+            : "An enigmatic place.",
+        locations: Array.isArray(initialState.worldState.locations)
+          ? initialState.worldState.locations.map((loc: any) => ({
+              id: loc.id,
+              name: loc.name,
+              description: loc.description,
+              worldId: loc.worldId,
+              isStartingLocation: loc.isStartingLocation,
+              connectedLocationIds: loc.connectedLocationIds || [],
+              thumbnailUrl: loc.thumbnailUrl,
+            }))
+          : [],
+        loreFragments: Array.isArray(initialState.worldState.loreFragments)
+          ? initialState.worldState.loreFragments.map((lore: any) => ({
+              id: lore.id,
+              title: lore.title,
+              content: lore.content,
+              type: lore.type,
+              worldId: lore.worldId,
+              contextId: lore.contextId,
+              isRevealed: lore.isRevealed,
+              keywords: lore.keywords || [],
+            }))
+          : [],
+      };
+
+      const locationContextData: NarrativeContext["location"] = {
+        id: initialState.currentLocation || "unknown_starting_location", // currentLocation on GameState is string
+        name: initialState.currentLocation || "A Vague Starting Point", // but could be empty, provide fallback
+        // For location description, NarrativeContext expects a string. GameState doesn't store it directly on root.
+        // We'll use a generic description as it's a starting point.
+        description: "The adventure begins here.",
+      };
+
+      this.narrativeManager.initialize(
+        characterContextData,
+        worldContextData,
+        locationContextData,
+        [] // NPCs, GameState doesn't have a root 'npcs' field
+      );
 
       // Emit game started event
       this.emitEvent({
@@ -568,73 +647,116 @@ export class GameEngine implements GameEngineInterface {
   }
 
   /**
-   * Generate narrative content based on the current game state
+   * Generates the initial narrative and decisions for a game session,
+   * updates the game state, and persists it.
+   * This is typically called by a server action after a new game is started
+   * and the initial bare state record has been created in the database.
    *
-   * @param sessionId - The session ID to generate narrative for
-   * @returns Object containing narrative text and available decisions
+   * @param sessionId - The ID of the current game session.
+   * @returns The generated narrative response containing the text and decisions.
+   * @throws Error if no current game state is found or if narrative generation fails.
    */
-  public async generateNarrative(sessionId: string): Promise<{
-    narrativeText: string;
-    decisions: Array<{ text: string; consequences?: string }>;
-  }> {
-    try {
-      // Get the current state
-      const currentState = this.stateManager.getCurrentState();
+  public async generateNarrative(
+    sessionId: string
+  ): Promise<NarrativeResponse> {
+    logger.debug(
+      `Generating initial narrative and decisions for session: ${sessionId}`,
+      { context: "game-engine" }
+    );
 
-      // Generate narrative through the narrative service
-      const response = await narrativeService.generateNarrative(
-        currentState.id
+    const currentGameState = this.stateManager.getCurrentState();
+    if (!currentGameState) {
+      logger.error(
+        "generateNarrative called but no current game state is available. Ensure stateManager is initialized.",
+        {
+          context: "game-engine",
+          metadata: { sessionId },
+        }
       );
+      throw new Error(
+        "Cannot generate narrative: No current game state available."
+      );
+    }
+    if (!currentGameState.id) {
+      logger.error(
+        "generateNarrative: Current game state has no ID, cannot proceed with update.",
+        {
+          context: "game-engine",
+          metadata: { sessionId },
+        }
+      );
+      throw new Error("Current game state is missing an ID.");
+    }
 
-      // Set decisions in the decision manager
-      this.decisionManager.setDecisions(response.decisions);
+    const aiSystemResponse = await narrativeService.generateNarrative(
+      currentGameState.id
+    ); // aiSystemResponse: { text: string, suggestedDecisions?: Array<{ text: string }> }
 
-      // Add the narrative entry to context
-      this.narrativeManager.addNarrativeEntry({
-        type: "narrative",
-        content: response.narrativeText,
-      });
+    const narrativeText = aiSystemResponse.narrativeText;
+    const decisions: Decision[] = (aiSystemResponse.decisions || []).map(
+      (d, index) => ({
+        id: `decision_${currentGameState.id}_init_${index}_${Date.now()}`, // Unique ID for the decision
+        text: d.text,
+        // Consequences are typically determined when a decision is *made*, not when it's presented.
+      })
+    );
 
-      // Emit narrative updated event
-      this.emitEvent({
-        type: "NARRATIVE_UPDATED",
-        payload: {
-          text: response.narrativeText,
-          decisions: response.decisions,
-        },
-        timestamp: new Date(),
-        sessionId,
-      });
+    // 3. Prepare the NarrativeResponse object to be returned and emitted
+    const narrativeResponse: NarrativeResponse = {
+      text: narrativeText,
+      decisions: decisions,
+      // worldEvents, characterUpdates, etc., could be populated if AI provides them
+    };
 
-      return {
-        narrativeText: response.narrativeText,
-        decisions: response.decisions,
-      };
-    } catch (error) {
-      logger.error("Failed to generate narrative", {
+    // 4. Create the updated GameState object
+    // We are updating the existing currentGameState object.
+    const updatedState: GameState = {
+      ...currentGameState,
+      narrative: {
+        currentText: narrativeText,
+        history: [
+          // Add to existing history if any, or start new
+          ...(currentGameState.narrative?.history || []),
+          {
+            type: "narrative",
+            content: narrativeText,
+            timestamp: new Date(),
+          } as NarrativeEvent, // Cast to NarrativeEvent
+        ],
+      },
+      decisions: decisions,
+      turnNumber: currentGameState.turnNumber
+        ? currentGameState.turnNumber + 1
+        : 1, // Start at turn 1 or increment
+      lastModified: new Date(),
+      // Ensure other relevant fields are preserved or updated
+    };
+
+    // 5. Update GameStateManager with this new state and persist it.
+    this.stateManager.setCurrentState(updatedState); // Update in-memory state
+    await this.stateManager.saveCurrentState(); // Persist changes to the DB (updates existing record)
+
+    // 6. Emit event
+    this.emitEvent({
+      type: "NARRATIVE_GENERATED",
+      payload: narrativeResponse,
+      timestamp: new Date(),
+      sessionId: sessionId,
+    });
+
+    logger.info(
+      "Initial narrative and decisions generated, state updated and persisted.",
+      {
         context: "game-engine",
         metadata: {
           sessionId,
-          error,
+          stateId: updatedState.id,
+          decisionCount: decisions.length,
         },
-      });
+      }
+    );
 
-      // Emit error event
-      this.emitEvent({
-        type: "ERROR_OCCURRED",
-        payload: {
-          message: "Failed to generate narrative",
-          context: {
-            sessionId,
-            error: error instanceof Error ? error.message : String(error),
-          },
-        },
-        timestamp: new Date(),
-        sessionId,
-      });
-
-      throw error;
-    }
+    return narrativeResponse;
   }
 
   /**
@@ -652,57 +774,85 @@ export class GameEngine implements GameEngineInterface {
     updatedState: GameState;
   }> {
     try {
-      // Process the decision
+      // Get the text of the decision the player is currently choosing
+      // BEFORE processDecision potentially changes the available decisions.
+      const currentDecisionsPriorToProcessing =
+        this.decisionManager.getCurrentDecisions();
+      const chosenOptionText =
+        currentDecisionsPriorToProcessing[decisionIndex]?.text ||
+        "Unknown Decision";
+
+      // Process the decision using DecisionManager (which now handles AI narrative generation)
       const { narrativeResponse, consequences } =
         await this.decisionManager.processDecision(decisionIndex);
 
-      // Get the current decisions as strings for the addDecision call
-      const currentDecisionsAsStrings = this.decisionManager
-        .getCurrentDecisions()
-        .map((d) => d.text);
+      // DecisionManager.processDecision now handles:
+      // 1. Adding player's choice to NarrativeContextManager
+      // 2. Calling AIService.generateNarrative & parsing
+      // 3. Updating GameState with new narrative text, history, and AI-suggested decisions
+      // 4. Adding AI's narrative to NarrativeContextManager
+      // 5. Setting new AI-suggested decisions in DecisionManager's currentDecisions
 
-      // Add the decision to narrative context
-      this.narrativeManager.addDecision({
-        options: currentDecisionsAsStrings,
-        chosenIndex: decisionIndex,
-      });
+      // The GameEngine's role here is to orchestrate the event and apply direct consequences.
 
-      // Add the narrative response to context
-      this.narrativeManager.addNarrativeEntry({
-        type: "response",
-        content: narrativeResponse.narrativeText,
-      });
-
-      // Update game state with consequences
-      const currentState = this.stateManager.getCurrentState();
-      const updatedState = this.stateManager.updateState({
+      // Apply direct consequences of the player's original decision to the game state
+      // Note: narrativeResponse.updatedCharacterState etc. from AI are not yet explicitly handled here,
+      // but processDecision in DecisionManager updates the GameState directly with AI narrative/decisions.
+      // If AI suggests direct state changes, DecisionManager or this method would need to merge them.
+      const currentState = this.stateManager.getCurrentState(); // Get the latest state AFTER DecisionManager updated it
+      const updatedStateWithConsequences = this.stateManager.updateState({
+        // Spread the current (potentially AI-modified) state first
         ...currentState,
-        ...consequences,
+        // Then apply direct consequences from the player's specifically chosen path
+        // This assumes 'consequences' are things like stat changes, item gains/losses from the *original* decision object
+        characterState: {
+          ...currentState.characterState,
+          ...(consequences?.character || {}),
+        },
+        worldState: {
+          ...currentState.worldState,
+          ...(consequences?.world || {}),
+        },
+        // newLocation from consequences would also be applied here if relevant
+        currentLocation: consequences?.location || currentState.currentLocation,
       });
+      logger.debug(
+        "Applied direct consequences of player decision to game state",
+        { context: "game-engine", metadata: { consequences } }
+      );
 
-      // Set new decisions
-      this.decisionManager.setDecisions(narrativeResponse.newDecisionPoints);
+      // The new decisions from the AI are already set by decisionManager.processDecision.
+      // So, no need to call this.decisionManager.setDecisions(...) here again.
 
-      // Emit decision made event
+      // Emit decision made event with the correct chosen option text
       this.emitEvent({
         type: "DECISION_MADE",
         payload: {
           decisionIndex,
-          chosenOption:
-            this.decisionManager.getCurrentDecisions()[decisionIndex]?.text ||
-            "",
-          consequences,
+          chosenOption: chosenOptionText, // Use the text of the option the player actually picked
+          consequences, // Consequences of the player's direct choice
         },
         timestamp: new Date(),
         sessionId,
       });
 
+      logger.debug("Player decision processed by GameEngine", {
+        context: "game-engine",
+        metadata: {
+          sessionId,
+          decisionIndex,
+          chosenOptionText,
+          aiNarrativeTextLength: narrativeResponse.narrativeText.length,
+          aiNewDecisionCount: narrativeResponse.newDecisionPoints.length,
+        },
+      });
+
       return {
-        narrativeResponse,
-        updatedState,
+        narrativeResponse, // Contains AI-generated text and new AI-suggested decisions
+        updatedState: updatedStateWithConsequences, // The final state after AI narrative and direct consequences
       };
     } catch (error) {
-      logger.error("Failed to process decision", {
+      logger.error("Failed to process decision in GameEngine", {
         context: "game-engine",
         metadata: {
           sessionId,
@@ -711,7 +861,6 @@ export class GameEngine implements GameEngineInterface {
         },
       });
 
-      // Emit error event
       this.emitEvent({
         type: "ERROR_OCCURRED",
         payload: {

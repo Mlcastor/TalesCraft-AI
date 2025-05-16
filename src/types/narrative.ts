@@ -1,5 +1,8 @@
+import { GameState } from "@/types/game";
+import type { Location, LoreFragment } from "@/types/database"; // Assuming Event type might also be needed
+
 /**
- * Represents a single entry in the narrative history stored in the database
+ * Represents a single entry in the narrative history
  */
 export interface NarrativeHistoryEntry {
   id: string;
@@ -7,67 +10,102 @@ export interface NarrativeHistoryEntry {
   type: "narrative" | "playerResponse";
   content: string;
   timestamp: Date;
+  // Optional metadata for richer context
+  metadata?: {
+    locationId?: string;
+    involvedNpcs?: string[];
+    relatedQuestId?: string;
+    emotionalTone?: string;
+  };
 }
 
 /**
- * Represents the context for narrative generation
+ * Represents an important event derived from narrative history
+ */
+export interface MemorableEvent {
+  id: string;
+  summary: string;
+  timestamp: Date;
+  importance: number; // Scale of 0-10
+  relatedEntries?: string[]; // IDs of NarrativeHistoryEntry
+}
+
+/**
+ * Represents a key moment or fact stored in long-term memory
+ */
+export interface LongTermMemoryFact {
+  id: string;
+  summary: string;
+  impact: "character" | "world" | "relationship";
+  importance: number;
+  relatedEntries?: string[];
+}
+
+/**
+ * Represents a piece of world information (lore, fact, etc.)
+ */
+export interface WorldFact {
+  id: string;
+  fact: string;
+  category: string; // e.g., 'history', 'geography', 'culture'
+  source?: string; // Where this fact was learned
+}
+
+/**
+ * Structure for narrative memory tiers
+ */
+export interface NarrativeMemory {
+  shortTerm: NarrativeHistoryEntry[];
+  mediumTerm: MemorableEvent[];
+  longTerm: LongTermMemoryFact[];
+  worldFacts: WorldFact[];
+}
+
+/**
+ * Represents the full context for narrative generation
  */
 export interface NarrativeContext {
   character: {
     id: string;
     name: string;
     backstory?: string;
-    traits: string[];
     appearance?: string;
+    traits: string[];
   };
   world: {
     id: string;
     name: string;
-    description: string;
+    description?: string;
+    locations?: Location[]; // Added
+    loreFragments?: LoreFragment[]; // Added
+    // events?: any[]; // Placeholder for Event type if needed
   };
   location: {
     id: string;
     name: string;
     description: string;
+    // Add more location-specific details if needed
+    // e.g., connectedLocations: string[];
+    // itemsPresent: string[];
   };
-  recentHistory: NarrativeHistoryEntry[];
-  importantEvents: {
-    id: string;
-    description: string;
-    timestamp: Date;
-  }[];
-  npcs: {
+  npcs: Array<{
     id: string;
     name: string;
-    relationshipWithPlayer: number;
-  }[];
+    description?: string;
+    relationshipToPlayer?: string; // e.g., 'friendly', 'hostile', 'neutral'
+    // Add more NPC-specific details if needed
+  }>;
+  gameState?: Partial<GameState>; // For any other relevant game state info
+  // Consider adding: currentQuest, recentEvents (summarized), relationships
 }
 
 /**
- * Represents the tiered narrative memory system
+ * Represents an event in the narrative, used in GameState history.
  */
-export interface NarrativeMemory {
-  shortTerm: NarrativeHistoryEntry[]; // Recent narrative events (last few exchanges)
-  mediumTerm: {
-    // Important events from current session
-    id: string;
-    summary: string;
-    timestamp: Date;
-    importance: number;
-  }[];
-  longTerm: {
-    // Character-defining moments
-    id: string;
-    summary: string;
-    impact: "character" | "world" | "relationship";
-    importance: number;
-  }[];
-  worldFacts: {
-    // Persistent facts about the world
-    id: string;
-    fact: string;
-    category: string;
-  }[];
+export interface NarrativeEvent {
+  type: "narrative" | "playerResponse";
+  content: string;
+  timestamp: Date;
 }
 
 /**

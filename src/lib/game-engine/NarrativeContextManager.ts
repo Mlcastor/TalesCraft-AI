@@ -5,6 +5,7 @@ import {
 } from "@/types/narrative";
 import { logger } from "@/lib/utils/logger";
 import { NarrativeContextManager as NarrativeContextManagerInterface } from "@/types/engine";
+import { aiService } from "@/lib/ai/AIService";
 
 /**
  * Configuration for the narrative context manager
@@ -365,48 +366,48 @@ export class NarrativeContextManager
   public async summarizeLongHistory(): Promise<string> {
     this.ensureInitialized();
 
-    // In a real implementation, this would use an AI service to generate
-    // a coherent summary of the narrative history
+    // Consolidate history to be summarized
+    // This can be refined to select more relevant parts or use structured data
+    const historyToSummarize = [
+      ...this.memory.longTerm.map((e) => e.summary),
+      ...this.memory.mediumTerm.map((e) => e.summary),
+      ...this.memory.shortTerm.map((e) => e.content),
+    ].join("\\n\\n"); // Added double newline for better separation for the AI
 
-    // For the MVP, we'll create a simple summary from our memory structures
-    const shortTermSummary = this.memory.shortTerm
-      .slice(-3)
-      .map(
-        (entry) =>
-          `${
-            entry.type === "narrative" ? "Narrative" : "Player"
-          }: ${entry.content.substring(0, 100)}...`
-      )
-      .join("\n");
+    if (!historyToSummarize.trim()) {
+      logger.info("No significant history to summarize.", {
+        context: "game-engine",
+      });
+      return "No significant history to summarize.";
+    }
 
-    const mediumTermSummary = this.memory.mediumTerm
-      .slice(0, 5)
-      .map((entry) => entry.summary)
-      .join("\n");
-
-    const longTermSummary = this.memory.longTerm
-      .slice(0, 3)
-      .map((entry) => entry.summary)
-      .join("\n");
-
-    const worldFactsSummary = this.memory.worldFacts
-      .slice(0, 5)
-      .map((fact) => fact.fact)
-      .join("\n");
-
-    return `
-Recent Events:
-${shortTermSummary}
-
-Important Events:
-${mediumTermSummary}
-
-Key Moments:
-${longTermSummary}
-
-World Facts:
-${worldFactsSummary}
-    `.trim();
+    try {
+      // Call AI service for summarization
+      // Using a default maxTokens, can be configured if needed
+      const summarizationResult = await aiService.summarizeContext(
+        historyToSummarize,
+        250
+      );
+      logger.debug("AI summarization successful", {
+        context: "game-engine",
+        metadata: { summaryLength: summarizationResult.summary.length },
+      });
+      return summarizationResult.summary;
+    } catch (error) {
+      logger.error("AI summarization failed in NarrativeContextManager", {
+        context: "game-engine",
+        metadata: { error },
+      });
+      // Fallback to a simpler, non-AI summary or a predefined message
+      const fallbackSummary = `Recent events include: ${this.memory.shortTerm
+        .slice(-3)
+        .map((e) => e.content)
+        .join("; ")}. Important memories involve: ${this.memory.mediumTerm
+        .slice(0, 2)
+        .map((e) => e.summary)
+        .join("; ")}.`;
+      return fallbackSummary;
+    }
   }
 
   /**
@@ -442,6 +443,7 @@ ${worldFactsSummary}
 
     return {
       character: this.character,
+      world: this.world,
       location: this.location,
       npcs: this.npcs.slice(0, 3), // Limit to 3 most relevant NPCs
       recentHistory: shortTermHighlights,

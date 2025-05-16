@@ -10,13 +10,14 @@ import {
   useEffect,
 } from "react";
 import { startGame } from "@/lib/actions/gameSession-actions";
-import { makeDecision as makeDecisionAction } from "@/lib/actions/decision-actions";
+import { makeDecision } from "@/lib/actions/decision-actions";
 import { logger } from "@/lib/utils/logger";
 import {
   GameClientState,
   GameClientAction,
   initialClientState,
 } from "@/types/gameClient";
+import { GameState, NarrativeResponse } from "@/types/game";
 
 /**
  * Reducer function to manage game state transitions.
@@ -36,6 +37,16 @@ function gameClientReducer(
         error: null,
       };
     case "INITIALIZE_GAME_SUCCESS":
+      return {
+        ...state,
+        isLoadingInitialGame: false,
+        sessionId: action.payload.sessionId,
+        characterId: action.payload.characterId,
+        worldId: action.payload.worldId,
+        currentGameState: action.payload.gameState,
+        error: null,
+      };
+    case "INITIALIZE_GAME_WITH_PRELOADED_STATE":
       return {
         ...state,
         isLoadingInitialGame: false,
@@ -99,26 +110,44 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 
 /**
  * Props for the GameProvider component.
+ * It now expects essential IDs and the initial game state to be passed from the server.
  */
 interface GameProviderProps {
   children: ReactNode;
-  autoInitializeCharacterId?: string;
-  autoInitializeWorldId?: string;
+  sessionId: string;
+  initialGameState: GameState;
+  characterId: string;
+  worldId: string;
 }
 
 /**
  * Provides game state and actions to its children components.
  * It interacts with server actions to manage the game lifecycle.
+ * Can be initialized with a pre-fetched game state to bypass auto-initialization.
  * @param children - React nodes to be rendered within the provider.
- * @param autoInitializeCharacterId - Optional character ID to automatically start/load a game session.
- * @param autoInitializeWorldId - Optional world ID to automatically start/load a game session.
+ * @param sessionId - The ID of the game session.
+ * @param initialGameState - The initial game state.
+ * @param characterId - The ID of the character.
+ * @param worldId - The ID of the world.
  */
 export function GameProvider({
   children,
-  autoInitializeCharacterId,
-  autoInitializeWorldId,
+  sessionId,
+  initialGameState,
+  characterId,
+  worldId,
 }: GameProviderProps) {
-  const [state, dispatch] = useReducer(gameClientReducer, initialClientState);
+  const [state, dispatch] = useReducer(gameClientReducer, {
+    ...initialClientState,
+    currentGameState: initialGameState || initialClientState.currentGameState,
+    sessionId: initialGameState?.sessionId || initialClientState.sessionId,
+    characterId:
+      initialGameState?.characterId || initialClientState.characterId,
+    worldId: initialGameState?.worldId || initialClientState.worldId,
+    isLoadingInitialGame: initialGameState
+      ? false
+      : initialClientState.isLoadingInitialGame,
+  });
 
   /**
    * Initializes a new game session or loads an existing one.
@@ -189,7 +218,7 @@ export function GameProvider({
             metadata: { sessionId: state.sessionId, decisionIndex },
           }
         );
-        const result = await makeDecisionAction(state.sessionId, decisionIndex);
+        const result = await makeDecision(state.sessionId, decisionIndex);
         logger.debug(
           `Decision processed successfully for session ${state.sessionId}`,
           {
@@ -219,35 +248,41 @@ export function GameProvider({
     dispatch({ type: "CLEAR_ERROR" });
   }, [dispatch]);
 
+  // Effect to initialize state from server-provided props
   useEffect(() => {
-    if (
-      autoInitializeCharacterId &&
-      autoInitializeWorldId &&
-      !state.sessionId && // Only initialize if no session ID yet
-      !state.isLoadingInitialGame && // And not already loading
-      !state.currentGameState // And no game state loaded yet
-    ) {
+    if (initialGameState && sessionId && characterId && worldId) {
       logger.debug(
-        `Auto-initializing game with Character ID: ${autoInitializeCharacterId}, World ID: ${autoInitializeWorldId}`,
+        `GameProvider: Initializing with preloaded state from props. Session: ${sessionId}`,
         {
           context: "GameProvider",
-          metadata: { autoInitializeCharacterId, autoInitializeWorldId },
+          metadata: {
+            sessionId,
+            characterId,
+            worldId,
+            hasGameState: !!initialGameState,
+          },
         }
       );
-      initializeGame(autoInitializeCharacterId, autoInitializeWorldId);
+      dispatch({
+        type: "INITIALIZE_GAME_WITH_PRELOADED_STATE",
+        payload: {
+          sessionId,
+          characterId,
+          worldId,
+          gameState: initialGameState,
+        },
+      });
     }
-  }, [
-    autoInitializeCharacterId,
-    autoInitializeWorldId,
-    initializeGame,
-    state.sessionId,
-    state.isLoadingInitialGame,
-    state.currentGameState,
-  ]);
+  }, [initialGameState, sessionId, characterId, worldId]);
 
   return (
     <GameContext.Provider
-      value={{ state, initializeGame, makePlayerDecision, clearError }}
+      value={{
+        state,
+        initializeGame,
+        makePlayerDecision,
+        clearError,
+      }}
     >
       {children}
     </GameContext.Provider>

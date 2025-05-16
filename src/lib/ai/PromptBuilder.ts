@@ -22,8 +22,39 @@ export class PromptBuilder {
   } {
     const characterName =
       context.characterName || context.characterState?.name || "Adventurer";
-    const location =
-      context.location || context.currentLocation || "Unknown location";
+
+    // --- Enhanced Location Handling ---
+    let locationString = "Unknown location";
+    let locationDetailsForLog: any = { used: locationString };
+
+    if (context.location && typeof context.location === "object") {
+      const locObj = context.location as {
+        name?: string;
+        description?: string;
+        id?: string;
+      };
+      locationString = locObj.name || locObj.id || "Unnamed Area";
+      if (locObj.description) {
+        locationString += ` (${locObj.description})`;
+      }
+      locationDetailsForLog = {
+        id: locObj.id,
+        name: locObj.name,
+        description: locObj.description,
+        derivedString: locationString,
+      };
+    } else if (
+      context.currentLocation &&
+      typeof context.currentLocation === "string"
+    ) {
+      locationString = context.currentLocation;
+      locationDetailsForLog = {
+        used: locationString,
+        source: "context.currentLocation",
+      };
+    }
+    // --- End Enhanced Location Handling ---
+
     const mood = context.mood || NarrativeMood.NEUTRAL;
     const dangerLevel = context.dangerLevel || DangerLevel.LOW;
 
@@ -42,10 +73,16 @@ export class PromptBuilder {
 Your task is to create engaging, descriptive narrative based on the player's actions and the world state.
 
 CHARACTER: ${characterName}
-LOCATION: ${location}
+LOCATION: ${locationString}
 MOOD: ${mood}
 DANGER LEVEL: ${dangerLevel}
-${npcsPresent.length > 0 ? `NPCs PRESENT: ${npcsPresent.join(", ")}` : ""}
+${
+  npcsPresent.length > 0
+    ? `NPCs PRESENT: ${npcsPresent
+        .map((npc: any) => npc.name || npc)
+        .join(", ")}`
+    : ""
+}
 
 WRITING STYLE:
 - Create immersive, atmospheric descriptions that engage the player's senses
@@ -82,7 +119,7 @@ Return ONLY valid JSON with the following structure:
 }`;
 
     // Build more detailed user prompt based on context
-    let userPrompt = `I'm currently in ${location}.`;
+    let userPrompt = `I'm currently in ${locationString}.`;
 
     // Add character details
     if (context.characterState) {
@@ -126,6 +163,20 @@ Return ONLY valid JSON with the following structure:
       }.`;
     }
 
+    // Add history if available from context.recentHistory (short-term memory from NarrativeContextManager)
+    if (
+      context.recentHistory &&
+      Array.isArray(context.recentHistory) &&
+      context.recentHistory.length > 0
+    ) {
+      userPrompt += "\n\nRecent events:";
+      context.recentHistory.forEach((entry: any) => {
+        userPrompt += `\n- ${
+          entry.type === "playerResponse" ? "I decided to" : "Then,"
+        } ${entry.content}`;
+      });
+    }
+
     // Add specific instruction
     userPrompt += `\n\nWhat happens next? Generate the narrative and decision options.`;
 
@@ -133,10 +184,20 @@ Return ONLY valid JSON with the following structure:
       context: "ai-prompt-builder",
       metadata: {
         characterName,
-        location,
+        locationProcessed: locationDetailsForLog,
+        locationStringUsed: locationString,
+        fullContextReceived: {
+          character: context.character,
+          location: context.location,
+          world: context.world,
+          npcs: context.npcs,
+          recentHistory: context.recentHistory,
+        },
         mood,
         dangerLevel,
         promptLength: systemPrompt.length + userPrompt.length,
+        "user-prompt": userPrompt,
+        "system-prompt": systemPrompt,
       },
     });
 

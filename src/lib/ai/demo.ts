@@ -1,3 +1,10 @@
+import dotenv from "dotenv";
+import path from "path";
+
+// Load environment variables from .env.local at the project root
+// Ensure this is at the VERY TOP of the file, before other imports that might use environment variables.
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+
 /**
  * AI Integration Demo
  *
@@ -315,7 +322,7 @@ async function runAllDemos() {
 }
 
 // Uncomment to run the demo
-// runAllDemos();
+runAllDemos();
 
 // Export demo functions for individual use
 export {

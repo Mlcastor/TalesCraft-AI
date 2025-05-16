@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma";
 import { prisma } from "./prisma";
 import { BaseRepository } from "./base/BaseRepository";
+import { CharacterWorldState as DbCharacterWorldState } from "@/types/database";
 import { RecordNotFoundError } from "@/lib/errors/DatabaseError";
 
 /**
@@ -25,7 +26,7 @@ export class CharacterWorldStateRepository extends BaseRepository {
   async getCharacterWorldStates(
     characterId: string,
     options?: { limit?: number; offset?: number }
-  ) {
+  ): Promise<DbCharacterWorldState[]> {
     return this.executeOperation(
       (client) =>
         client.characterWorldState.findMany({

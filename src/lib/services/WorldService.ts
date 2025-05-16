@@ -1,8 +1,8 @@
 import { ValidationError } from "@/lib/errors/DatabaseError";
 import { BaseService } from "./base/BaseService";
 import { WorldRepository } from "@/lib/db/world";
-import { World } from "@/types/database";
-import { WorldWithRelatedData, Event } from "@/types/game";
+import { World, Event } from "@/types/database";
+import { WorldWithRelatedData, Event as GameEvent } from "@/types/game";
 import { isNotEmpty } from "@/lib/utils/validation";
 import { Prisma } from "@/generated/prisma";
 import { logger } from "@/lib/utils/logger";
@@ -64,17 +64,50 @@ export class WorldService extends BaseService {
    * @param dbEvent - Event from the database
    * @returns Transformed Event conforming to game interface
    */
-  private transformEvent(dbEvent: any): Event {
+  private transformEvent(dbEvent: Event): GameEvent {
+    // Create default trigger conditions structure
+    const defaultTriggerConditions = {
+      probability: 0,
+      requiredItems: [],
+      requiredDecisions: [],
+    };
+
     // Parse JSON fields stored in the database to match expected interface structure
     return {
       ...dbEvent,
       // Transform triggerConditions from JSON to expected structure
       triggerConditions:
-        typeof dbEvent.triggerConditions === "object"
-          ? dbEvent.triggerConditions
-          : { probability: 0, requiredItems: [], requiredDecisions: [] },
-      // Transform outcomes from JSON to expected structure
-      outcomes: Array.isArray(dbEvent.outcomes) ? dbEvent.outcomes : [],
+        typeof dbEvent.triggerConditions === "object" &&
+        dbEvent.triggerConditions !== null
+          ? { ...defaultTriggerConditions, ...dbEvent.triggerConditions }
+          : defaultTriggerConditions,
+      // Transform outcomes from JSON to expected structure with validation
+      outcomes: Array.isArray(dbEvent.outcomes)
+        ? dbEvent.outcomes
+            .filter((item) => {
+              // Type guard to check if item has required properties
+              return (
+                typeof item === "object" &&
+                item !== null &&
+                "id" in item &&
+                "description" in item &&
+                typeof item.id === "string" &&
+                typeof item.description === "string"
+              );
+            })
+            .map((item: any) => ({
+              id: item.id,
+              description: item.description,
+              requirements: {
+                dialogue: Array.isArray(item.requirements?.dialogue)
+                  ? item.requirements.dialogue
+                  : [],
+                items: Array.isArray(item.requirements?.items)
+                  ? item.requirements.items
+                  : [],
+              },
+            }))
+        : [],
     };
   }
 

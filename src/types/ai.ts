@@ -136,18 +136,24 @@ export interface AIService {
 export interface PromptBuilder {
   buildNarrativePrompt: (
     context: Record<string, any>,
-    history: Array<Record<string, any>>,
+    history: Array<{
+      type: "narrative" | "playerResponse";
+      content: string;
+    }>,
     config?: PromptConfig
-  ) => string;
+  ) => { systemPrompt: string; userPrompt: string };
 
   buildDecisionPrompt: (
     narrativeContext: string,
     characterState: Record<string, any>,
     worldState: Record<string, any>,
     config?: PromptConfig
-  ) => string;
+  ) => { systemPrompt: string; userPrompt: string };
 
-  buildSummaryPrompt: (context: string, maxTokens: number) => string;
+  buildSummaryPrompt: (
+    context: string,
+    maxTokens: number
+  ) => { systemPrompt: string; userPrompt: string };
 
   optimizePrompt: (prompt: string, maxTokens: number) => string;
 }
@@ -231,6 +237,9 @@ export enum NarrativeMood {
   JOYFUL = "joyful",
   MELANCHOLIC = "melancholic",
   SUSPICIOUS = "suspicious",
+  TENSE = "tense",
+  DETERMINED = "determined",
+  CAUTIOUS = "cautious",
 }
 
 /**

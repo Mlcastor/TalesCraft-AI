@@ -189,6 +189,7 @@ export interface GameState {
   // UI state (not persisted in database)
   isLoading?: boolean;
   error?: string | null;
+  turnNumber?: number;
   narrative?: {
     text: string;
     history: Array<{
@@ -274,8 +275,7 @@ export interface NarrativeRequest {
 
 export interface NarrativeResponse {
   narrativeText: string;
-  newDecisionPoints: Array<{
-    id?: string;
+  decisions: Array<{
     text: string;
     consequences?: string;
   }>;

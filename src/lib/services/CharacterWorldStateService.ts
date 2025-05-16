@@ -4,6 +4,8 @@ import {
   CharacterWorldStateRepository,
   characterWorldStateRepository as defaultCharacterWorldStateRepository,
 } from "@/lib/db/characterWorldState";
+import { CharacterWorldState as DbCharacterWorldState } from "@/types/database";
+import { CharacterWorldState as GameCharacterWorldState } from "@/types/game";
 import { isNotEmpty } from "@/lib/utils/validation";
 import { logger } from "@/lib/utils/logger";
 
@@ -38,7 +40,7 @@ export class CharacterWorldStateService extends BaseService {
     characterId: string,
     worldId: string,
     newLocation: string
-  ): Promise<any> {
+  ): Promise<GameCharacterWorldState> {
     return this.executeOperation(async () => {
       // Validate inputs
       if (!isNotEmpty(characterId)) {
@@ -75,10 +77,15 @@ export class CharacterWorldStateService extends BaseService {
       });
 
       // Update location through repository
-      return await this.characterWorldStateRepository.updateCharacterLocation(
-        characterId,
-        worldId,
-        newLocation
+      const dbCharacterWorldState =
+        await this.characterWorldStateRepository.updateCharacterLocation(
+          characterId,
+          worldId,
+          newLocation
+        );
+
+      return this.convertDbCharacterWorldStateToGameCharacterWorldState(
+        dbCharacterWorldState
       );
     }, "updateCharacterLocation");
   }
@@ -93,7 +100,7 @@ export class CharacterWorldStateService extends BaseService {
   async findCharacterWorldState(
     characterId: string,
     worldId: string
-  ): Promise<any | null> {
+  ): Promise<GameCharacterWorldState | null> {
     return this.executeOperation(async () => {
       if (!isNotEmpty(characterId)) {
         throw new ValidationError(
@@ -111,10 +118,17 @@ export class CharacterWorldStateService extends BaseService {
         );
       }
 
-      return await this.characterWorldStateRepository.findCharacterWorldState(
-        characterId,
-        worldId
-      );
+      const dbCharacterWorldState =
+        await this.characterWorldStateRepository.findCharacterWorldState(
+          characterId,
+          worldId
+        );
+
+      return dbCharacterWorldState
+        ? this.convertDbCharacterWorldStateToGameCharacterWorldState(
+            dbCharacterWorldState
+          )
+        : null;
     }, "findCharacterWorldState");
   }
 
@@ -128,7 +142,7 @@ export class CharacterWorldStateService extends BaseService {
   async getCharacterWorldStates(
     characterId: string,
     options?: { limit?: number; offset?: number }
-  ): Promise<any[]> {
+  ): Promise<GameCharacterWorldState[]> {
     return this.executeOperation(async () => {
       if (!isNotEmpty(characterId)) {
         throw new ValidationError(
@@ -138,11 +152,39 @@ export class CharacterWorldStateService extends BaseService {
         );
       }
 
-      return await this.characterWorldStateRepository.getCharacterWorldStates(
-        characterId,
-        options
+      const dbCharacterWorldStates =
+        await this.characterWorldStateRepository.getCharacterWorldStates(
+          characterId,
+          options
+        );
+
+      return dbCharacterWorldStates.map(
+        this.convertDbCharacterWorldStateToGameCharacterWorldState
       );
     }, "getCharacterWorldStates");
+  }
+
+  /**
+   * Utils
+   */
+  private convertDbCharacterWorldStateToGameCharacterWorldState(
+    dbCharacterWorldState: DbCharacterWorldState
+  ): GameCharacterWorldState {
+    return {
+      ...dbCharacterWorldState,
+      currentLocation: dbCharacterWorldState.currentLocation ?? undefined,
+      lastPlayedAt: dbCharacterWorldState.lastPlayedAt ?? undefined,
+    };
+  }
+
+  private convertGameCharacterWorldStateToDbCharacterWorldState(
+    gameCharacterWorldState: GameCharacterWorldState
+  ): DbCharacterWorldState {
+    return {
+      ...gameCharacterWorldState,
+      currentLocation: gameCharacterWorldState.currentLocation ?? null,
+      lastPlayedAt: gameCharacterWorldState.lastPlayedAt ?? null,
+    };
   }
 }
 

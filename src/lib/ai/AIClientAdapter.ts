@@ -8,7 +8,7 @@ import { logger } from "@/lib/utils/logger";
  */
 export class GroqAdapter implements AIClientAdapter {
   private client: Groq;
-  private defaultModel = "mixtral-8x7b-32768";
+  private defaultModel = "meta-llama/llama-4-maverick-17b-128e-instruct";
 
   /**
    * Create a new GroqAdapter instance
@@ -57,7 +57,7 @@ export class GroqAdapter implements AIClientAdapter {
       const response = await this.client.chat.completions.create({
         model: config?.model || this.defaultModel,
         messages,
-        max_tokens: config?.maxTokens || 1024,
+        max_tokens: config?.maxTokens || 4000,
         temperature: config?.temperature || 0.7,
         response_format: responseFormat,
       });

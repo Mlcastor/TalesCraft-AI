@@ -284,15 +284,24 @@ export class ResponseParser implements ResponseParserInterface {
   private getFallbackNarrativeResponse(): {
     text: string;
     entities?: Record<string, any>;
-    suggestedDecisions?: Array<{ text: string }>;
+    suggestedDecisions?: Array<{ text: string; consequences?: string }>;
   } {
     return {
       text: "The path ahead seems momentarily unclear. You pause to gather your thoughts and consider your options.",
       entities: {},
       suggestedDecisions: [
-        { text: "Wait and observe" },
-        { text: "Press onward cautiously" },
-        { text: "Try a different approach" },
+        {
+          text: "Wait and observe",
+          consequences: "Take time to better understand the situation.",
+        },
+        {
+          text: "Press onward cautiously",
+          consequences: "Move forward carefully, being alert for dangers.",
+        },
+        {
+          text: "Try a different approach",
+          consequences: "Try an alternative approach to the situation.",
+        },
       ],
     };
   }

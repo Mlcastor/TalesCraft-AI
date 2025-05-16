@@ -17,6 +17,8 @@ import {
   narrativeContextManager as defaultNarrativeContextManager,
 } from "./NarrativeContextManager";
 import { logger } from "@/lib/utils/logger";
+import { aiService } from "@/lib/ai/AIService";
+import { responseParser } from "@/lib/ai/ResponseParser";
 
 /**
  * Configuration options for the DecisionManager
@@ -194,41 +196,82 @@ export class DecisionManager implements DecisionManagerInterface {
   }> {
     // Check if index is valid
     if (index < 0 || index >= this.currentDecisions.length) {
+      logger.warn("Invalid decision index", {
+        context: "game-engine",
+        metadata: { index, available: this.currentDecisions.length },
+      });
       throw new Error(
         `Invalid decision index: ${index}. Available decisions: ${this.currentDecisions.length}`
       );
     }
 
     try {
-      // Get current game state
       const currentState = this.gameStateManager.getCurrentState();
-
-      // Get the selected decision
       const selectedDecision = this.currentDecisions[index];
 
-      // Create decision history entry
-      const historyEntry: DecisionHistoryEntry = {
-        options: this.currentDecisions.map((d) => ({ text: d.text })),
-        chosenIndex: index,
-        timestamp: new Date(),
-      };
+      // Log player's choice immediately for context
+      logger.debug("Player selected decision", {
+        context: "game-engine",
+        metadata: { decisionText: selectedDecision.text, index },
+      });
 
-      // Add decision to narrative context
+      // The addDecision method in NarrativeContextManager already creates a playerResponse entry.
+      // This ensures the player's action is part of the context for the AI.
       this.narrativeContextManager.addDecision({
         options: this.currentDecisions.map((d) => d.text),
         chosenIndex: index,
       });
 
-      // Parse any consequences from the decision
-      const consequences = this.parseConsequences(
+      // Get context for AI AFTER player's decision has been added to narrative context
+      const aiContext = this.narrativeContextManager.getContextForAI();
+      const narrativeHistory = currentState.narrative?.history || [];
+
+      logger.debug("Generating narrative with AI", {
+        context: "game-engine",
+        metadata: { historyLength: narrativeHistory.length },
+      });
+      // Generate narrative using AI service
+      const rawAiResponse = await aiService.generateNarrative(
+        aiContext, // This context should ideally include the latest player action
+        narrativeHistory, // History before this turn's AI response
+        { responseFormat: { type: "json_object" } } // Ensuring JSON for reliable parsing
+      );
+
+      logger.debug("Received raw AI response", {
+        context: "game-engine",
+        metadata: { tokens: rawAiResponse.tokens },
+      });
+      // Parse the AI response
+      const parsedAiResult =
+        responseParser.parseNarrativeResponse(rawAiResponse);
+      logger.debug("Parsed AI response", {
+        context: "game-engine",
+        metadata: {
+          narrativeTextLength: parsedAiResult.text.length,
+          decisionCount: parsedAiResult.suggestedDecisions?.length,
+        },
+      });
+
+      // Prepare the narrative response object for the game engine
+      const narrativeResponse: NarrativeResponse = {
+        narrativeText: parsedAiResult.text,
+        decisions: parsedAiResult.suggestedDecisions || [],
+        // Potential future: map updatedCharacterState, updatedWorldState from AI if provided
+      };
+
+      // Original consequences from the *player's chosen decision* (e.g., stat changes, item usage)
+      const decisionConsequences = this.parseConsequences(
         selectedDecision.consequences
       );
-      historyEntry.consequences = consequences;
 
-      // Add to decision history
+      // Update history entry for internal DecisionManager tracking
+      const historyEntry: DecisionHistoryEntry = {
+        options: this.currentDecisions.map((d) => ({ text: d.text })),
+        chosenIndex: index,
+        timestamp: new Date(),
+        consequences: decisionConsequences, // Consequences of player's direct choice
+      };
       this.decisionHistory.unshift(historyEntry);
-
-      // Trim history if needed
       if (this.decisionHistory.length > this.config.maxDecisionHistorySize) {
         this.decisionHistory = this.decisionHistory.slice(
           0,
@@ -236,81 +279,97 @@ export class DecisionManager implements DecisionManagerInterface {
         );
       }
 
-      // Create a simple narrative response for the MVP
-      // In a full implementation, this would involve more complex narrative generation
-      const narrativeResponse: NarrativeResponse = {
-        narrativeText: `You chose: ${selectedDecision.text}`,
-        newDecisionPoints: [
-          { text: "Continue" },
-          { text: "Examine surroundings" },
-          { text: "Check inventory" },
-        ],
-      };
+      // Update GameState: Add player's action and AI's narrative to history,
+      // set new narrative text and AI-suggested decisions.
+      const updatedNarrativeHistory = [
+        ...(currentState.narrative?.history || []),
+        // Player's choice text is already added to narrative context via this.narrativeContextManager.addDecision
+        // which itself calls addNarrativeEntry. So, it's part of short-term memory for the AI.
+        // Now add the AI's response to the game state history.
+        {
+          type: "narrative" as const,
+          content: narrativeResponse.narrativeText,
+        },
+      ];
 
-      // Apply immediate consequences to the state if needed
-      if (Object.keys(consequences).length > 0) {
-        if (consequences.character) {
-          narrativeResponse.updatedCharacterState = consequences.character;
-        }
-        if (consequences.world) {
-          narrativeResponse.updatedWorldState = consequences.world;
-        }
-        if (consequences.location) {
-          narrativeResponse.newLocation = consequences.location;
-        }
+      this.gameStateManager.updateState({
+        narrative: {
+          text: narrativeResponse.narrativeText,
+          history: updatedNarrativeHistory,
+        },
+        decisions: narrativeResponse.decisions, // Update game state with new decisions
+        // Note: aiContext in GameState could be updated here with rawAiResponse or parsedAiResult if needed for debugging/later use
+      });
+      logger.debug("Game state updated with AI narrative and decisions", {
+        context: "game-engine",
+      });
+
+      // Add the AI's narrative response to the NarrativeContextManager as well
+      // This ensures it's part of the context for future AI calls.
+      this.narrativeContextManager.addNarrativeEntry({
+        type: "narrative",
+        content: narrativeResponse.narrativeText,
+      });
+
+      // Set the new decisions generated by the AI for the player
+      if (
+        narrativeResponse.decisions &&
+        narrativeResponse.decisions.length > 0
+      ) {
+        this.setDecisions(narrativeResponse.decisions);
+      } else {
+        // Handle cases where AI provides no new decisions - perhaps offer generic options or end a scene
+        logger.warn(
+          "AI provided no new decision points. Clearing current decisions.",
+          { context: "game-engine" }
+        );
+        this.clearDecisions();
+        // Consider adding some default/fallback decisions here if clearing is not desired
+        // For example: this.setDecisions([{ text: "Reflect on what happened..." }]);
       }
 
-      // Clear current decisions
-      this.clearDecisions();
-
-      // Record the decision in the database for persistence
-      // Use a generated ID as decisionPointId for now
+      // Persist the original player decision (not the AI outcome)
+      // This logging remains important for tracking player choices and direct consequences.
       const decisionPointId = `dp_${Date.now()}`;
-
-      // In a non-MVP implementation, we would await this
-      // But for MVP, we'll fire and forget to avoid slowing down the response
       this.decisionService
         .recordDecision(
           currentState.id,
           decisionPointId,
-          historyEntry.options,
+          historyEntry.options.map((opt) => ({ text: opt.text })), // Ensure it's Array<{text: string}>
           index,
-          "Game decision context", // This would be more specific in a full implementation
-          consequences
+          "Game decision context",
+          decisionConsequences // record the parsed consequences of the *selected* decision
         )
         .catch((error) => {
-          logger.error("Failed to record decision", {
+          logger.error("Failed to record player decision", {
             context: "game-engine",
-            metadata: {
-              error,
-              decisionIndex: index,
-              stateId: currentState.id,
-            },
+            metadata: { error, decisionIndex: index, stateId: currentState.id },
           });
         });
 
-      // Log the decision processing
-      logger.debug("Processed player decision", {
+      logger.info("Player decision processed with AI-generated narrative", {
         context: "game-engine",
         metadata: {
           decisionIndex: index,
           decisionText: selectedDecision.text,
-          hasConsequences: Object.keys(consequences).length > 0,
+          aiNarrativeLength: narrativeResponse.narrativeText.length,
+          newDecisionCount: narrativeResponse.decisions.length,
+          hasOriginalConsequences: Object.keys(decisionConsequences).length > 0,
         },
       });
 
       return {
-        narrativeResponse,
-        consequences,
+        narrativeResponse, // This is the AI's response (new narrative + new decisions)
+        consequences: decisionConsequences, // These are the consequences of the *player's chosen option*
       };
     } catch (error) {
-      logger.error("Error processing decision", {
+      // Catching potential errors from AI service calls or parsing
+      logger.error("Error processing decision with AI integration", {
         context: "game-engine",
-        metadata: {
-          error,
-          decisionIndex: index,
-        },
+        metadata: { error, decisionIndex: index },
       });
+      // Consider a graceful fallback: e.g., generic error message and simple decisions
+      // For now, rethrow to be handled by the GameEngine or calling layer
       throw error;
     }
   }

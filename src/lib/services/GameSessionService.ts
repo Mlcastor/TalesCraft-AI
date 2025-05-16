@@ -83,7 +83,7 @@ export class GameSessionService extends BaseService {
 
       // Create a new session
       const now = new Date();
-      const sessionData = { worldId } as unknown as Prisma.JsonValue;
+      const sessionData = { worldId } as Prisma.JsonValue;
 
       const gameSession = await this.gameSessionRepository.create({
         characterId,

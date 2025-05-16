@@ -126,11 +126,11 @@ export class DecisionService extends BaseService {
         gameState: { connect: { id: gameStateId } },
         decisionPointId,
         decisionContext: context || null,
-        optionsPresented: options as unknown as Prisma.InputJsonValue,
+        optionsPresented: options as Prisma.InputJsonValue,
         playerChoice: choiceIndex,
         timestamp: new Date(),
         location: gameState.currentLocation || null,
-        consequences: analyzedConsequences as unknown as Prisma.InputJsonValue,
+        consequences: analyzedConsequences as Prisma.InputJsonValue,
         relatedNpcIds: [], // This would be populated in a more advanced implementation
       };
 

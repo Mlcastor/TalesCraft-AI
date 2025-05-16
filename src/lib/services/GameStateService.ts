@@ -1,11 +1,23 @@
-import { ValidationError } from "@/lib/errors/DatabaseError";
+import {
+  ValidationError,
+  RecordNotFoundError,
+} from "@/lib/errors/DatabaseError";
 import { BaseService } from "./base/BaseService";
 import { GameStateRepository } from "@/lib/db/gameState";
 import { GameSessionRepository } from "@/lib/db/gameSession";
-import type { GameState as DbGameState, NPCState } from "@/types/database";
+import { CharacterRepository } from "@/lib/db/character";
+import { WorldRepository } from "@/lib/db/world";
+import type {
+  GameState as DbGameState,
+  NPCState,
+  World as DbWorld,
+  Location as DbLocation,
+  LoreFragment as DbLoreFragment,
+} from "@/types/database";
 import type { GameState } from "@/types/game"; // Import the full GameState type
 import { isNotEmpty } from "@/lib/utils/validation";
 import { Prisma } from "@/generated/prisma";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Service for managing game states
@@ -14,23 +26,33 @@ import { Prisma } from "@/generated/prisma";
 export class GameStateService extends BaseService {
   private readonly gameStateRepository: GameStateRepository;
   private readonly gameSessionRepository: GameSessionRepository;
+  private readonly characterRepository: CharacterRepository;
+  private readonly worldRepository: WorldRepository;
 
   /**
    * Create a new GameStateService
    *
    * @param gameStateRepository - Repository for game state operations
    * @param gameSessionRepository - Repository for game session operations
+   * @param characterRepository - Repository for character operations
+   * @param worldRepository - Repository for world operations
    */
   constructor(
     gameStateRepository: GameStateRepository = new GameStateRepository(),
-    gameSessionRepository: GameSessionRepository = new GameSessionRepository()
+    gameSessionRepository: GameSessionRepository = new GameSessionRepository(),
+    characterRepository: CharacterRepository = new CharacterRepository(),
+    worldRepository: WorldRepository = new WorldRepository()
   ) {
     super("GameStateService", {
       gameStateRepository,
       gameSessionRepository,
+      characterRepository,
+      worldRepository,
     });
     this.gameStateRepository = gameStateRepository;
     this.gameSessionRepository = gameSessionRepository;
+    this.characterRepository = characterRepository;
+    this.worldRepository = worldRepository;
   }
 
   /**
@@ -41,40 +63,63 @@ export class GameStateService extends BaseService {
    * @returns A properly typed GameState object
    */
   public convertDbStateToGameState(dbState: DbGameState): GameState {
-    // Create a new object with the correct types instead of mutating
-    const gameState: GameState = {
+    // Ensure characterState and worldState are parsed or handled if they are JSON strings
+    // For MVP, assuming they are already objects or Prisma handles JSON conversion.
+    // If they were stored as strings, JSON.parse would be needed here.
+
+    const characterState =
+      typeof dbState.characterState === "object" &&
+      dbState.characterState !== null
+        ? dbState.characterState
+        : {};
+    const worldState =
+      typeof dbState.worldState === "object" && dbState.worldState !== null
+        ? dbState.worldState
+        : {};
+    const aiContext =
+      typeof dbState.aiContext === "object" && dbState.aiContext !== null
+        ? dbState.aiContext
+        : {};
+
+    return {
       id: dbState.id,
       sessionId: dbState.sessionId,
       characterId: dbState.characterId,
-      worldId: dbState.worldId ?? undefined,
-      locationId: dbState.locationId ?? undefined,
-      savePointName: dbState.savePointName ?? undefined,
+      worldId: dbState.worldId || undefined, // Ensure undefined if null
+      locationId: dbState.locationId || undefined, // Ensure undefined if null
+      savePointName: dbState.savePointName || undefined,
       currentLocation: dbState.currentLocation,
       saveTimestamp: dbState.saveTimestamp,
-      narrativeContext: dbState.narrativeContext ?? undefined,
-      aiContext: dbState.aiContext as Record<string, any>,
-      characterState: dbState.characterState as Record<string, any>,
-      worldState: dbState.worldState as Record<string, any>,
+      narrativeContext: dbState.narrativeContext || undefined,
+      aiContext: aiContext as Record<string, any>,
+      characterState: characterState as Record<string, any>, // Cast as it might be more specific later
+      worldState: worldState as Record<string, any>, // Cast as it might be more specific later
       isAutosave: dbState.isAutosave,
       isCompleted: dbState.isCompleted,
-      isLoading: false,
-      error: null,
+      // Narrative and decisions are typically not directly on the DB GameState model
+      // but are constructed or added by the GameEngine/GameClient.
+      // Initialize them as empty/default if not present, or based on other fields if applicable.
+      narrative: {
+        text: "", // Initial narrative text might be generated later
+        history: [],
+      },
+      decisions: [],
     };
-
-    return gameState;
   }
 
   /**
    * Create a new game state
    *
    * @param sessionId - The session ID for this game state
-   * @param data - Game state data
+   * @param data - Game state data, including characterId and worldId for initial setup
    * @returns The created game state
    * @throws ValidationError if session ID is invalid or session doesn't exist
    */
   async createGameState(
     sessionId: string,
     data: Partial<GameState> & {
+      characterId: string;
+      worldId: string;
       relatedNpcs?: Array<Omit<NPCState, "id" | "gameStateId">>;
     }
   ): Promise<GameState> {
@@ -87,8 +132,22 @@ export class GameStateService extends BaseService {
           { entity: this.serviceName }
         );
       }
+      if (!data.characterId) {
+        throw new ValidationError(
+          "Character ID is required in data for createGameState",
+          { characterId: "Character ID is required" },
+          { entity: this.serviceName }
+        );
+      }
+      if (!data.worldId) {
+        throw new ValidationError(
+          "World ID is required in data for createGameState",
+          { worldId: "World ID is required" },
+          { entity: this.serviceName }
+        );
+      }
 
-      // Verify the session exists
+      // Verify the session exists (uses internal session.characterId later, but good to check)
       const session = await this.gameSessionRepository.findById(sessionId);
       if (!session) {
         throw new ValidationError(
@@ -96,6 +155,20 @@ export class GameStateService extends BaseService {
           { sessionId: "Session does not exist" },
           { entity: this.serviceName }
         );
+      }
+      // Ensure the session's characterId matches the one provided in data, if consistency is key
+      if (session.characterId !== data.characterId) {
+        logger.warn(
+          "Session characterId and data.characterId mismatch in createGameState",
+          {
+            context: this.serviceName,
+            metadata: {
+              sessionCharId: session.characterId,
+              dataCharId: data.characterId,
+            },
+          }
+        );
+        // Potentially throw error or use session.characterId as source of truth
       }
 
       // Use transaction to ensure data integrity
@@ -107,28 +180,94 @@ export class GameStateService extends BaseService {
             data: { lastActivityAt: new Date() },
           });
 
+          // Fetch Character and World details to populate characterState and worldState
+          const character = await this.characterRepository.getCharacterById(
+            session.characterId
+          );
+          if (!character) {
+            throw new RecordNotFoundError("Character", session.characterId);
+          }
+
+          // Fetch World WITH related data
+          const worldWithDetails =
+            await this.worldRepository.getWorldWithRelatedData(data.worldId);
+          if (!worldWithDetails) {
+            throw new RecordNotFoundError("World", data.worldId);
+          }
+
           // Prepare data for game state creation
-          const now = new Date();
+          const populatedCharacterState = {
+            id: character.id,
+            name: character.name,
+            backstory: character.backstory || undefined,
+            appearance: character.appearanceDescription || undefined,
+            traits: character.personalityTraits || [],
+          };
+
+          // Populate worldState with locations and loreFragments
+          const populatedWorldState = {
+            id: worldWithDetails.id,
+            name: worldWithDetails.name,
+            description: worldWithDetails.description || undefined,
+            // Ensure these are arrays, even if empty, to match expected type
+            locations: ((worldWithDetails.locations as DbLocation[]) || []).map(
+              (loc) => ({
+                // Cast to DbLocation for safety
+                id: loc.id,
+                name: loc.name,
+                description: loc.description,
+                isStartingLocation: loc.isStartingLocation,
+                connectedLocationIds: loc.connectedLocationIds || [],
+                thumbnailUrl: loc.thumbnailUrl,
+                worldId: loc.worldId,
+              })
+            ),
+            loreFragments: (
+              (worldWithDetails.loreFragments as DbLoreFragment[]) || []
+            ).map((lore) => ({
+              // Cast to DbLoreFragment
+              id: lore.id,
+              title: lore.title,
+              content: lore.content,
+              type: lore.type,
+              contextId: lore.contextId,
+              isRevealed: lore.isRevealed,
+              keywords: lore.keywords || [],
+              worldId: lore.worldId,
+            })),
+            // events: worldWithDetails.events || [], // if events are also needed
+          };
+
+          // Determine the starting location
+          let determinedStartingLocation = "starting_area"; // Default fallback
+          if (
+            worldWithDetails.locations &&
+            worldWithDetails.locations.length > 0
+          ) {
+            const startingLoc = (
+              worldWithDetails.locations as DbLocation[]
+            ).find((loc) => loc.isStartingLocation);
+            if (startingLoc) {
+              determinedStartingLocation = startingLoc.id; // Assuming currentLocation should be an ID
+            }
+          }
+
           const gameStateData: Prisma.GameStateCreateInput = {
             session: { connect: { id: sessionId } },
             character: { connect: { id: session.characterId } },
-            currentLocation: data.currentLocation || "starting_area",
-            saveTimestamp: now,
+            world: { connect: { id: data.worldId } },
+            currentLocation: data.currentLocation || determinedStartingLocation,
+            saveTimestamp: new Date(),
             savePointName: data.savePointName || null,
-            narrativeContext: data.narrativeContext || null,
+            narrativeContext: data.narrativeContext || undefined,
             aiContext: (data.aiContext || {}) as Prisma.InputJsonValue,
-            characterState: (data.characterState ||
-              {}) as Prisma.InputJsonValue,
-            worldState: (data.worldState || {}) as Prisma.InputJsonValue,
+            characterState: populatedCharacterState as Prisma.InputJsonValue,
+            worldState: populatedWorldState as Prisma.InputJsonValue,
             isAutosave: data.isAutosave || false,
             isCompleted: data.isCompleted || false,
           };
 
-          // Add optional world and location connections if provided
-          if (data.worldId) {
-            gameStateData.world = { connect: { id: data.worldId } };
-          }
-
+          // locationId is usually set by gameplay, not at initial creation unless specified
           if (data.locationId) {
             gameStateData.location = { connect: { id: data.locationId } };
           }
@@ -139,7 +278,7 @@ export class GameStateService extends BaseService {
             const dbState = await this.gameStateRepository.createWithRelations(
               gameStateData,
               {
-                npcs: relatedNpcs as any,
+                npcs: relatedNpcs as any, // Assuming type compatibility
               }
             );
             return this.convertDbStateToGameState(dbState);
@@ -421,19 +560,62 @@ export class GameStateService extends BaseService {
     }
   ): Promise<GameState[]> {
     return this.executeOperation(async () => {
+      // Create a simple Record<string, "asc"|"desc"> to match repository expectations
+      const orderBy: Record<string, "asc" | "desc"> = {};
+
+      if (options?.sortBy === "timestamp") {
+        orderBy.saveTimestamp = options.sortOrder || "desc";
+      } else if (options?.sortBy === "savePointName") {
+        orderBy.savePointName = options.sortOrder || "asc";
+      } else {
+        orderBy.saveTimestamp = "desc"; // Default sort
+      }
+
       const states = await this.gameStateRepository.findMany({
         where: { sessionId, isAutosave: options?.isAutosave },
-        orderBy: {
-          saveTimestamp: "desc",
-        },
+        orderBy,
       });
       return states.map(this.convertDbStateToGameState);
     }, "getAllGameStates");
+  }
+
+  /**
+   * Update a game state
+   *
+   * @param stateId - The ID of the game state to update
+   * @param data - The game state data to update
+   * @returns The updated game state
+   */
+  async updateGameState(
+    stateId: string,
+    data: Partial<GameState>
+  ): Promise<GameState> {
+    return this.executeOperation(async () => {
+      // TODO: Re-evaluate how decisions should be updated.
+      // For now, excluding from direct update to avoid Prisma type errors.
+      const { decisions, ...restOfData } = data;
+      if (decisions) {
+        logger.warn(
+          "Attempted to update decisions via GameStateService.updateGameState. This is not currently supported for the 'decisions' field directly.",
+          {
+            context: this.serviceName,
+            metadata: { stateId },
+          }
+        );
+      }
+      const dbState = await this.gameStateRepository.update(
+        stateId,
+        restOfData as any
+      ); // Using 'as any' for restOfData temporarily, Prisma types can be complex.
+      return this.convertDbStateToGameState(dbState);
+    }, "updateGameState");
   }
 }
 
 // Export singleton instance for convenience
 export const gameStateService = new GameStateService(
   new GameStateRepository(),
-  new GameSessionRepository()
+  new GameSessionRepository(),
+  new CharacterRepository(),
+  new WorldRepository()
 );

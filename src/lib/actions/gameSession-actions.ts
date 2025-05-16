@@ -7,6 +7,7 @@ import { logger } from "@/lib/utils/logger";
 import { GameSession, GameState } from "@/types/game";
 import { isNotEmpty } from "@/lib/utils/validation";
 import { sessionController } from "@/lib/game-engine/SessionController";
+import { getLatestGameStateForSession } from "./game-state-actions";
 
 /**
  * Start a new game session
@@ -40,25 +41,76 @@ export async function startGame(
       );
     }
 
-    // Use the GameEngine to start the game
-    const { session, initialState } = await gameEngine.startGame(
-      characterId,
-      worldId
-    );
-
-    logger.info("Game started", {
+    // Use the GameEngine to start the game (creates session and bare initial state)
+    const { session, initialState: bareInitialState } =
+      await gameEngine.startGame(characterId, worldId);
+    logger.debug("Initial session and bare game state created", {
       context: "server-action",
       metadata: {
         action: "startGame",
         sessionId: session.id,
-        characterId,
-        worldId,
+        stateId: bareInitialState.id,
       },
     });
 
-    return { session, initialState };
+    // Now, generate the initial narrative for this new session/state
+    // This call should ensure the GameState in GameStateManager is updated and persisted.
+    await gameEngine.generateNarrative(session.id);
+    logger.debug("Initial narrative generated for session", {
+      context: "server-action",
+      metadata: { action: "startGame", sessionId: session.id },
+    });
+
+    // Fetch the latest game state ID for the session, which should now be populated
+    const latestStateId = await getLatestGameStateForSession(session.id);
+    if (!latestStateId) {
+      logger.error(
+        "Failed to retrieve latest game state ID after narrative generation.",
+        {
+          context: "server-action",
+          metadata: { action: "startGame", sessionId: session.id },
+        }
+      );
+      throw new Error(
+        "Failed to retrieve latest game state after narrative generation."
+      );
+    }
+
+    // Fetch the updated state which should now include the initial narrative and decisions
+    const populatedInitialState = await gameEngine.getGameState(latestStateId);
+
+    if (!populatedInitialState) {
+      logger.error(
+        "Failed to load populated initial game state even with latestStateId.",
+        {
+          context: "server-action",
+          metadata: {
+            action: "startGame",
+            sessionId: session.id,
+            latestStateId,
+          },
+        }
+      );
+      throw new Error("Failed to load populated initial game state.");
+    }
+
+    logger.debug("Populated initial game state fetched for startGame action", {
+      context: "server-action",
+      metadata: {
+        action: "startGame",
+        sessionId: session.id,
+        stateId: populatedInitialState.id,
+        hasNarrative: !!populatedInitialState.narrative?.text,
+        decisionCount: populatedInitialState.decisions?.length || 0,
+      },
+    });
+
+    return {
+      session,
+      initialState: populatedInitialState,
+    };
   } catch (error) {
-    logger.error("Failed to start game", {
+    logger.error("Failed to start game session action", {
       context: "server-action",
       metadata: {
         action: "startGame",
