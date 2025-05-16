@@ -127,19 +127,8 @@ export class GameStateManager implements GameStateManagerInterface {
       throw new Error(`Game state with ID ${stateId} not found`);
     }
 
-    // Convert database state to game state and handle null values
-    const gameState: GameState = {
-      ...loadedState,
-      worldId: loadedState.worldId || undefined,
-      locationId: loadedState.locationId || undefined,
-      savePointName: loadedState.savePointName || undefined,
-      narrativeContext: loadedState.narrativeContext || undefined,
-      aiContext: loadedState.aiContext as Record<string, any>,
-      characterState: loadedState.characterState as Record<string, any>,
-      worldState: loadedState.worldState as Record<string, any>,
-      isLoading: false,
-      error: null,
-    };
+    // The GameStateService now handles the conversion from DB state to GameState
+    const gameState = loadedState;
 
     // Set as current state and add to history
     this.currentState = gameState;
@@ -178,19 +167,8 @@ export class GameStateManager implements GameStateManagerInterface {
       savePointName
     );
 
-    // Convert database state to game state and handle null values
-    const gameState: GameState = {
-      ...savedState,
-      worldId: savedState.worldId || undefined,
-      locationId: savedState.locationId || undefined,
-      savePointName: savedState.savePointName || undefined,
-      narrativeContext: savedState.narrativeContext || undefined,
-      aiContext: savedState.aiContext as Record<string, any>,
-      characterState: savedState.characterState as Record<string, any>,
-      worldState: savedState.worldState as Record<string, any>,
-      isLoading: false,
-      error: null,
-    };
+    // GameStateService now handles the database state to GameState conversion
+    const gameState = savedState;
 
     // Update current state and history
     this.currentState = gameState;

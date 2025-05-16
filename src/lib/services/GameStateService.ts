@@ -41,7 +41,8 @@ export class GameStateService extends BaseService {
    * @returns A properly typed GameState object
    */
   public convertDbStateToGameState(dbState: DbGameState): GameState {
-    return {
+    // Create a new object with the correct types instead of mutating
+    const gameState: GameState = {
       id: dbState.id,
       sessionId: dbState.sessionId,
       characterId: dbState.characterId,
@@ -59,6 +60,8 @@ export class GameStateService extends BaseService {
       isLoading: false,
       error: null,
     };
+
+    return gameState;
   }
 
   /**
@@ -133,13 +136,20 @@ export class GameStateService extends BaseService {
           // Create related NPCs if they exist
           const relatedNpcs = data.relatedNpcs || [];
           if (relatedNpcs.length > 0) {
-            return this.gameStateRepository.createWithRelations(gameStateData, {
-              npcs: relatedNpcs as any,
-            });
+            const dbState = await this.gameStateRepository.createWithRelations(
+              gameStateData,
+              {
+                npcs: relatedNpcs as any,
+              }
+            );
+            return this.convertDbStateToGameState(dbState);
           }
 
           // Create the game state
-          return this.gameStateRepository.create(gameStateData);
+          const dbState = await this.gameStateRepository.create(gameStateData);
+
+          // Convert before returning
+          return this.convertDbStateToGameState(dbState);
         },
         { primaryRepository: "gameStateRepository" }
       );
@@ -295,13 +305,20 @@ export class GameStateService extends BaseService {
           // Check if there are related NPCs to include
           const relatedNpcs = data.relatedNpcs || [];
           if (relatedNpcs.length > 0) {
-            return this.gameStateRepository.createWithRelations(gameStateData, {
-              npcs: relatedNpcs as any,
-            });
+            const dbState = await this.gameStateRepository.createWithRelations(
+              gameStateData,
+              {
+                npcs: relatedNpcs as any,
+              }
+            );
+            return this.convertDbStateToGameState(dbState);
           }
 
           // Create the new game state
-          return this.gameStateRepository.create(gameStateData);
+          const dbState = await this.gameStateRepository.create(gameStateData);
+
+          // Convert before returning
+          return this.convertDbStateToGameState(dbState);
         },
         { primaryRepository: "gameStateRepository" }
       );
@@ -366,6 +383,52 @@ export class GameStateService extends BaseService {
 
       return this.convertDbStateToGameState(dbState);
     }, "reconstructGameState");
+  }
+
+  /**
+   * Delete a game state by ID
+   *
+   * @param stateId - The ID of the game state to delete
+   * @returns True if the state was deleted, false if it doesn't exist
+   */
+  async deleteGameState(stateId: string): Promise<boolean> {
+    return this.executeOperation(async () => {
+      if (!isNotEmpty(stateId)) {
+        throw new ValidationError(
+          "State ID is required",
+          { stateId: "State ID is required" },
+          { entity: this.serviceName }
+        );
+      }
+
+      await this.gameStateRepository.delete(stateId);
+      return true;
+    }, "deleteGameState");
+  }
+
+  /**
+   * Get all game states for a session
+   *
+   * @param sessionId - The ID of the session to get states for
+   * @returns All game states for the session
+   */
+  async getAllGameStates(
+    sessionId: string,
+    options?: {
+      sortBy?: "timestamp" | "savePointName";
+      sortOrder?: "asc" | "desc";
+      isAutosave?: boolean;
+    }
+  ): Promise<GameState[]> {
+    return this.executeOperation(async () => {
+      const states = await this.gameStateRepository.findMany({
+        where: { sessionId, isAutosave: options?.isAutosave },
+        orderBy: {
+          saveTimestamp: "desc",
+        },
+      });
+      return states.map(this.convertDbStateToGameState);
+    }, "getAllGameStates");
   }
 }
 

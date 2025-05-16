@@ -183,14 +183,11 @@ export class GameEngine implements GameEngineInterface {
         worldId
       );
 
-      // Create initial game state
-      const dbState = await gameStateService.createGameState(session.id, {
+      // Create initial game state - GameStateService now handles conversion
+      const initialState = await gameStateService.createGameState(session.id, {
         characterId,
         worldId,
       });
-
-      // Convert database state to game state
-      const initialState: GameState = this.convertDbStateToGameState(dbState);
 
       // Initialize state manager with the initial state
       this.stateManager.initialize(initialState);
@@ -238,6 +235,7 @@ export class GameEngine implements GameEngineInterface {
         type: "ERROR_OCCURRED",
         payload: {
           message: "Failed to start game",
+          code: "START_FAILED",
           context: {
             characterId,
             worldId,
@@ -270,29 +268,58 @@ export class GameEngine implements GameEngineInterface {
     state: GameState;
   }> {
     try {
+      logger.debug("Loading game session", {
+        context: "game-engine",
+        metadata: { sessionId },
+      });
+
       // Load the session
       const session = await this.sessionController.getSession(sessionId);
       if (!session) {
         throw new Error(`Session with ID ${sessionId} not found`);
       }
 
-      // Get the latest state for this session
-      const dbState = await gameStateService.getLatestGameState(sessionId);
-      if (!dbState) {
-        throw new Error(`No game state found for session ${sessionId}`);
+      // Get the latest state for this session - GameStateService now handles conversion
+      const state = await this.stateManager.loadState(session.id);
+      if (!state) {
+        throw new Error(`No game state found for session ${session.id}`);
       }
-
-      // Convert database state to game state
-      const state: GameState = this.convertDbStateToGameState(dbState);
 
       // Initialize state manager
       this.stateManager.initialize(state);
 
       // Load narrative context
-      if (state.narrativeContext) {
-        this.narrativeManager.resetContext();
-        // Populate context from state.narrativeContext
-        // This would depend on the specific format of your narrative context
+      this.narrativeManager.initialize(
+        {
+          id: state.characterId,
+          name: state.characterState.name || "Unknown",
+          traits: state.characterState.traits || [],
+          backstory: state.characterState.backstory,
+          appearance: state.characterState.appearance,
+        },
+        {
+          id: state.worldState.id || "unknown",
+          name: state.worldState.name || "Unknown World",
+          description: state.worldState.description || "",
+        },
+        {
+          id: state.currentLocation || "unknown",
+          name: state.currentLocation || "Unknown Location",
+          description: "",
+        }
+      );
+
+      // Restore decisions from the loaded state
+      if (state.decisions && state.decisions.length > 0) {
+        this.decisionManager.setDecisions(state.decisions);
+      } else {
+        // Fallback if no decisions in saved state, or generate initial ones
+        // This might involve a call to generateNarrative or a default set
+        logger.warn(
+          "No decision points found in loaded state, setting default.",
+          { context: "game-engine", metadata: { sessionId: state.sessionId } }
+        );
+        this.decisionManager.setDecisions([{ text: "Continue exploring..." }]);
       }
 
       // Emit state loaded event if not disabled
@@ -309,7 +336,7 @@ export class GameEngine implements GameEngineInterface {
         });
       }
 
-      logger.info("Game loaded", {
+      logger.debug("Game loaded", {
         context: "game-engine",
         metadata: {
           sessionId,
@@ -334,11 +361,9 @@ export class GameEngine implements GameEngineInterface {
       this.emitEvent({
         type: "ERROR_OCCURRED",
         payload: {
-          message: "Failed to load game",
-          context: {
-            sessionId,
-            error: error instanceof Error ? error.message : String(error),
-          },
+          message: `Failed to load game: ${error}`,
+          code: "LOAD_FAILED",
+          context: { sessionId },
         },
         timestamp: new Date(),
         sessionId: "system",
@@ -884,29 +909,66 @@ export class GameEngine implements GameEngineInterface {
   }
 
   /**
-   * Convert database state to game state
+   * Load game state from the service
    *
-   * @param dbState - The database state to convert
-   * @returns A properly typed GameState
+   * @param stateId - The state ID to load
+   * @param sessionId - The current session ID
+   * @returns The loaded game state
+   * @private
    */
-  private convertDbStateToGameState(dbState: any): GameState {
-    return {
-      id: dbState.id,
-      sessionId: dbState.sessionId,
-      characterId: dbState.characterId,
-      worldId: dbState.worldId || undefined,
-      locationId: dbState.locationId || undefined,
-      savePointName: dbState.savePointName || undefined,
-      currentLocation: dbState.currentLocation,
-      saveTimestamp: dbState.saveTimestamp,
-      narrativeContext: dbState.narrativeContext || undefined,
-      aiContext: dbState.aiContext as Record<string, any>,
-      characterState: dbState.characterState as Record<string, any>,
-      worldState: dbState.worldState as Record<string, any>,
-      isAutosave: dbState.isAutosave,
-      isCompleted: dbState.isCompleted,
-      isLoading: false,
-      error: null,
-    };
+  private async loadGameStateFromService(
+    stateId: string,
+    sessionId: string
+  ): Promise<GameState> {
+    if (!stateId) {
+      logger.warn("No state ID provided to loadGameStateFromService", {
+        context: "game-engine",
+        metadata: { sessionId },
+      });
+      throw new Error("No state ID available to load game.");
+    }
+
+    // Use GameStateManager to load the state (which now uses GameStateService for conversion)
+    const state = await this.stateManager.loadState(stateId);
+
+    if (state.sessionId !== sessionId) {
+      logger.warn("Loaded state session ID does not match current session ID", {
+        context: "game-engine",
+        metadata: {
+          loadedSessionId: state.sessionId,
+          currentSessionId: sessionId,
+          stateId,
+        },
+      });
+      // Depending on desired behavior, you might throw an error here
+      // or allow it if it's a valid scenario (e.g. admin loading).
+      // For now, we'll proceed but log a warning.
+    }
+    return state;
+  }
+
+  /**
+   * Clear any error state
+   * Implements the clearError method from the GameEngine interface
+   */
+  public clearError(): void {
+    // Clear any error state in the current game state
+    if (this.stateManager.getCurrentState()) {
+      this.stateManager.updateState({
+        error: null,
+      });
+    }
+
+    // Emit event that error has been cleared
+    this.emitEvent({
+      type: "ERROR_OCCURRED",
+      payload: {
+        message: "Error cleared",
+        code: "ERROR_CLEARED",
+        context: { cleared: true },
+      },
+      timestamp: new Date(),
+      sessionId: this.stateManager.getCurrentState()?.sessionId || "system",
+    });
   }
 }

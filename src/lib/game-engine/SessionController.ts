@@ -7,12 +7,13 @@ import {
   setBrowserStorage,
   removeBrowserStorage,
 } from "@/lib/utils/storage";
+import type { GameSession as DbGameSession } from "@/types/database";
 
 /**
  * Converts database GameSession to engine GameSession
  * Handles type compatibility issues
  */
-function convertToGameSession(dbSession: any): GameSession {
+function convertToGameSession(dbSession: DbGameSession): GameSession {
   return {
     id: dbSession.id,
     characterId: dbSession.characterId,
@@ -21,7 +22,7 @@ function convertToGameSession(dbSession: any): GameSession {
     isActive: dbSession.isActive,
     lastActivityAt: dbSession.lastActivityAt,
     durationSeconds: dbSession.durationSeconds || undefined,
-    sessionData: dbSession.sessionData || {},
+    sessionData: dbSession.sessionData as Record<string, any>,
   };
 }
 

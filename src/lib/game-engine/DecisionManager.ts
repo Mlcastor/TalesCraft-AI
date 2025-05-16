@@ -445,72 +445,27 @@ export class DecisionManager implements DecisionManagerInterface {
     }
 
     try {
-      // In a real implementation, this would use a more sophisticated parsing approach
-      // For now, we'll use a simple approach for the MVP
-
-      const consequences: Record<string, any> = {};
-
-      // Look for structured patterns in the consequences string
-      if (consequencesStr.includes("health")) {
-        consequences.character = {
-          health: this.extractDelta(consequencesStr, "health"),
-        };
+      // Attempt to parse as JSON
+      const parsed = JSON.parse(consequencesStr);
+      if (typeof parsed === "object" && parsed !== null) {
+        return parsed;
       }
-
-      if (consequencesStr.includes("reputation")) {
-        consequences.character = {
-          ...(consequences.character || {}),
-          reputation: this.extractDelta(consequencesStr, "reputation"),
-        };
-      }
-
-      if (consequencesStr.includes("location")) {
-        const locationMatch = consequencesStr.match(
-          /location:\s*([a-zA-Z\s]+)/
-        );
-        if (locationMatch && locationMatch[1]) {
-          consequences.location = locationMatch[1].trim();
-        }
-      }
-
-      // Add analyzed field with metadata
-      consequences.analyzed = {
-        timestamp: new Date().toISOString(),
-        originalText: consequencesStr,
-      };
-
-      return consequences;
-    } catch (error) {
-      logger.warn("Failed to parse consequences string", {
+      // If JSON.parse results in non-object (e.g. a string, number), treat as invalid format for consequences
+      logger.warn("Consequences string parsed to non-object JSON", {
         context: "game-engine",
-        metadata: {
-          consequencesStr,
-          error,
-        },
+        metadata: { consequencesStr },
       });
-
-      // Return empty consequences on error
       return {};
+    } catch (error) {
+      logger.error("Failed to parse consequences string as JSON", {
+        context: "game-engine",
+        metadata: { consequencesStr, error },
+      });
+      // For MVP, if strict JSON is enforced, we might not need a fallback.
+      // If a fallback is still desired for some reason, it should be robust or clearly documented as limited.
+      // Considering the best practice for "Clean Code", relying on a single, well-defined format (JSON) is preferable.
+      return {}; // Return empty if not valid JSON
     }
-  }
-
-  /**
-   * Extract numeric delta from consequences string
-   *
-   * @param text - Text to extract from
-   * @param attribute - Attribute name to look for
-   * @returns Numeric delta or 0 if not found
-   * @private
-   */
-  private extractDelta(text: string, attribute: string): number {
-    const pattern = new RegExp(`${attribute}\\s*([+-]\\d+)`);
-    const match = text.match(pattern);
-
-    if (match && match[1]) {
-      return parseInt(match[1], 10);
-    }
-
-    return 0;
   }
 }
 
