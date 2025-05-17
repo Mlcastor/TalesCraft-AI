@@ -1,8 +1,8 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import Navigation from "@/components/Navigation";
-import { UserSyncWrapper } from "@/components/UserSyncWrapper";
+import { Navigation } from "@/components/layout/Navigation";
+import { Footer } from "@/components/layout/Footer";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,14 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
+    <html lang="en">
+      <body className={inter.className}>
+        <AuthProvider>
           <Navigation />
-          <UserSyncWrapper>{children}</UserSyncWrapper>
-          <Analytics />
-        </body>
-      </html>
-    </ClerkProvider>
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </AuthProvider>
+        <Analytics />
+      </body>
+    </html>
   );
 }

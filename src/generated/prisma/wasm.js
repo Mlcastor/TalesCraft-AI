@@ -123,13 +123,44 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  password: 'password',
+  name: 'name',
   createdAt: 'createdAt',
   lastLogin: 'lastLogin',
   isActive: 'isActive',
-  preferences: 'preferences'
+  preferences: 'preferences',
+  emailVerified: 'emailVerified',
+  verificationToken: 'verificationToken',
+  verificationTokenExpires: 'verificationTokenExpires',
+  resetPasswordToken: 'resetPasswordToken',
+  resetPasswordExpires: 'resetPasswordExpires',
+  role: 'role'
 };
 
-exports.Prisma.CharacterScalarFieldEnum = {
+exports.Prisma.UserProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  avatarUrl: 'avatarUrl',
+  bio: 'bio',
+  preferences: 'preferences',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expires: 'expires',
+  userAgent: 'userAgent',
+  ip: 'ip',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastActive: 'lastActive'
+};
+
+exports.Prisma.MVPCharacterScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   name: 'name',
@@ -141,98 +172,70 @@ exports.Prisma.CharacterScalarFieldEnum = {
   isActive: 'isActive'
 };
 
-exports.Prisma.GameSessionScalarFieldEnum = {
-  id: 'id',
-  characterId: 'characterId',
-  startedAt: 'startedAt',
-  endedAt: 'endedAt',
-  durationSeconds: 'durationSeconds',
-  sessionData: 'sessionData'
-};
-
-exports.Prisma.GameStateScalarFieldEnum = {
-  id: 'id',
-  sessionId: 'sessionId',
-  characterId: 'characterId',
-  savePointName: 'savePointName',
-  currentLocation: 'currentLocation',
-  saveTimestamp: 'saveTimestamp',
-  narrativeContext: 'narrativeContext',
-  aiContext: 'aiContext',
-  characterState: 'characterState',
-  worldState: 'worldState',
-  isAutosave: 'isAutosave',
-  isCompleted: 'isCompleted'
-};
-
-exports.Prisma.NPCTemplateScalarFieldEnum = {
-  id: 'id',
-  code: 'code',
-  name: 'name',
-  personalityTraits: 'personalityTraits',
-  defaultDialogue: 'defaultDialogue',
-  appearanceDescription: 'appearanceDescription',
-  isUnique: 'isUnique'
-};
-
-exports.Prisma.NPCStateScalarFieldEnum = {
-  id: 'id',
-  gameStateId: 'gameStateId',
-  npcTemplateId: 'npcTemplateId',
-  currentLocation: 'currentLocation',
-  relationshipWithPlayer: 'relationshipWithPlayer',
-  dialogueHistory: 'dialogueHistory',
-  instanceProperties: 'instanceProperties'
-};
-
-exports.Prisma.LoreCategoryScalarFieldEnum = {
+exports.Prisma.MVPWorldScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  parentCategoryId: 'parentCategoryId'
+  thumbnailUrl: 'thumbnailUrl',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
 };
 
-exports.Prisma.WorldLoreScalarFieldEnum = {
+exports.Prisma.MVPCharacterWorldStateScalarFieldEnum = {
+  characterId: 'characterId',
+  worldId: 'worldId',
+  currentLocation: 'currentLocation',
+  lastPlayedAt: 'lastPlayedAt'
+};
+
+exports.Prisma.MVPLocationScalarFieldEnum = {
   id: 'id',
-  categoryId: 'categoryId',
+  worldId: 'worldId',
+  name: 'name',
+  description: 'description',
+  isStartingLocation: 'isStartingLocation',
+  connectedLocationIds: 'connectedLocationIds',
+  dangerLevel: 'dangerLevel',
+  thumbnailUrl: 'thumbnailUrl'
+};
+
+exports.Prisma.MVPLoreFragmentScalarFieldEnum = {
+  id: 'id',
+  worldId: 'worldId',
   title: 'title',
   content: 'content',
-  isDiscoverable: 'isDiscoverable',
-  discoveryConditions: 'discoveryConditions',
+  type: 'type',
+  locationId: 'locationId',
+  contextId: 'contextId',
+  isRevealed: 'isRevealed',
   keywords: 'keywords'
 };
 
-exports.Prisma.DecisionScalarFieldEnum = {
+exports.Prisma.MVPEventScalarFieldEnum = {
   id: 'id',
-  gameStateId: 'gameStateId',
-  decisionPointId: 'decisionPointId',
-  decisionContext: 'decisionContext',
-  optionsPresented: 'optionsPresented',
-  playerChoice: 'playerChoice',
-  timestamp: 'timestamp',
-  location: 'location',
-  relatedNpcIds: 'relatedNpcIds',
-  consequences: 'consequences'
+  worldId: 'worldId',
+  locationId: 'locationId',
+  title: 'title',
+  description: 'description',
+  eventType: 'eventType',
+  triggerConditions: 'triggerConditions',
+  outcomes: 'outcomes',
+  isRepeatable: 'isRepeatable'
 };
 
-exports.Prisma.AIContextHistoryScalarFieldEnum = {
+exports.Prisma.SimplifiedGameStateScalarFieldEnum = {
   id: 'id',
-  gameStateId: 'gameStateId',
-  contextType: 'contextType',
-  promptTokens: 'promptTokens',
-  completionTokens: 'completionTokens',
-  promptText: 'promptText',
-  completionText: 'completionText',
-  timestamp: 'timestamp',
-  relevanceScore: 'relevanceScore'
-};
-
-exports.Prisma.NarrativeHistoryScalarFieldEnum = {
-  id: 'id',
-  gameStateId: 'gameStateId',
-  type: 'type',
-  content: 'content',
-  timestamp: 'timestamp'
+  sessionId: 'sessionId',
+  characterId: 'characterId',
+  worldId: 'worldId',
+  turnNumber: 'turnNumber',
+  characterState: 'characterState',
+  worldState: 'worldState',
+  currentLocationId: 'currentLocationId',
+  narrativeLog: 'narrativeLog',
+  currentChoices: 'currentChoices',
+  lastModified: 'lastModified',
+  currentObjective: 'currentObjective'
 };
 
 exports.Prisma.SortOrder = {
@@ -263,16 +266,15 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Character: 'Character',
-  GameSession: 'GameSession',
-  GameState: 'GameState',
-  NPCTemplate: 'NPCTemplate',
-  NPCState: 'NPCState',
-  LoreCategory: 'LoreCategory',
-  WorldLore: 'WorldLore',
-  Decision: 'Decision',
-  AIContextHistory: 'AIContextHistory',
-  NarrativeHistory: 'NarrativeHistory'
+  UserProfile: 'UserProfile',
+  Session: 'Session',
+  MVPCharacter: 'MVPCharacter',
+  MVPWorld: 'MVPWorld',
+  MVPCharacterWorldState: 'MVPCharacterWorldState',
+  MVPLocation: 'MVPLocation',
+  MVPLoreFragment: 'MVPLoreFragment',
+  MVPEvent: 'MVPEvent',
+  SimplifiedGameState: 'SimplifiedGameState'
 };
 
 /**

@@ -1,0 +1,137 @@
+.
+├── docs
+│   ├── AI Integration Plan.md
+│   ├── Database Design.md
+│   ├── Gameplay Loop.md
+│   ├── Hub Migration Plan.md
+│   ├── MVP Database Design.md
+│   ├── MVP Plan.md
+│   ├── TBAI Detailled Action Plan.md
+│   ├── User Flow Enhancement.md
+│   └── marketing.md
+├── prisma
+│   ├── [prisma related files]
+├── public
+│   ├── images
+│   │   ├── [images]
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── src
+│   ├── app
+│   │   ├── api
+│   │   │   ├── ai
+│   │   │   │   └── route.ts
+│   │   │   ├── characters
+│   │   │   │   └── route.ts
+│   │   │   ├── debug
+│   │   │   │   └── env
+│   │   │   ├── debug-env
+│   │   │   │   └── route.ts
+│   │   │   ├── game
+│   │   │   │   └── actions.ts
+│   │   │   ├── location
+│   │   │   │   └── [locationId]
+│   │   │   ├── webhooks
+│   │   │   │   └── clerk
+│   │   │   └── world
+│   │   │       └── [worldId]
+│   │   ├── characters
+│   │   │   ├── create
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── debug
+│   │   │   └── env
+│   │   │       └── page.tsx
+│   │   ├── game
+│   │   │   ├── components
+│   │   │   │   ├── ChoicePanel.tsx
+│   │   │   │   ├── ErrorScreen.tsx
+│   │   │   │   ├── GameContainer.tsx
+│   │   │   │   ├── GameControls.tsx
+│   │   │   │   ├── GameHeader.tsx
+│   │   │   │   ├── LoadingScreen.tsx
+│   │   │   │   ├── NarrativeHistory.tsx
+│   │   │   │   └── NoGameStateScreen.tsx
+│   │   │   ├── hooks
+│   │   │   │   ├── useGameInitialization.ts
+│   │   │   │   └── useNarrativeManager.ts
+│   │   │   ├── select
+│   │   │   │   └── page.tsx
+│   │   │   ├── GameClient.tsx
+│   │   │   └── page.tsx
+│   │   ├── hub
+│   │   │   ├── world
+│   │   │   │   └── [worldId]
+│   │   │   └── page.tsx
+│   │   ├── profile
+│   │   │   └── page.tsx
+│   │   ├── sign-in
+│   │   │   └── [[...sign-in]]
+│   │   │       └── page.tsx
+│   │   ├── sign-up
+│   │   │   └── [[...sign-up]]
+│   │   │       └── page.tsx
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components
+│   │   ├── auth
+│   │   │   └── UserDataSync.tsx
+│   │   ├── game
+│   │   ├── ui
+│   │   ├── Navigation.tsx
+│   │   └── UserSyncWrapper.tsx
+│   ├── lib
+│   │   ├── actions
+│   │   │   └── user-actions.ts
+│   │   ├── ai
+│   │   │   ├── examples
+│   │   │   │   └── narrativeDirectorExample.ts
+│   │   │   ├── aiConfig.ts
+│   │   │   ├── aiService.ts
+│   │   │   ├── debugEnv.ts
+│   │   │   └── worldContext.ts
+│   │   ├── db
+│   │   │   ├── aiContextHistory.ts
+│   │   │   ├── character.ts
+│   │   │   ├── characterWorldState.ts
+│   │   │   ├── decision.ts
+│   │   │   ├── event.ts
+│   │   │   ├── gameSession.ts
+│   │   │   ├── gameState.ts
+│   │   │   ├── index.ts
+│   │   │   ├── location.ts
+│   │   │   ├── loreFragment.ts
+│   │   │   ├── narrativeHistory.ts
+│   │   │   ├── npcState.ts
+│   │   │   ├── npcTemplate.ts
+│   │   │   ├── prisma.ts
+│   │   │   ├── user.ts
+│   │   │   └── world.ts
+│   │   └── game-engine
+│   │       ├── GameEngineProvider.tsx
+│   │       ├── GameStateManager.ts
+│   │       ├── SessionManager.ts
+│   │       └── index.ts
+│   ├── styles
+│   ├── types
+│   │   ├── database.ts
+│   │   ├── game.ts
+│   │   └── narrative.ts
+│   └── middleware.ts
+├── README.md
+├── eslint.config.mjs
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── tailwind.config.js
+├── tree.txt
+└── tsconfig.json
+
+56 directories, 124 files

@@ -16,184 +16,182 @@ datasource db {
 
 // User model
 model User {
-  id            String      @id @default(uuid())
-  email         String      @unique
-  createdAt     DateTime    @default(now()) @map("created_at")
-  lastLogin     DateTime?   @map("last_login")
-  isActive      Boolean     @default(true) @map("is_active")
-  preferences   Json        @default("{}")
-  characters    Character[]
+  id                       String         @id @default(uuid())
+  email                    String         @unique
+  password                 String? // Hashed password
+  name                     String? // User's display name
+  createdAt                DateTime       @default(now()) @map("created_at")
+  lastLogin                DateTime?      @map("last_login")
+  isActive                 Boolean        @default(true) @map("is_active")
+  preferences              Json           @default("{}")
+  emailVerified            Boolean        @default(false) @map("email_verified")
+  verificationToken        String?        @map("verification_token")
+  verificationTokenExpires DateTime?      @map("verification_token_expires")
+  resetPasswordToken       String?        @map("reset_password_token")
+  resetPasswordExpires     DateTime?      @map("reset_password_expires")
+  role                     String         @default("user") // Can be "user", "admin", etc.
+  sessions                 Session[]
+  profile                  UserProfile?
+  mvpCharacters            MVPCharacter[] // Relation to MVPCharacter
 
   @@map("users")
 }
 
-// Character model
-model Character {
-  id                   String         @id @default(uuid())
-  userId               String         @map("user_id")
-  name                 String
-  backstory            String?
-  appearanceDescription String?        @map("appearance_description")
-  personalityTraits    Json           @default("[]") @map("personality_traits")
-  createdAt            DateTime       @default(now()) @map("created_at")
-  lastPlayedAt         DateTime?      @map("last_played_at")
-  isActive             Boolean        @default(true) @map("is_active")
-  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  gameSessions         GameSession[]
-  gameStates           GameState[]
+// User Profile model - for additional user data
+model UserProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique @map("user_id")
+  name        String
+  avatarUrl   String?  @map("avatar_url")
+  bio         String?
+  preferences Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// Session model - for keeping track of user sessions
+model Session {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  token      String?  @unique
+  expires    DateTime
+  userAgent  String?  @map("user_agent")
+  ip         String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  lastActive DateTime @default(now()) @map("last_active")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// --- MVP MODELS ---
+
+model MVPCharacter {
+  id                    String    @id @default(uuid())
+  userId                String    @map("user_id")
+  name                  String
+  backstory             String?
+  appearanceDescription String?   @map("appearance_description")
+  personalityTraits     Json      @default("[]") @map("personality_traits") // Matches MVPCharacter.personalityTraits: string[]
+  createdAt             DateTime  @default(now()) @map("created_at")
+  lastPlayedAt          DateTime? @map("last_played_at")
+  isActive              Boolean   @default(true) @map("is_active")
+
+  user                    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mvpCharacterWorldStates MVPCharacterWorldState[]
+  simplifiedGameStates    SimplifiedGameState[]
 
   @@unique([userId, name])
   @@index([userId])
-  @@map("characters")
+  @@map("mvp_characters")
 }
 
-// Game Session model
-model GameSession {
-  id               String      @id @default(uuid())
-  characterId      String      @map("character_id")
-  startedAt        DateTime    @default(now()) @map("started_at")
-  endedAt          DateTime?   @map("ended_at")
-  durationSeconds  Int?        @map("duration_seconds") 
-  sessionData      Json        @default("{}") @map("session_data")
-  character        Character   @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  gameStates       GameState[]
+model MVPWorld {
+  id           String   @id @default(uuid())
+  name         String
+  description  String?
+  thumbnailUrl String?  @map("thumbnail_url")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
 
+  mvpLocations            MVPLocation[]
+  mvpLoreFragments        MVPLoreFragment[]
+  mvpCharacterWorldStates MVPCharacterWorldState[]
+  simplifiedGameStates    SimplifiedGameState[]
+  MVPEvent                MVPEvent[]
+
+  @@map("mvp_worlds")
+}
+
+model MVPCharacterWorldState {
+  characterId     String    @map("character_id")
+  worldId         String    @map("world_id")
+  currentLocation String?   @map("current_location") // As per MVPCharacterWorldState type
+  lastPlayedAt    DateTime? @map("last_played_at")
+
+  character MVPCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  world     MVPWorld     @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  @@id([characterId, worldId]) // Composite primary key
+  @@map("mvp_character_world_states")
+}
+
+model MVPLocation {
+  id                   String   @id @default(uuid())
+  worldId              String   @map("world_id")
+  name                 String
+  description          String?
+  isStartingLocation   Boolean  @default(false) @map("is_starting_location")
+  connectedLocationIds String[] @map("connected_location_ids") // Matches MVPLocation.connectedLocationIds: string[]
+  dangerLevel          String?  @map("danger_level")
+  thumbnailUrl         String?  @map("thumbnail_url")
+
+  world    MVPWorld   @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  MVPEvent MVPEvent[]
+
+  @@unique([worldId, name])
+  @@map("mvp_locations")
+}
+
+model MVPLoreFragment {
+  id         String   @id @default(uuid())
+  worldId    String   @map("world_id")
+  title      String
+  content    String
+  type       String? // Optional as per MVP plan (prioritize core fields)
+  locationId String?  @map("location_id") // Optional 
+  contextId  String?  @map("context_id") // Optional
+  isRevealed Boolean  @default(true) @map("is_revealed")
+  keywords   String[] @default([]) @map("keywords") // Matches MVPLoreFragment.keywords: string[]
+
+  world MVPWorld @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  @@map("mvp_lore_fragments")
+}
+
+model MVPEvent {
+  id                String  @id @default(uuid())
+  worldId           String  @map("world_id")
+  locationId        String? @map("location_id")
+  title             String
+  description       String
+  eventType         String
+  triggerConditions Json    @map("trigger_conditions")
+  outcomes          Json    @map("outcomes")
+  isRepeatable      Boolean @default(false) @map("is_repeatable")
+
+  world    MVPWorld     @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  location MVPLocation? @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@map("mvp_events")
+}
+
+model SimplifiedGameState {
+  id                String   @id @default(uuid())
+  sessionId         String // Plan: simple UUID string, not a direct FK for MVP
+  characterId       String   @map("character_id")
+  worldId           String   @map("world_id")
+  turnNumber        Int
+  characterState    Json     @map("character_state") // Stores MVPCharacterState (subset of fields)
+  worldState        Json     @map("world_state") // Stores MVPWorldState (subset of fields)
+  currentLocationId String   @map("current_location_id") // ID of an MVPLocation
+  narrativeLog      Json     @map("narrative_log") // Stores NarrativeLogEntry[]
+  currentChoices    Json     @map("current_choices") // Stores string[]
+  lastModified      DateTime @map("last_modified")
+  currentObjective  String?  @map("current_objective")
+
+  character MVPCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  world     MVPWorld     @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  // currentLocationId is an ID string, not a direct relation here to keep it simple as per plan.
+
+  @@index([sessionId])
   @@index([characterId])
-  @@index([startedAt(sort: Desc)])
-  @@map("game_sessions")
-}
-
-// Game State model
-model GameState {
-  id               String       @id @default(uuid())
-  sessionId        String       @map("session_id")
-  characterId      String       @map("character_id")
-  savePointName    String?      @map("save_point_name")
-  currentLocation  String       @map("current_location")
-  saveTimestamp    DateTime     @default(now()) @map("save_timestamp")
-  narrativeContext String?      @map("narrative_context")
-  aiContext        Json         @default("{}") @map("ai_context")
-  characterState   Json         @map("character_state")
-  worldState       Json         @map("world_state")
-  isAutosave       Boolean      @default(false) @map("is_autosave")
-  isCompleted      Boolean      @default(false) @map("is_completed")
-  session          GameSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  character        Character    @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  npcStates        NPCState[]
-  decisions        Decision[]
-  aiContextHistory AIContextHistory[]
-  narrativeHistory NarrativeHistory[]
-
-  @@index([characterId])
-  @@index([saveTimestamp(sort: Desc)])
-  @@map("game_states")
-}
-
-// NPC Template model
-model NPCTemplate {
-  id                    String     @id @default(uuid())
-  code                  String     @unique
-  name                  String
-  personalityTraits     Json       @default("[]") @map("personality_traits")
-  defaultDialogue       Json       @default("[]") @map("default_dialogue")
-  appearanceDescription String?    @map("appearance_description")
-  isUnique              Boolean    @default(false) @map("is_unique")
-  npcStates             NPCState[]
-
-  @@map("npc_templates")
-}
-
-// NPC State model
-model NPCState {
-  id                 String      @id @default(uuid())
-  gameStateId        String      @map("game_state_id")
-  npcTemplateId      String      @map("npc_template_id")
-  currentLocation    String?     @map("current_location")
-  relationshipWithPlayer Int     @default(0) @map("relationship_with_player")
-  dialogueHistory    Json        @default("[]") @map("dialogue_history")
-  instanceProperties Json        @default("{}") @map("instance_properties")
-  gameState          GameState   @relation(fields: [gameStateId], references: [id], onDelete: Cascade)
-  npcTemplate        NPCTemplate @relation(fields: [npcTemplateId], references: [id])
-
-  @@unique([gameStateId, npcTemplateId])
-  @@index([gameStateId])
-  @@map("npc_states")
-}
-
-// Lore Categories model
-model LoreCategory {
-  id                String         @id @default(uuid())
-  name              String         @unique
-  description       String?
-  parentCategoryId  String?        @map("parent_category_id")
-  parentCategory    LoreCategory?  @relation("CategoryToSubcategory", fields: [parentCategoryId], references: [id])
-  subcategories     LoreCategory[] @relation("CategoryToSubcategory")
-  worldLore         WorldLore[]
-
-  @@map("lore_categories")
-}
-
-// World Lore model
-model WorldLore {
-  id                  String        @id @default(uuid())
-  categoryId          String?       @map("category_id")
-  title               String
-  content             String
-  isDiscoverable      Boolean       @default(true) @map("is_discoverable")
-  discoveryConditions Json          @default("{}") @map("discovery_conditions")
-  keywords            String[]
-  category            LoreCategory? @relation(fields: [categoryId], references: [id])
-
-  @@index([categoryId])
-  @@map("world_lore")
-}
-
-// Decision model
-model Decision {
-  id                 String    @id @default(uuid())
-  gameStateId        String    @map("game_state_id")
-  decisionPointId    String    @map("decision_point_id")
-  decisionContext    String?   @map("decision_context")
-  optionsPresented   Json      @map("options_presented")
-  playerChoice       Int       @map("player_choice")
-  timestamp          DateTime  @default(now())
-  location           String?
-  relatedNpcIds      String[]  @map("related_npc_ids")
-  consequences       Json      @default("{}") @map("consequences")
-  gameState          GameState @relation(fields: [gameStateId], references: [id], onDelete: Cascade)
-
-  @@index([gameStateId])
-  @@map("decisions")
-}
-
-// AI Context History model
-model AIContextHistory {
-  id               String    @id @default(uuid())
-  gameStateId      String    @map("game_state_id")
-  contextType      String    @map("context_type")
-  promptTokens     Int       @map("prompt_tokens")
-  completionTokens Int       @map("completion_tokens")
-  promptText       String?   @map("prompt_text")
-  completionText   String?   @map("completion_text")
-  timestamp        DateTime  @default(now())
-  relevanceScore   Float?    @map("relevance_score")
-  gameState        GameState @relation(fields: [gameStateId], references: [id], onDelete: Cascade)
-
-  @@index([gameStateId])
-  @@index([contextType, timestamp(sort: Desc)])
-  @@map("ai_context_history")
-}
-
-// Narrative History model
-model NarrativeHistory {
-  id          String    @id @default(uuid())
-  gameStateId String    @map("game_state_id")
-  type        String    // "narrative" or "playerResponse"
-  content     String    // Serialized content
-  timestamp   DateTime  @default(now())
-  gameState   GameState @relation(fields: [gameStateId], references: [id], onDelete: Cascade)
-
-  @@index([gameStateId])
-  @@index([timestamp(sort: Asc)])
-  @@map("narrative_history")
+  @@index([worldId])
+  @@index([lastModified])
+  @@map("simplified_game_states")
 }

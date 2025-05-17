@@ -2,14 +2,22 @@
  * AI Service for handling LLM interactions in Tales Craft AI
  */
 
-import { Groq } from "groq-sdk";
+import { AIProvider, GroqModel } from "./aiConfig";
 import {
-  AIProvider,
-  GroqModel,
-  getProviderConfig,
-  isProviderConfigured,
-} from "./aiConfig";
-import { debugEnvironmentVariables } from "./debugEnv";
+  MVPCharacter,
+  MVPLocation,
+  MVPLoreFragment,
+  MVPNarrativeResponse,
+  MVPWorldState,
+} from "@/types/mvpTypes";
+import {
+  NarrativeMood as SystemNarrativeMood,
+  DangerLevel as SystemDangerLevel,
+  AIResponse,
+  PromptConfig,
+} from "@/types/ai";
+import { aiClientAdapter } from "@/lib/ai/AIClientAdapter";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Represents the possible AI agent roles in the game
@@ -21,104 +29,25 @@ export enum AIAgentRole {
 }
 
 /**
- * Represents the mood of narrative or NPCs
+ * Represents the mood of narrative or NPCs - Now using SystemNarrativeMood from @/types/ai
  */
-export enum NarrativeMood {
-  FRIENDLY = "friendly",
-  HOSTILE = "hostile",
-  NEUTRAL = "neutral",
-  MYSTERIOUS = "mysterious",
-  FRIGHTENED = "frightened",
-  JOYFUL = "joyful",
-  MELANCHOLIC = "melancholic",
-  SUSPICIOUS = "suspicious",
-}
+export { SystemNarrativeMood as NarrativeMood };
 
 /**
- * Represents the danger level in a scene or location
+ * Represents the danger level in a scene or location - Now using SystemDangerLevel from @/types/ai
  */
-export enum DangerLevel {
-  NONE = "none",
-  LOW = "low",
-  MODERATE = "moderate",
-  HIGH = "high",
-  EXTREME = "extreme",
-}
+export { SystemDangerLevel as DangerLevel };
 
 /**
  * Metadata for AI responses with specific game-relevant information
  */
 export interface AIResponseMetadata {
-  mood?: NarrativeMood;
-  danger?: DangerLevel;
+  mood?: SystemNarrativeMood;
+  danger?: SystemDangerLevel;
   locationRelevance?: string[];
   npcMentioned?: string[];
-  loreRevealed?: string[];
   suggestedNextLocations?: string[];
-  [key: string]: string | string[] | number | boolean | undefined;
-}
-
-/**
- * Standard response structure from any AI agent
- */
-export interface AIResponse {
-  text: string;
-  choices?: Array<{
-    id: string;
-    text: string;
-    consequence?: string;
-  }>;
-  metadata?: AIResponseMetadata;
-}
-
-/**
- * Character personality traits
- */
-export interface PersonalityTraits {
-  primary?: string;
-  secondary?: string[];
-  flaws?: string[];
-  motivations?: string[];
-}
-
-/**
- * Game character including player character and NPCs
- */
-export interface GameCharacter {
-  id?: string;
-  name: string;
-  backstory?: string;
-  appearanceDescription?: string;
-  personalityTraits?: PersonalityTraits;
-  relationshipWithPlayer?: number; // -100 to 100 scale
-  currentLocation?: string;
-  [key: string]: unknown;
-}
-
-/**
- * World location information
- */
-export interface Location {
-  id: string;
-  name: string;
-  description: string;
-  connectedLocations: string[];
-  currentNpcs?: string[];
-  dangerLevel?: DangerLevel;
-  discoveredLore?: string[];
-}
-
-/**
- * Previously made decision for context
- */
-export interface PreviousDecision {
-  decisionPointId: string;
-  context: string;
-  playerChoice: number;
-  consequences: Record<string, any>;
-  relatedNpcIds?: string[];
-  location?: string;
-  timestamp: string;
+  loreRevealed?: string[];
 }
 
 /**
@@ -136,19 +65,14 @@ export interface ConversationMessage {
  */
 export interface AIRequestContext {
   agentRole: AIAgentRole;
-  playerCharacter: GameCharacter;
-  currentNpc?: GameCharacter; // For NPC_ROLEPLAYER
-  currentLocation?: Location;
-  worldState?: {
-    discoveredLocations: string[];
-    timeOfDay?: string;
-    currentQuest?: string;
-  };
-  relevantLore?: Array<{
-    title: string;
-    content: string;
-  }>;
-  previousDecisions?: PreviousDecision[];
+  playerCharacter: MVPCharacter;
+  currentNpc?: MVPCharacter; // For NPC_ROLEPLAYER
+  currentLocation?: MVPLocation;
+  worldName?: string;
+  locationName?: string;
+  worldState?: MVPWorldState;
+  relevantLore?: MVPLoreFragment[];
+  dangerLevel?: SystemDangerLevel;
   conversationHistory: ConversationMessage[];
   prompt: string;
 }
@@ -187,66 +111,67 @@ export interface AIResponseOptions {
 export async function getAIResponse(
   input: AIRequestContext,
   config: AIResponseOptions = {}
-): Promise<AIResponse> {
-  // For backward compatibility, continue logging if API key is properly configured
-  const isConfigured = isProviderConfigured();
-  if (!isConfigured) {
-    console.warn(
-      "AI Provider is not properly configured. Attempting to use server-side API endpoint."
-    );
-  }
-
+): Promise<MVPNarrativeResponse> {
   try {
-    // Use the server-side API endpoint
-    const response = await fetch("/api/ai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        role: input.agentRole,
-        prompt: input.prompt,
-        character: input.playerCharacter,
-        location: input.currentLocation,
-        context: {
-          conversationHistory: input.conversationHistory,
-          mood: input.currentLocation?.dangerLevel || DangerLevel.LOW,
-          temperature: config.temperature || 0.7,
-          maxTokens: config.maxTokens || 1024,
-          modelName: config.modelName || GroqModel.LLAMA_4_MAVRICK,
-        },
+    const systemPrompt = getSystemPrompt(input.agentRole, input);
+    const messages: Array<{
+      role: "system" | "user" | "assistant";
+      content: string;
+    }> = [
+      { role: "system", content: systemPrompt },
+      ...input.conversationHistory.map((msg) => ({
+        role: msg.role === "npc" ? "assistant" : msg.role,
+        content: msg.content,
+      })),
+      { role: "user", content: input.prompt },
+    ];
+
+    const effectivePromptConfig: PromptConfig = {
+      ...(config.modelName && { model: config.modelName }),
+      ...(typeof config.temperature === "number" && {
+        temperature: config.temperature,
       }),
+      ...(typeof config.maxTokens === "number" && {
+        maxTokens: config.maxTokens,
+      }),
+    };
+
+    logger.debug("Calling AIClientAdapter.generateChatCompletion", {
+      context: "ai-service",
+      metadata: {
+        agentRole: input.agentRole,
+        messageCount: messages.length,
+        promptConfig: effectivePromptConfig,
+      },
     });
 
-    if (!response.ok) {
-      // Handle error response
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage =
-        errorData.error ||
-        `API error: ${response.status} ${response.statusText}`;
-      console.error("AI response error:", errorMessage);
+    const adapterResponse: AIResponse =
+      await aiClientAdapter.generateChatCompletion(
+        messages,
+        effectivePromptConfig
+      );
 
-      if (process.env.NODE_ENV === "development") {
-        return generateMockResponse(
-          input,
-          config.provider || AIProvider.GROQ,
-          errorMessage
-        );
-      }
+    logger.debug("Received response from AIClientAdapter", {
+      context: "ai-service",
+      metadata: {
+        tokens: adapterResponse.tokens,
+      },
+    });
 
-      throw new Error(errorMessage);
-    }
-
-    // Parse response
-    const aiResponse = await response.json();
-    return parseAIResponse(aiResponse, input);
+    return parseAIResponse(adapterResponse.text, input);
   } catch (error) {
-    console.error("Error in getAIResponse:", error);
+    logger.error("Error in getAIResponse calling AIClientAdapter", {
+      context: "ai-service",
+      metadata: {
+        error,
+        agentRole: input.agentRole,
+      },
+    });
 
     if (process.env.NODE_ENV === "development") {
       return generateMockResponse(
         input,
-        config.provider || AIProvider.GROQ,
+        AIProvider.GROQ,
         error instanceof Error ? error.message : "Unknown error occurred"
       );
     }
@@ -266,34 +191,35 @@ function generateMockResponse(
   context: AIRequestContext,
   provider: AIProvider,
   errorDetails?: string
-): AIResponse {
+): MVPNarrativeResponse {
   console.log(`Generating mock response for ${provider} with context:`, {
     agentRole: context.agentRole,
     prompt: context.prompt,
     error: errorDetails || "No API key configured",
   });
 
-  // Get location name if available
   const locationName = context.currentLocation?.name || "this mysterious place";
 
-  // Create an appropriate mock message based on whether error details are provided
   const mockText = errorDetails
     ? `[MOCK RESPONSE] You are in ${locationName}. The system encountered an error: ${errorDetails}. This is a development fallback response.`
     : `[MOCK RESPONSE] You are in ${locationName}. The ${provider.toUpperCase()} API key is missing, so this is a development fallback response. Please configure your API key to see actual AI-generated content.`;
 
   return {
-    text: mockText,
-    choices: [
-      { id: "mock-1", text: "Continue exploring (mock choice)" },
-      { id: "mock-2", text: "Check for hidden secrets (mock choice)" },
-      { id: "mock-3", text: "Return to safety (mock choice)" },
+    narrativeText: mockText,
+    decisions: [
+      {
+        text: "Continue exploring (mock choice)",
+        consequences: "You continue exploring the area.",
+      },
+      {
+        text: "Check for hidden secrets (mock choice)",
+        consequences: "You check for hidden secrets in the area.",
+      },
+      {
+        text: "Return to safety (mock choice)",
+        consequences: "You return to safety.",
+      },
     ],
-    metadata: {
-      mood: NarrativeMood.NEUTRAL,
-      danger: DangerLevel.NONE,
-      isMockResponse: true,
-      mockReason: errorDetails || "Missing API key",
-    },
   };
 }
 
@@ -306,45 +232,47 @@ function generateMockResponse(
 function parseAIResponse(
   responseText: string,
   context: AIRequestContext
-): AIResponse {
+): MVPNarrativeResponse {
   try {
-    // Parse the JSON response - should be valid JSON since we used json_object format
     const parsedResponse = JSON.parse(responseText);
 
-    // Extract text and raw choices
-    const narrativeText = parsedResponse.text || "The narrative continues...";
-    const rawChoices = Array.isArray(parsedResponse.choices)
+    const narrativeText =
+      parsedResponse.narrativeText ||
+      parsedResponse.text ||
+      "The narrative continues...";
+    const rawChoices = Array.isArray(parsedResponse.decisions)
+      ? parsedResponse.decisions
+      : Array.isArray(parsedResponse.choices)
       ? parsedResponse.choices
       : [];
 
-    // Generate properly formatted choices
-    const formattedChoices = rawChoices.map(
-      (choice: string, index: number) => ({
-        id: `choice_${index + 1}`,
-        text: choice,
-      })
-    );
+    const formattedChoices = rawChoices.map((choice: any, index: number) => {
+      if (typeof choice === "string") {
+        return { text: choice };
+      }
+      const { id, ...restOfChoice } = choice;
+      return {
+        text: restOfChoice.text || `Choice ${index + 1}`,
+        ...(restOfChoice.consequences && {
+          consequences: restOfChoice.consequences,
+        }),
+      };
+    });
 
-    // Generate metadata programmatically based on context
-    const metadata = generateMetadata(narrativeText, context);
-
-    // Return the properly formatted AIResponse
     return {
-      text: narrativeText,
-      choices:
+      narrativeText: narrativeText,
+      decisions:
         formattedChoices.length > 0
           ? formattedChoices
           : generateDefaultChoices(),
-      metadata: metadata,
     };
   } catch (parseError) {
     console.error("Error parsing AI response as JSON:", parseError);
 
-    // Fallback if JSON parsing fails - this should be rare with response_format: json_object
     return {
-      text: "The narrative takes an unexpected turn... (There was an issue with the storyteller's response.)",
-      choices: generateDefaultChoices(),
-      metadata: generateMetadata("", context),
+      narrativeText:
+        "The narrative takes an unexpected turn... (There was an issue with the storyteller's response.)",
+      decisions: generateDefaultChoices(),
     };
   }
 }
@@ -360,39 +288,34 @@ function generateMetadata(
   narrativeText: string,
   context: AIRequestContext
 ): AIResponseMetadata {
-  // Get danger level from context if available
-  const dangerLevel = context.currentLocation?.dangerLevel || DangerLevel.LOW;
+  const dangerLevel = context.dangerLevel || SystemDangerLevel.LOW;
 
-  // Determine mood based on narrative content (simplified logic)
-  let mood = NarrativeMood.NEUTRAL;
+  let mood = SystemNarrativeMood.NEUTRAL;
   if (
     narrativeText.toLowerCase().includes("danger") ||
     narrativeText.toLowerCase().includes("threat")
   ) {
-    mood = NarrativeMood.HOSTILE;
+    mood = SystemNarrativeMood.HOSTILE;
   } else if (
     narrativeText.toLowerCase().includes("mystery") ||
     narrativeText.toLowerCase().includes("strange")
   ) {
-    mood = NarrativeMood.MYSTERIOUS;
+    mood = SystemNarrativeMood.MYSTERIOUS;
   } else if (
     narrativeText.toLowerCase().includes("joy") ||
     narrativeText.toLowerCase().includes("happy")
   ) {
-    mood = NarrativeMood.JOYFUL;
+    mood = SystemNarrativeMood.JOYFUL;
   }
 
-  // Extract location relevance
   const locationRelevance = context.currentLocation
     ? [context.currentLocation.name]
     : [];
 
-  // Extract NPC mentions if an NPC is present
   const npcMentioned = context.currentNpc ? [context.currentNpc.name] : [];
 
-  // Use connected locations for suggested next locations
   const suggestedNextLocations =
-    context.currentLocation?.connectedLocations || [];
+    context.currentLocation?.connectedLocationIds || [];
 
   return {
     mood,
@@ -400,7 +323,7 @@ function generateMetadata(
     locationRelevance,
     npcMentioned,
     suggestedNextLocations,
-    loreRevealed: [], // Can be populated with more sophisticated logic in the future
+    loreRevealed: [],
   };
 }
 
@@ -412,11 +335,9 @@ function generateMetadata(
 function generateDefaultChoices() {
   return [
     {
-      id: "choice_1",
       text: "Continue exploring",
     },
     {
-      id: "choice_2",
       text: "Take a different approach",
     },
   ];
@@ -429,13 +350,11 @@ function generateDefaultChoices() {
  * @returns Extracted narrative text or empty string
  */
 function extractPlainTextNarrative(responseText: string): string {
-  // First try to extract just the narrative part if there seems to be other content
   const narrativeMatch = responseText.match(/(.+?)(?:(?:choice|option)s?:|{)/i);
   if (narrativeMatch && narrativeMatch[1]) {
     return narrativeMatch[1].trim();
   }
 
-  // Otherwise return the whole text
   return responseText;
 }
 
@@ -450,9 +369,7 @@ export function trimConversationContext(
   history: ConversationMessage[],
   maxTokens: number = 4000
 ): ConversationMessage[] {
-  // Placeholder implementation - will be refined with actual token counting
   if (history.length > 10) {
-    // Keep the first message (usually system prompt) and the most recent ones
     return [history[0], ...history.slice(history.length - 9)];
   }
   return history;
@@ -469,29 +386,87 @@ export function getSystemPrompt(
   agentRole: AIAgentRole,
   context: Partial<AIRequestContext>
 ): string {
+  let basePrompt = "";
   switch (agentRole) {
     case AIAgentRole.NARRATIVE_DIRECTOR:
-      return `You are the Narrative Director for a text-based RPG. Your role is to create engaging, 
+      basePrompt = `You are the Narrative Director for a text-based RPG. Your role is to create engaging, 
               descriptive narrative based on the player's actions and the world state. Describe the 
-              environment vividly and present meaningful choices that affect the story.`;
+              environment vividly and present meaningful choices that affect the story.
+              The response MUST be a JSON object with the following schema:
+              {
+                "narrativeText": "string (the main narrative description)",
+                "decisions": ["string (a concise player decision, max 3-5 words)", "string", "..."]
+              }
+              Maximum 3 decisions. The narrativeText should be detailed and immersive.
+              Do NOT include any introductory phrases like "Okay, here's the JSON:" or markdown code fences.
+              The entire response should be ONLY the JSON object.`;
+      break;
 
     case AIAgentRole.NPC_ROLEPLAYER:
-      return `You are roleplaying as ${
-        context.currentNpc?.name
+      basePrompt = `You are roleplaying as ${
+        context.currentNpc?.name || "an NPC"
       }, a character in a text-based RPG. 
               Maintain consistent personality based on the traits: ${JSON.stringify(
-                context.currentNpc?.personalityTraits
+                context.currentNpc?.personalityTraits || []
               )}.
-              Respond to the player in-character and consider your relationship level: ${
-                context.currentNpc?.relationshipWithPlayer
-              }.`;
+              Respond to the player in-character and consider your relationship level: PlaceHolder.
+              The response MUST be a JSON object with the following schema:
+              {
+                "narrativeText": "string (what the NPC says or does)",
+                "decisions": ["string (a concise player dialogue option or action, max 3-5 words)", "string", "..."]
+              }
+              Maximum 3 decisions. The narrativeText should be the NPC's direct speech or actions.
+              Do NOT include any introductory phrases like "Okay, here's the JSON:" or markdown code fences.
+              The entire response should be ONLY the JSON object.`;
+      break;
 
     case AIAgentRole.LORE_MANAGER:
-      return `You are the Lore Manager for a text-based RPG. Your role is to provide relevant world lore and
+      basePrompt = `You are the Lore Manager for a text-based RPG. Your role is to provide relevant world lore and
               information based on the player's current situation and discoveries. Keep track of what lore has
-              already been revealed and help maintain world consistency.`;
+              already been revealed and help maintain world consistency.
+              The response MUST be a JSON object with the following schema:
+              {
+                "narrativeText": "string (the lore or information revealed)",
+                "decisions": ["string (a concise player option to learn more or react, max 3-5 words)", "string", "..."]
+              }
+              Maximum 3 decisions. The narrativeText should be purely informational or descriptive lore.
+              Do NOT include any introductory phrases like "Okay, here's the JSON:" or markdown code fences.
+              The entire response should be ONLY the JSON object.`;
+      break;
 
     default:
-      return `You are an AI assistant in a text-based RPG game.`;
+      basePrompt = `You are an AI assistant in a text-based RPG game.
+              The response MUST be a JSON object with the following schema:
+              {
+                "narrativeText": "string (your response)",
+                "decisions": ["string (a concise player option, max 3-5 words)", "string", "..."]
+              }
+              Maximum 3 decisions.
+              Do NOT include any introductory phrases like "Okay, here's the JSON:" or markdown code fences.
+              The entire response should be ONLY the JSON object.`;
+      break;
   }
+  if (context.worldName) {
+    basePrompt += `\n\nWorld: ${context.worldName}.`;
+  }
+  if (context.locationName) {
+    basePrompt += ` Current Location: ${context.locationName}.`;
+  }
+  if (context.relevantLore && context.relevantLore.length > 0) {
+    const loreSummary = context.relevantLore
+      .map((l) => `${l.title}: ${l.content.substring(0, 100)}...`)
+      .join("\n");
+    basePrompt += `\n\nRelevant Lore:\n${loreSummary}`;
+  }
+  if (context.playerCharacter) {
+    basePrompt += `\n\nPlayer Character: ${
+      context.playerCharacter.name
+    }. Backstory: ${
+      context.playerCharacter.backstory || "Not specified"
+    }. Personality: ${
+      context.playerCharacter.personalityTraits.join(", ") || "Not specified"
+    }.`;
+  }
+
+  return basePrompt;
 }

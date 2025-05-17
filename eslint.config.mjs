@@ -44,6 +44,13 @@ const eslintConfig = [
       // Disable no-wrapper-object-types warnings
       "@typescript-eslint/no-wrapper-object-types": "off",
     },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: "./tsconfig.json",
+        },
+      },
+    },
   },
 ];
 
