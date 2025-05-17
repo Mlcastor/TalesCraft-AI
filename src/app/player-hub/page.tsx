@@ -5,10 +5,10 @@ import { HubLayout } from "@/components/player-hub/HubLayout";
 import { CharacterPanel } from "@/components/player-hub/CharacterPanel";
 import { WorldsPanel } from "@/components/player-hub/WorldsPanel";
 import {
-  getUserCharacters,
-  getAllCharacterWorldStates,
-} from "@/lib/actions/character-actions";
-import { getAllActiveWorlds } from "@/lib/actions/world-actions";
+  getMyCharactersAction,
+  getCharacterWorldStatesByCharacterIdAction,
+} from "@/lib/actions/characterActions";
+import { getAllWorldsAction } from "@/lib/actions/worldActions";
 
 export const metadata: Metadata = {
   title: "Player Hub | Tales Craft AI",
@@ -28,13 +28,31 @@ export default async function PlayerHubPage() {
   }
 
   // Fetch characters and worlds
-  const characters = (await getUserCharacters()) || [];
-  const worlds = await getAllActiveWorlds();
+  const dbCharacters = (await getMyCharactersAction()) || [];
+  const characters = dbCharacters.map((char) => ({
+    ...char,
+    backstory: char.backstory ?? null,
+    appearanceDescription: char.appearanceDescription ?? null,
+    lastPlayedAt: char.lastPlayedAt ?? null,
+  }));
+  const dbWorlds = await getAllWorldsAction();
+  const worlds = dbWorlds.map((world) => ({
+    ...world,
+    thumbnailUrl: world.thumbnailUrl ?? null,
+    description: world.description ?? null,
+  }));
 
   // Get character-world states for each character
-  const characterWorldStatesByCharacter = await getAllCharacterWorldStates(
-    characters.map((char) => char.id)
-  );
+  // Create a record to store world states by character ID
+  const characterWorldStatesByCharacter: Record<string, any[]> = {};
+
+  // Loop through each character and fetch their world states
+  for (const character of characters) {
+    const worldStates = await getCharacterWorldStatesByCharacterIdAction(
+      character.id
+    );
+    characterWorldStatesByCharacter[character.id] = worldStates;
+  }
 
   return (
     <HubLayout

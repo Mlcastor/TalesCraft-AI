@@ -1,5 +1,7 @@
 import { LoginForm } from "@/components/auth/LoginForm";
 import Link from "next/link";
+import { Card, SectionTitle, Button } from "@/components/ui/Primitives";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Login | Tales Craft AI",
@@ -10,35 +12,33 @@ export const metadata = {
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800">
-      <div className="max-w-md w-full p-6 bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+      <Card className="w-full max-w-md p-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-amber-400 mb-2">
-            Tales Craft AI
-          </h1>
+          <SectionTitle as="h1">Tales Craft AI</SectionTitle>
           <p className="text-gray-300">Sign in to continue your adventure</p>
         </div>
 
-        <LoginForm />
+        <Suspense
+          fallback={
+            <div className="text-center p-4">Loading login form...</div>
+          }
+        >
+          <LoginForm />
+        </Suspense>
 
         <div className="mt-6 text-center text-sm text-gray-400">
           Don&apos;t have an account?{" "}
-          <Link
-            href="/register"
-            className="text-amber-400 hover:text-amber-300"
-          >
+          <Button href="/register" variant="link" className="p-0">
             Create one now
-          </Link>
+          </Button>
         </div>
 
         <div className="mt-2 text-center text-sm text-gray-400">
-          <Link
-            href="/forgot-password"
-            className="text-amber-400 hover:text-amber-300"
-          >
+          <Button href="/forgot-password" variant="link" className="p-0">
             Forgot your password?
-          </Link>
+          </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

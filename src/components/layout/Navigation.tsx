@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/Primitives";
 import { UserMenu } from "@/components/auth/UserMenu";
 import {
   AuthenticatedOnly,
@@ -37,18 +38,12 @@ export function Navigation() {
           </AuthenticatedOnly>
 
           <UnauthenticatedOnly>
-            <Link
-              href="/login"
-              className="text-white hover:text-amber-400 transition-colors"
-            >
+            <Button href="/login" variant="link" className="p-0">
               Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-white rounded-md hover:from-amber-600 hover:to-yellow-700 transition-colors"
-            >
+            </Button>
+            <Button href="/register" variant="primary" className="px-4 py-2">
               Sign Up
-            </Link>
+            </Button>
           </UnauthenticatedOnly>
         </div>
       </div>

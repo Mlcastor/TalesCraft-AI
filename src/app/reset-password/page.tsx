@@ -12,12 +12,12 @@ import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
  *
  * Allows users to reset their password using a token from the URL.
  */
-export default function ResetPasswordPage({
+export default async function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: { token?: string };
+  searchParams: Promise<{ token?: string }>;
 }) {
-  const token = searchParams.token || "";
+  const { token } = await searchParams;
   const hasToken = !!token;
 
   return (

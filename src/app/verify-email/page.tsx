@@ -18,9 +18,9 @@ import Link from "next/link";
 export default async function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams: { token?: string };
+  searchParams: Promise<{ token?: string }>;
 }) {
-  const token = searchParams.token;
+  const { token } = await searchParams;
 
   // Default state
   let success = false;

@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { SessionUser } from "@/types/authTypes";
 import { verifyToken } from "@/lib/utils/authUtils";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/lib/repositories/prisma";
 
 /**
  * Gets the current user session from the auth cookie

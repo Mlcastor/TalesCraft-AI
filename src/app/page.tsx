@@ -1,5 +1,4 @@
 // Server Component (no "use client" directive)
-import Link from "next/link";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { OpenSourceSection } from "@/components/landing/OpenSourceSection";

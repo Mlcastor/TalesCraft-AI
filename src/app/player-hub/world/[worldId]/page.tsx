@@ -2,17 +2,19 @@ import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import { getServerSession } from "@/lib/auth/session";
 import { HubLayout } from "@/components/player-hub/HubLayout";
-import { CharacterSelection } from "@/components/player-hub/CharacterSelection";
-import { WorldDetails } from "@/components/player-hub/WorldDetails";
-import { getUserCharacters } from "@/lib/actions/character-actions";
-import { getWorldById } from "@/lib/actions/world-actions";
-import { getCharacterWorldStateForWorld } from "@/lib/actions/character-actions";
-import { CharacterWorldStateWithWorld } from "@/types/database";
-import { StartGameButton } from "@/components/game/StartGameButton";
-import { getRouteParamAsync } from "@/lib/utils/routeUtils";
+import { WorldDetails } from "@/components/player-hub/world/WorldDetails";
+import {
+  getMyCharactersAction,
+  getCharacterWorldStateForWorldAction,
+} from "@/lib/actions/characterActions";
+import {
+  getWorldByIdAction,
+  getWorldWithRelatedDataAction,
+} from "@/lib/actions/worldActions";
+import { MVPCharacterWorldState } from "@/types/mvpTypes";
 
 interface WorldDetailPageProps {
-  params: { worldId: string };
+  params: Promise<{ worldId: string }>;
 }
 
 export async function generateMetadata({
@@ -20,7 +22,7 @@ export async function generateMetadata({
 }: WorldDetailPageProps): Promise<Metadata> {
   // In Next.js 15, we must await the params object itself
   const { worldId } = await params;
-  const world = await getWorldById(worldId);
+  const world = await getWorldByIdAction(worldId);
 
   if (!world) {
     return {
@@ -51,15 +53,14 @@ export default async function WorldDetailPage({
   }
 
   // Get the world data with related entities
-  const world = await getWorldById(worldId);
-
-  if (!world) {
+  const worldWithData = await getWorldWithRelatedDataAction(worldId);
+  if (!worldWithData) {
     // World not found or not accessible
     redirect("/player-hub");
   }
 
   // Get the user's characters
-  const characters = (await getUserCharacters()) || [];
+  const characters = (await getMyCharactersAction()) || [];
 
   if (!characters || characters.length === 0) {
     // No characters available, redirect to character creation
@@ -67,15 +68,16 @@ export default async function WorldDetailPage({
   }
 
   // Get the character-world states for each character
-  const characterWorldStates: Record<
-    string,
-    CharacterWorldStateWithWorld | null
-  > = {};
+  const characterWorldStates: Record<string, MVPCharacterWorldState | null> =
+    {};
 
   for (const character of characters) {
     try {
       // This now uses findCharacterWorldState which returns null instead of throwing an error
-      const state = await getCharacterWorldStateForWorld(character.id, worldId);
+      const state = await getCharacterWorldStateForWorldAction(
+        character.id,
+        worldId
+      );
       characterWorldStates[character.id] = state;
     } catch (error) {
       // If there's still an error (just to be safe), log it and continue
@@ -89,42 +91,20 @@ export default async function WorldDetailPage({
 
   return (
     <HubLayout
-      title={`Enter ${world.name}`}
-      description={world.description || undefined}
+      title=""
       backLink={{
         href: "/player-hub",
         label: "Back to Hub",
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="mb-8">
         {/* World details panel */}
-        <div>
-          <WorldDetails world={world} />
-        </div>
-
-        {/* Character selection panel */}
-        <div>
-          <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden mb-4">
-            <div className="bg-gray-700 p-4 border-b border-gray-600">
-              <h2 className="text-xl font-bold text-white">Select Character</h2>
-              <p className="text-sm text-gray-300">
-                Choose a character to play as in this world
-              </p>
-            </div>
-            <CharacterSelection
-              characters={characters}
-              worldId={worldId}
-              characterWorldStates={characterWorldStates}
-            />
-          </div>
-
-          {/* Start game button */}
-          <StartGameButton
-            characters={characters}
-            worldId={worldId}
-            characterWorldStates={characterWorldStates}
-          />
-        </div>
+        <WorldDetails
+          world={worldWithData}
+          characters={characters}
+          worldId={worldId}
+          characterWorldStates={characterWorldStates}
+        />
       </div>
     </HubLayout>
   );

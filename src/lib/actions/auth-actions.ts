@@ -7,7 +7,7 @@
  * login, registration, logout, and email verification.
  */
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import {
@@ -16,10 +16,16 @@ import {
   hashPassword,
   generateRandomToken,
   verifyToken,
+  hashToken,
 } from "@/lib/utils/authUtils";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/lib/repositories/prisma";
 import { logger } from "@/lib/utils/logger";
 import { User } from "@/types/authTypes";
+import { allowRequest, resetKey } from "@/lib/utils/rateLimiter";
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from "@/lib/services/emailService";
 
 // Validation schemas
 const loginSchema = z.object({
@@ -37,6 +43,10 @@ const registerSchema = z.object({
 // Session cookie name
 const SESSION_COOKIE_NAME = "auth_session";
 
+// Rate-limit configuration
+const LOGIN_LIMIT = { limit: 5, windowMs: 15 * 60 * 1000 }; // 5 attempts / 15min
+const RESET_LIMIT = { limit: 3, windowMs: 60 * 60 * 1000 }; // 3 requests / hour
+
 /**
  * Login user action
  *
@@ -51,6 +61,16 @@ export async function login(formData: FormData) {
       password: formData.get("password"),
       remember: formData.get("remember") === "on",
     });
+
+    // ---- Rate-limit: per email + IP combination -------------------------
+    const ip = (headers() as any).get("x-forwarded-for") || "unknown";
+    const rateKey = `login:${parsed.email}:${ip}`;
+    if (!(await allowRequest(rateKey, LOGIN_LIMIT))) {
+      return {
+        success: false,
+        error: "Too many login attempts. Please try again later.",
+      };
+    }
 
     // Find user with password field
     const user = await prisma.user.findUnique({
@@ -108,6 +128,9 @@ export async function login(formData: FormData) {
       data: { lastLogin: new Date() },
     });
 
+    // Reset the rate-limit counter on successful login
+    await resetKey(rateKey);
+
     return { success: true, userId: user.id };
   } catch (error) {
     logger.error("Login error", {
@@ -153,8 +176,9 @@ export async function register(formData: FormData) {
     // Hash password
     const hashedPassword = await hashPassword(parsed.password);
 
-    // Generate verification token
-    const verificationToken = generateRandomToken();
+    // Generate verification token (store hashed in DB)
+    const verificationTokenPlain = generateRandomToken();
+    const verificationTokenHashed = hashToken(verificationTokenPlain);
     const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     // Create user with schema that matches database
@@ -170,13 +194,18 @@ export async function register(formData: FormData) {
             name: parsed.name,
           },
         },
-        verificationToken,
+        verificationToken: verificationTokenHashed,
         verificationTokenExpires: verificationExpires,
       },
     });
 
-    // TODO: Send verification email with token
-    // This would call an email service to send the verification link
+    // Send verification email (fire & forget)
+    sendVerificationEmail(user.email, verificationTokenPlain).catch((err) =>
+      logger.error("Failed to send verification email", {
+        context: "email",
+        error: err instanceof Error ? err.message : String(err),
+      })
+    );
 
     return {
       success: true,
@@ -257,10 +286,13 @@ export async function verifyEmail(token: string) {
       return { success: false, error: "Invalid verification token" };
     }
 
-    // Find user with token
+    // Hash incoming token before look-up
+    const hashedToken = hashToken(token);
+
+    // Find user with hashed token
     const user = await prisma.user.findFirst({
       where: {
-        verificationToken: token,
+        verificationToken: hashedToken,
         verificationTokenExpires: {
           gt: new Date(),
         },
@@ -362,16 +394,6 @@ export async function getCurrentSession() {
 }
 
 /**
- * Helper function to get Headers object in a server component/action
- */
-function headers() {
-  const headersList = new Headers();
-  return {
-    get: (name: string) => headersList.get(name) || "",
-  };
-}
-
-/**
  * Request password reset action
  *
  * Generates a password reset token and sends a reset email to the user.
@@ -380,6 +402,14 @@ export async function requestPasswordReset(email: string) {
   try {
     if (!email) {
       return { success: false, error: "Email is required" };
+    }
+
+    // ---- Rate-limit -----------------------------------------------------
+    if (!(await allowRequest(`reset:${email.toLowerCase()}`, RESET_LIMIT))) {
+      return {
+        success: false,
+        error: "Too many password reset requests. Please try again later.",
+      };
     }
 
     // Find user with the provided email
@@ -397,29 +427,33 @@ export async function requestPasswordReset(email: string) {
       };
     }
 
-    // Generate reset token
-    const resetToken = generateRandomToken();
+    // Generate reset token (store hashed)
+    const resetTokenPlain = generateRandomToken();
+    const resetTokenHashed = hashToken(resetTokenPlain);
     const resetExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     // Update user with reset token
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        resetPasswordToken: resetToken,
+        resetPasswordToken: resetTokenHashed,
         resetPasswordExpires: resetExpires,
       },
     });
 
-    // TODO: Send reset password email with token
-    // In a production environment, you would integrate with an email service
-    // For now, we'll just return the token for testing purposes
+    // Send password reset email (fire & forget)
+    sendPasswordResetEmail(user.email, resetTokenPlain).catch((err) =>
+      logger.error("Failed to send reset email", {
+        context: "email",
+        error: err instanceof Error ? err.message : String(err),
+      })
+    );
 
-    const resetUrl = `${
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-    }/reset-password?token=${resetToken}`;
-
-    // Log the reset URL for development/testing purposes
+    // Provide reset link in logs during non-prod for convenience
     if (process.env.NODE_ENV !== "production") {
+      const resetUrl = `${
+        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+      }/reset-password?token=${resetTokenPlain}`;
       logger.info(`Password reset URL: ${resetUrl}`, { context: "auth" });
     }
 
@@ -466,10 +500,13 @@ export async function resetPassword(formData: FormData) {
       return { success: false, error: "Passwords do not match" };
     }
 
-    // Find user with token
+    // Hash incoming token before lookup
+    const hashedToken = hashToken(token);
+
+    // Find user with hashed token
     const user = await prisma.user.findFirst({
       where: {
-        resetPasswordToken: token,
+        resetPasswordToken: hashedToken,
         resetPasswordExpires: {
           gt: new Date(),
         },

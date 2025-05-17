@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Character } from "@/types/database";
+import { MVPCharacter } from "@/types/database";
+import { Card, SectionTitle, Button } from "@/components/ui/Primitives";
 
 interface CharacterPanelProps {
-  characters: Character[];
+  characters: MVPCharacter[];
   characterWorldStates?: Record<string, any[]>;
   isLoading?: boolean;
 }
@@ -19,26 +20,31 @@ export function CharacterPanel({
 }: CharacterPanelProps) {
   if (isLoading) {
     return (
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 h-full">
+      <Card className="h-full">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-amber-400">Your Characters</h2>
+          <SectionTitle as="h4" className="mb-0 text-left">
+            Your Characters
+          </SectionTitle>
         </div>
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-gray-700 h-32 rounded-lg"></div>
           ))}
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700 p-5 h-full">
-      <h2 className="text-xl font-bold text-amber-400 mb-4 flex items-center justify-between">
-        <span>Your Characters</span>
-        <Link
+    <Card className="h-full">
+      <div className="flex items-center justify-between mb-4">
+        <SectionTitle as="h2" className="mb-0 text-left flex-1">
+          Your Characters
+        </SectionTitle>
+        <Button
           href="/player-hub/characters/create"
-          className="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-gray-900 text-sm rounded-md transition-colors inline-flex items-center"
+          variant="primary"
+          className="px-2 py-1 text-sm inline-flex items-center"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,15 +59,15 @@ export function CharacterPanel({
             />
           </svg>
           New
-        </Link>
-      </h2>
+        </Button>
+      </div>
 
       {characters.length > 0 ? (
         <div className="space-y-4 overflow-y-auto max-h-[500px] pr-2">
-          {characters.map((character: Character) => (
-            <div
+          {characters.map((character: MVPCharacter) => (
+            <Card
               key={character.id}
-              className="bg-gray-900 p-4 rounded-lg border border-gray-700 hover:border-amber-400 transition-colors"
+              className="bg-gray-900 p-4 border-gray-700 hover:border-amber-400"
             >
               <h3 className="text-lg font-bold text-amber-400 mb-1">
                 {character.name}
@@ -100,20 +106,17 @@ export function CharacterPanel({
                 Worlds visited:{" "}
                 {characterWorldStates[character.id]?.length || 0}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ) : (
         <div className="text-center py-8">
           <p className="text-gray-400 mb-2">No characters yet</p>
-          <Link
-            href="/player-hub/characters/create"
-            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-medium rounded-md transition-colors inline-block"
-          >
+          <Button href="/player-hub/characters/create" variant="primary">
             Create Character
-          </Link>
+          </Button>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

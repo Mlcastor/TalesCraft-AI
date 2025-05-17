@@ -4,16 +4,16 @@
  * Displays the key features of the application in a responsive grid layout.
  */
 
+import { SectionTitle, Card } from "@/components/ui/Primitives";
+
 export function FeaturesSection() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-16">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-amber-400">
-        Embark on a Dynamic Adventure
-      </h2>
+      <SectionTitle>Embark on a Dynamic Adventure</SectionTitle>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* Feature 1 */}
-        <div className="bg-gray-800 bg-opacity-50 p-6 rounded-lg border border-gray-700 shadow-xl">
+        <Card>
           <div className="text-amber-400 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -35,10 +35,10 @@ export function FeaturesSection() {
             Craft a unique hero with a custom backstory, abilities, and
             personality traits that influence your adventure.
           </p>
-        </div>
+        </Card>
 
         {/* Feature 2 */}
-        <div className="bg-gray-800 bg-opacity-50 p-6 rounded-lg border border-gray-700 shadow-xl">
+        <Card>
           <div className="text-amber-400 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -62,10 +62,10 @@ export function FeaturesSection() {
             Experience a living narrative that adapts to your choices, creating
             a unique story tailored to your actions.
           </p>
-        </div>
+        </Card>
 
         {/* Feature 3 */}
-        <div className="bg-gray-800 bg-opacity-50 p-6 rounded-lg border border-gray-700 shadow-xl">
+        <Card>
           <div className="text-amber-400 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -87,10 +87,10 @@ export function FeaturesSection() {
             Journey through diverse locations filled with lore, secrets, and
             memorable characters waiting to be discovered.
           </p>
-        </div>
+        </Card>
 
         {/* Feature 4 */}
-        <div className="bg-gray-800 bg-opacity-50 p-6 rounded-lg border border-gray-700 shadow-xl">
+        <Card>
           <div className="text-amber-400 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -112,10 +112,10 @@ export function FeaturesSection() {
             Face foes in tactical turn-based combat where your skills,
             equipment, and decision-making determine victory.
           </p>
-        </div>
+        </Card>
 
         {/* Feature 5 */}
-        <div className="bg-gray-800 bg-opacity-50 p-6 rounded-lg border border-gray-700 shadow-xl">
+        <Card>
           <div className="text-amber-400 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -137,10 +137,10 @@ export function FeaturesSection() {
             Every decision matters, shaping your relationships, the world around
             you, and the ultimate outcome of your journey.
           </p>
-        </div>
+        </Card>
 
         {/* Feature 6 */}
-        <div className="bg-gray-800 bg-opacity-50 p-6 rounded-lg border border-gray-700 shadow-xl">
+        <Card>
           <div className="text-amber-400 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +162,7 @@ export function FeaturesSection() {
             Grow in power and ability as you overcome challenges, unlock new
             skills, and collect powerful items.
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   );

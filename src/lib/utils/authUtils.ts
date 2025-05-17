@@ -14,8 +14,19 @@ import { logger } from "./logger";
 // Constants for security settings
 const SALT_ROUNDS = 12;
 const DEFAULT_TOKEN_EXPIRY = "7d"; // 7 days
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-secret-key-change-in-production";
+
+// Ensure the JWT secret is provided via environment variable
+export const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  /*
+   * Failing fast rather than silently using an insecure default string.
+   * This guarantees that every environment (development, staging, production)
+   * explicitly defines JWT_SECRET and avoids accidentally deploying with a
+   * weak default.
+   */
+  throw new Error("JWT_SECRET environment variable must be defined");
+}
 
 /**
  * Generate a JWT token for a user session
@@ -204,4 +215,12 @@ export function convertToSessionUser(
     preferences: user.preferences,
     role: user.role,
   };
+}
+
+/**
+ * Hash an arbitrary token using SHA-256. Mainly used for verification / reset
+ * tokens that we store in the database.
+ */
+export function hashToken(token: string): string {
+  return crypto.createHash("sha256").update(token).digest("hex");
 }

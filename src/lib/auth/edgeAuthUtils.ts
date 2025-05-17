@@ -9,8 +9,12 @@ import { jwtVerify, SignJWT } from "jose";
 import { SessionUser, JwtPayload } from "@/types/authTypes";
 
 // Constants
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-secret-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable must be defined");
+}
+
 const SESSION_COOKIE_NAME = "auth_session";
 
 /**

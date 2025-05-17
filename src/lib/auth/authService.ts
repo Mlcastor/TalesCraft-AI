@@ -26,8 +26,8 @@ import {
 } from "@/lib/utils/authUtils";
 import { logger } from "@/lib/utils/logger";
 import { v4 as uuidv4 } from "uuid";
-import { prisma } from "@/lib/db/prisma";
-import { userRepository } from "@/lib/db/user";
+import { prisma } from "@/lib/repositories/prisma";
+import { userRepository } from "@/lib/repositories/user";
 import { ValidationError } from "@/lib/errors/DatabaseError";
 import { z } from "zod";
 

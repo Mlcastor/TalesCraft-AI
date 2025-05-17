@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import { getServerSession } from "@/lib/auth/session";
 import { HubLayout } from "@/components/player-hub/HubLayout";
-import { CharacterCreationForm } from "@/components/player-hub/CharacterCreationForm";
+import { CharacterCreationForm } from "@/components/player-hub/characters/create/CharacterCreationForm";
 
 export const metadata: Metadata = {
   title: "Create Character | Tales Craft AI",

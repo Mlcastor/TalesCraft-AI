@@ -2,59 +2,45 @@ import { Prisma } from "@/generated/prisma/index";
 
 // Type definitions from Prisma
 export type User = Prisma.UserGetPayload<Record<string, never>>;
-export type Character = Prisma.CharacterGetPayload<Record<string, never>>;
-export type GameSession = Prisma.GameSessionGetPayload<Record<string, never>>;
-export type GameState = Prisma.GameStateGetPayload<Record<string, never>>;
-export type NPCTemplate = Prisma.NPCTemplateGetPayload<Record<string, never>>;
-export type NPCState = Prisma.NPCStateGetPayload<Record<string, never>>;
-export type Decision = Prisma.DecisionGetPayload<Record<string, never>>;
-export type AIContextHistory = Prisma.AIContextHistoryGetPayload<
+export type MVPCharacter = Prisma.MVPCharacterGetPayload<Record<string, never>>;
+export type SimplifiedGameState = Prisma.SimplifiedGameStateGetPayload<
   Record<string, never>
 >;
-export type NarrativeHistory = Prisma.NarrativeHistoryGetPayload<{}>;
 
 // New Hub-related models
-export type World = Prisma.WorldGetPayload<Record<string, never>>;
-export type CharacterWorldState = Prisma.CharacterWorldStateGetPayload<
+export type MVPWorld = Prisma.MVPWorldGetPayload<Record<string, never>>;
+export type MVPCharacterWorldState = Prisma.MVPCharacterWorldStateGetPayload<
   Record<string, never>
 >;
-export type Location = Prisma.LocationGetPayload<Record<string, never>>;
-export type LoreFragment = Prisma.LoreFragmentGetPayload<Record<string, never>>;
-export type Event = Prisma.EventGetPayload<Record<string, never>>;
+export type MVPLocation = Prisma.MVPLocationGetPayload<Record<string, never>>;
+export type MVPLoreFragment = Prisma.MVPLoreFragmentGetPayload<
+  Record<string, never>
+>;
 
 // Extended types for create operations
-export type CharacterCreate = Prisma.CharacterCreateInput;
-export type GameSessionCreate = Prisma.GameSessionCreateInput;
-export type GameStateCreate = Prisma.GameStateCreateInput;
-export type NPCTemplateCreate = Prisma.NPCTemplateCreateInput;
-export type NPCStateCreate = Prisma.NPCStateCreateInput;
-export type DecisionCreate = Prisma.DecisionCreateInput;
-export type AIContextHistoryCreate = Prisma.AIContextHistoryCreateInput;
 export type UserCreate = Prisma.UserCreateInput;
-export type NarrativeHistoryCreate = Prisma.NarrativeHistoryCreateInput;
+export type MVPCharacterCreate = Prisma.MVPCharacterCreateInput;
+export type SimplifiedGameStateCreate = Prisma.SimplifiedGameStateCreateInput;
 
 // New Hub-related create types
-export type WorldCreate = Prisma.WorldCreateInput;
-export type CharacterWorldStateCreate = Prisma.CharacterWorldStateCreateInput;
-export type LocationCreate = Prisma.LocationCreateInput;
-export type LoreFragmentCreate = Prisma.LoreFragmentCreateInput;
-export type EventCreate = Prisma.EventCreateInput;
+export type MVPWorldCreate = Prisma.MVPWorldCreateInput;
+export type MVPCharacterWorldStateCreate =
+  Prisma.MVPCharacterWorldStateCreateInput;
+export type MVPLocationCreate = Prisma.MVPLocationCreateInput;
+export type MVPLoreFragmentCreate = Prisma.MVPLoreFragmentCreateInput;
 
 // Extended types with relationships included
-export type CharacterWithWorlds = Prisma.CharacterGetPayload<{
-  include: { characterWorldStates: { include: { world: true } } };
+export type MVPCharacterWithMVPCharacterWorldStates =
+  Prisma.MVPCharacterGetPayload<{
+    include: { mvpCharacterWorldStates: { include: { world: true } } };
+  }>;
+
+export type MVPWorldWithMVPLocations = Prisma.MVPWorldGetPayload<{
+  include: { mvpLocations: true };
 }>;
 
-export type WorldWithLocations = Prisma.WorldGetPayload<{
-  include: { locations: true };
-}>;
-
-export type LocationWithEvents = Prisma.LocationGetPayload<{
-  include: { events: true };
-}>;
-
-export type CharacterWorldStateWithWorld =
-  Prisma.CharacterWorldStateGetPayload<{
+export type MVPCharacterWorldStateWithMVPWorld =
+  Prisma.MVPCharacterWorldStateGetPayload<{
     include: { world: true };
   }>;
 

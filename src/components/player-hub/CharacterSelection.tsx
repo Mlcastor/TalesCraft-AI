@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Character, CharacterWorldStateWithWorld } from "@/types/database";
+import { MVPCharacter, MVPCharacterWorldState } from "@/types/mvpTypes";
+import { Card, SectionTitle, Button } from "@/components/ui/Primitives";
 
 interface CharacterSelectionProps {
-  characters: Character[];
+  characters: MVPCharacter[];
   worldId: string;
-  characterWorldStates: Record<string, CharacterWorldStateWithWorld | null>;
+  characterWorldStates: Record<string, MVPCharacterWorldState | null>;
   isLoading?: boolean;
 }
 
@@ -22,9 +23,9 @@ export function CharacterSelection({
   if (isLoading) {
     return (
       <div className="mb-8">
-        <h2 className="text-xl font-bold text-amber-400 mb-4">
+        <SectionTitle as="h2" className="text-left mb-4">
           Choose Your Character
-        </h2>
+        </SectionTitle>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div
@@ -39,9 +40,9 @@ export function CharacterSelection({
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-bold text-amber-400 mb-4">
+      <SectionTitle as="h2" className="text-left mb-4">
         Choose Your Character
-      </h2>
+      </SectionTitle>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {characters.map((character) => {
@@ -49,9 +50,9 @@ export function CharacterSelection({
           const hasVisitedBefore = !!worldState;
 
           return (
-            <div
+            <Card
               key={character.id}
-              className={`bg-gray-800 p-4 rounded-lg border hover:border-amber-400 transition-colors ${
+              className={`bg-gray-800 p-4 border transition-colors ${
                 hasVisitedBefore ? "border-green-600" : "border-gray-700"
               }`}
             >
@@ -120,14 +121,15 @@ export function CharacterSelection({
                 </div>
               )}
 
-              <Link
+              <Button
                 href={`/player-hub/characters/${character.id}/play/${worldId}`}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-medium rounded-md transition-colors inline-block w-full text-center"
+                variant="primary"
+                className="w-full"
                 id={`character-${character.id}`}
               >
                 {hasVisitedBefore ? "Continue Adventure" : "Begin Adventure"}
-              </Link>
-            </div>
+              </Button>
+            </Card>
           );
         })}
       </div>
