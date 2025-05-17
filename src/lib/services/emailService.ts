@@ -3,17 +3,26 @@ import { logger } from "@/lib/utils/logger";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 
-if (!resendApiKey) {
+// Only throw during development or at runtime, not during production build
+if (!resendApiKey && process.env.NODE_ENV !== "production") {
   throw new Error(
     "RESEND_API_KEY environment variable must be defined – obtain it from the Resend dashboard and restart."
   );
 }
 
-// Sender must be a verified domain or address in Resend.
-const FROM_EMAIL =
-  process.env.EMAIL_FROM || "noreply@" + (process.env.DOMAIN || "example.com");
+// Create a placeholder Resend instance for build-time
+const resend = resendApiKey
+  ? new Resend(resendApiKey)
+  : {
+      // Mock implementation for build time
+      emails: {
+        send: async () => ({
+          id: "build-time-mock",
+          data: null,
+        }),
+      },
+    };
 
-const resend = new Resend(resendApiKey);
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 function createHtmlTemplate(
@@ -35,6 +44,9 @@ function createHtmlTemplate(
 }
 
 export async function sendVerificationEmail(to: string, token: string) {
+  // Ensure API key is available at runtime
+  ensureApiKey();
+
   const verifyUrl = `${APP_URL}/verify-email?token=${token}`;
   const subject = "Verify your email";
   const html = createHtmlTemplate(
@@ -59,6 +71,9 @@ export async function sendVerificationEmail(to: string, token: string) {
 }
 
 export async function sendPasswordResetEmail(to: string, token: string) {
+  // Ensure API key is available at runtime
+  ensureApiKey();
+
   const resetUrl = `${APP_URL}/reset-password?token=${token}`;
   const subject = "Reset your password";
   const html = createHtmlTemplate(
@@ -81,3 +96,16 @@ export async function sendPasswordResetEmail(to: string, token: string) {
     });
   }
 }
+
+// We'll check at runtime if needed
+function ensureApiKey() {
+  if (!resendApiKey && typeof window !== "undefined") {
+    throw new Error(
+      "RESEND_API_KEY environment variable must be defined for sending emails."
+    );
+  }
+}
+
+// Sender must be a verified domain or address in Resend.
+const FROM_EMAIL =
+  process.env.EMAIL_FROM || "noreply@" + (process.env.DOMAIN || "example.com");
