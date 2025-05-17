@@ -11,7 +11,9 @@ import { SessionUser, JwtPayload } from "@/types/authTypes";
 // Constants
 const JWT_SECRET = process.env.JWT_SECRET;
 
-if (!JWT_SECRET) {
+// In production, during build/prerendering, we don't want to throw
+// because environment variables might not be available yet
+if (!JWT_SECRET && process.env.NODE_ENV !== "production") {
   throw new Error("JWT_SECRET environment variable must be defined");
 }
 

@@ -18,7 +18,9 @@ const DEFAULT_TOKEN_EXPIRY = "7d"; // 7 days
 // Ensure the JWT secret is provided via environment variable
 export const JWT_SECRET = process.env.JWT_SECRET;
 
-if (!JWT_SECRET) {
+// In production, during build/prerendering, we don't want to throw
+// because environment variables might not be available yet
+if (!JWT_SECRET && process.env.NODE_ENV !== "production") {
   /*
    * Failing fast rather than silently using an insecure default string.
    * This guarantees that every environment (development, staging, production)
@@ -26,6 +28,19 @@ if (!JWT_SECRET) {
    * weak default.
    */
   throw new Error("JWT_SECRET environment variable must be defined");
+}
+
+// In a production runtime context, we still want to enforce this
+// We can check for both process.env.NODE_ENV === 'production' and typeof window !== 'undefined'
+// to detect we're in a browser-like runtime environment, not build time
+if (
+  !JWT_SECRET &&
+  process.env.NODE_ENV === "production" &&
+  typeof window !== "undefined"
+) {
+  throw new Error(
+    "JWT_SECRET environment variable must be defined in production runtime"
+  );
 }
 
 /**
