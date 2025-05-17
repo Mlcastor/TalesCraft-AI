@@ -1,7 +1,19 @@
-import type { NextConfig } from "next";
+import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // The critical fix for Prisma in Vercel:
+  output: "standalone",
+
+  // TypeScript-compatible webpack configuration
+  webpack: (config) => {
+    config.externals = [
+      ...((config.externals as any[]) || []),
+      "prisma",
+      "@prisma/client",
+    ];
+    return config;
+  },
+
   headers: async () => {
     return [
       {
